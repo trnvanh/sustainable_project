@@ -1,0 +1,28 @@
+server:
+    port: 8080
+spring:
+    application:
+        name: foodproduct
+    datasource:
+        password: P@ssword*123
+        url: jdbc:postgresql://code4fun.xyz:5432/sustanable_project?currentSchema=sustanable
+        username: dev
+    jpa:
+        generate-ddl: true
+        hibernate:
+            ddl-auto: update
+        properties:
+            hibernate:
+                dialect: org.hibernate.dialect.PostgreSQLDialect
+                jdbc:
+                    lob:
+                        non_contextual_creation: true
+        show-sql: false
+    mvc:
+        pathmatch:
+            matching-strategy: ant_path_matcher
+    servlet:
+        multipart:
+            max-file-size: 25MB
+            max-request-size: 25MB
+
