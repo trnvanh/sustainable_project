@@ -23,12 +23,12 @@ export function OrderCard({ item }: { item: OrderItem }) {
       <View style={styles.info}>
         <Text style={styles.title}>{item.title}</Text>
         <Text style={styles.restaurant}>{item.restaurant}</Text>
-        <View style={styles.metaRow}>
-          <Text style={styles.date}>{item.date}</Text>
-          <View style={[styles.statusBadge, { backgroundColor: statusColor }]}>
-            <Text style={styles.statusText}>{item.status}</Text>
-          </View>
+        
+        <Text style={styles.date}>{item.date}</Text>
+        <View style={[styles.statusBadge, { backgroundColor: statusColor }]}>
+          <Text style={styles.statusText}>{item.status}</Text>
         </View>
+        
       </View>
     </View>
   );
@@ -68,12 +68,6 @@ const styles = StyleSheet.create({
     color: '#6B7280',
     marginTop: 2,
   },
-  metaRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginTop: 8,
-  },
   date: {
     fontSize: 12,
     color: '#9CA3AF',
@@ -82,6 +76,8 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
     paddingHorizontal: 8,
     borderRadius: 12,
+    width:100,
+    alignItems: 'flex-end',
   },
   statusText: {
     fontSize: 12,

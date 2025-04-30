@@ -90,6 +90,7 @@ export default function Explore() {
 const styles = StyleSheet.create({
   container: {
     padding: 16,
+    paddingTop: 50,
     backgroundColor: '#C4DAD2',
   },
   searchContainer: {

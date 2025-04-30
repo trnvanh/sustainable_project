@@ -156,7 +156,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#C4DAD2',
-    paddingTop: 20,
+    paddingTop: 50,
     paddingHorizontal: 12,
     //paddingBottom: 50,
   },
@@ -176,7 +176,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#6A9C89', 
     paddingVertical: 8,
     borderRadius: 12,
-    //marginBottom: 12,
+    marginBottom: 12,
+    height: 250,
   },
   storeCard: {
     width: 200,

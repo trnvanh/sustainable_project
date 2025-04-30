@@ -50,16 +50,16 @@ export default function ProfileScreen() {
             </View>
     
             {/* Options */}
-            <TouchableOpacity style={styles.optionCard}>
+            <TouchableOpacity style={styles.optionCard} onPress={() => {router.push('/profile-info')}}>
               <Text style={styles.optionText}>Profile info</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.optionCard}>
+            <TouchableOpacity style={styles.optionCard} onPress={() => {router.push('/order-history')}}>
               <Text style={styles.optionText}>Order history</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.optionCard}>
+            <TouchableOpacity style={styles.optionCard} onPress={() => {router.push('/settings')}}>
               <Text style={styles.optionText}>Settings</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.optionCard}>
+            <TouchableOpacity style={styles.optionCard} onPress={() => {router.push('/contact')}}>
               <Text style={styles.optionText}>Contact us</Text>
             </TouchableOpacity>
     
@@ -102,7 +102,7 @@ export default function ProfileScreen() {
         backgroundColor: '#fff',
         padding: 20,
         borderRadius: 16,
-        marginTop: -20,
+        marginTop: -10,
         marginBottom: 20,
         alignItems: 'center',
       },
@@ -142,7 +142,7 @@ export default function ProfileScreen() {
         alignItems: 'center',
       },
       statText: {
-        fontSize: 16,
+        fontSize: 15,
         fontWeight: '500',
       },
       optionCard: {
