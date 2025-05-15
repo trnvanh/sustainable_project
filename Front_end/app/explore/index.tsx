@@ -5,6 +5,7 @@ import OfferCard from '@/components/OfferCard';
 import CategoryCard from '@/components/CategoryCard';
 import ScreenWithBack from '@/components/ScreenBack';
 import { router } from 'expo-router';
+import React from 'react';
 
 export default function Explore() {
 
