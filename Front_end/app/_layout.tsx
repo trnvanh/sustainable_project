@@ -1,13 +1,16 @@
+import React from 'react';
 import { Stack, useNavigation, useRouter, usePathname, Slot } from 'expo-router';
 import { Pressable, Text, View, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons/';
-import { AuthProvider, useAuth } from '@/hooks/useAuth';
+//import { AuthProvider, useAuth } from '@/hooks/useAuth';
+import { useAuthStore } from '@/store/useAuthStore';
 
 function AppLayout() {
   const navigation = useNavigation();
   const router = useRouter();
   const pathname = usePathname();
-  const { user } = useAuth();
+  //const { user } = useAuth();
+  const user = useAuthStore((state) => state.user);
 
   const hideNavRoutes = ['/login', '/register', '/welcome', '/prelogin', '/email-signup', '/offer'];
 
@@ -49,13 +52,15 @@ function AppLayout() {
 }
 
 // Wrapping AppLayout with AuthProvider
-export default function LayoutWrapper() {
-  return (
-    <AuthProvider>
-      <AppLayout />
-    </AuthProvider>
-  );
-}
+// export default function LayoutWrapper() {
+//   return (
+//     <AuthProvider>
+//       <AppLayout />
+//     </AuthProvider>
+//   );
+// }
+export default AppLayout;
+
 
 function NavItem({ icon, label, active, onPress }) {
   return (

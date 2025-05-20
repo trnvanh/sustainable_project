@@ -1,3 +1,4 @@
+import React from 'react'
 import { View, Text, StyleSheet } from 'react-native';
 import { Link, useRouter } from 'expo-router';
 import SocialButton from '@/components/SocialButton';
@@ -57,3 +58,4 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
   },
 });
+

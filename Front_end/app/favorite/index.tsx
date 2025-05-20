@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image } from 'react-native';
 import { FavoriteCard } from '@/components/FavoriteCard'; 
+import AuthGuard from '@/components/Protected';
 
 interface FavoriteItem {
   id: string;
@@ -111,44 +112,46 @@ export default function FavoriteScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.heading}>FavoritEats</Text>
-      <FlatList
-        data={favorites}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <FavoriteCard
-            title={item.name}
-            image={item.image}
-            price={item.price}
-            onDelete={() => handleDelete(item.id)}
-          />
-        )}
-        numColumns={2}
-        columnWrapperStyle={styles.row}
-        contentContainerStyle={{ paddingBottom: 16 }}
-      />
-      <View style={styles.storeSection}>
-        <Text style={styles.heading}>🏪 Stores 🏪</Text>
+    <AuthGuard>
+      <View style={styles.container}>
+        <Text style={styles.heading}>FavoritEats</Text>
         <FlatList
-          horizontal
-          data={favoriteStores}
+          data={favorites}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
-            <TouchableOpacity style={styles.storeCard}>
-              <Image source={{ uri: item.image }} style={styles.storeImage} />
-              <View style={styles.overlay}>
-                <Text style={styles.storeName}>{item.name}</Text>
-                <Text style={styles.storeDeal}>{item.deal}</Text>
-                <Text style={styles.storeMeta}>📍 {item.location}  ⭐ {item.rating.toFixed(1)}</Text>
-              </View>
-            </TouchableOpacity>
+            <FavoriteCard
+              title={item.name}
+              image={item.image}
+              price={item.price}
+              onDelete={() => handleDelete(item.id)}
+            />
           )}
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{ paddingLeft: 12, paddingRight: 12, paddingBottom: 100 }}
+          numColumns={2}
+          columnWrapperStyle={styles.row}
+          contentContainerStyle={{ paddingBottom: 16 }}
         />
+        <View style={styles.storeSection}>
+          <Text style={styles.heading}>🏪 Stores 🏪</Text>
+          <FlatList
+            horizontal
+            data={favoriteStores}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <TouchableOpacity style={styles.storeCard}>
+                <Image source={{ uri: item.image }} style={styles.storeImage} />
+                <View style={styles.overlay}>
+                  <Text style={styles.storeName}>{item.name}</Text>
+                  <Text style={styles.storeDeal}>{item.deal}</Text>
+                  <Text style={styles.storeMeta}>📍 {item.location}  ⭐ {item.rating.toFixed(1)}</Text>
+                </View>
+              </TouchableOpacity>
+            )}
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={{ paddingLeft: 12, paddingRight: 12, paddingBottom: 100 }}
+          />
+        </View>
       </View>
-    </View>
+    </AuthGuard>
   );
 }
 

@@ -1,15 +1,10 @@
-import { View, Text, StyleSheet, Image, Pressable } from 'react-native';
+import React from 'react';
+import { View, Text, StyleSheet, Image, Pressable, ImageSourcePropType } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import type { Offer } from '@/store/useProductsStore';
 
-interface OfferCardProps {
-  name: string;
-  price: string;
-  image?: string;
-  pickupTime?: string;
-  distance?: string;
-  portionsLeft: number;
-}
+export type OfferCardProps = Pick<Offer, 'name' | 'price' | 'image' | 'pickupTime' | 'distance' | 'portionsLeft'>;
 
 export default function OfferCard({
   name,
@@ -21,12 +16,26 @@ export default function OfferCard({
 }: OfferCardProps) {
   const router = useRouter();
 
+  // Normalize image value into ImageSourcePropType
+  const getImageSource = (): ImageSourcePropType => {
+    if (typeof image === 'string') {
+      //console.log('Image URL:', image);
+      return { uri: image };
+    } else if (typeof image === 'number') {
+      //console.log('Image local:', image);
+      return image;
+    } else if (typeof image === 'object' && 'uri' in image) {
+      //console.log('Image object:', image);
+      return image; // Already in correct format
+    } else {
+      //console.log('Image fallback');
+      return { uri: 'https://via.placeholder.com/160x100.png?text=Food' };
+    }
+  };
+
   return (
     <Pressable style={styles.card} onPress={() => router.push('/offer')}>
-      <Image
-        source={{ uri: image || 'https://via.placeholder.com/160x100.png?text=Food' }}
-        style={styles.cardImage}
-      />
+      <Image source={getImageSource()} style={styles.cardImage} />
       <View style={styles.cardContent}>
         <Text style={styles.cardName}>{name}</Text>
         <Text style={styles.cardPrice}>{price}</Text>
@@ -42,21 +51,15 @@ export default function OfferCard({
         </View>
 
         <View style={styles.infoRow}>
-        <MaterialCommunityIcons
+          <MaterialCommunityIcons
             name={portionsLeft <= 1 ? 'fire' : 'food'}
             size={14}
             color={portionsLeft <= 1 ? '#D32F2F' : '#777'}
-        />
-        <Text
-            style={[
-            styles.infoText,
-            portionsLeft <= 2 && styles.lowPortions,
-            ]}
-        >
+          />
+          <Text style={[styles.infoText, portionsLeft <= 2 && styles.lowPortions]}>
             {portionsLeft} left
-        </Text>
+          </Text>
         </View>
-
       </View>
     </Pressable>
   );
@@ -100,7 +103,7 @@ const styles = StyleSheet.create({
     marginLeft: 4,
   },
   lowPortions: {
-    color: '#D32F2F', 
+    color: '#D32F2F',
     fontWeight: '600',
-  },  
+  },
 });

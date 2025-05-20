@@ -1,28 +1,30 @@
-import { router, useRouter } from 'expo-router';
 import React, { useState } from 'react';
+import { View, Text, TextInput, StyleSheet, Pressable, Alert } from 'react-native';
 import { Link } from 'expo-router';
-import { View, Text, TextInput, StyleSheet, Pressable } from 'react-native';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuthStore } from '@/store/useAuthStore';
 
 export default function LoginScreen() {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const login = useAuthStore((state) => state.login);
 
-  const router = useRouter();
-  const { login } = useAuth();
-
-  const handleLogin = () => {
-    login({ name: 'testuser', password: '1234' }); // mock login
-    router.replace('/explore'); // redirect to main app
+  const handleLogin = async () => {
+    try {
+      await login(email, password);
+      // Navigation handled inside the store
+    } catch (error) {
+      Alert.alert('Login Failed', 'Invalid username or password.');
+    }
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>HeroEats</Text>
+
       <TextInput
-        placeholder="Username"
-        value={username}
-        onChangeText={setUsername}
+        placeholder="Email"
+        value={email}
+        onChangeText={setEmail}
         style={styles.input}
       />
       <TextInput
@@ -43,7 +45,7 @@ export default function LoginScreen() {
 
       <Pressable style={styles.link}>
         <Text style={styles.linkText}>
-            <Link href="/welcome">Don't have account yet?</Link>
+          <Link href="/welcome">Don't have account yet?</Link>
         </Text>
       </Pressable>
     </View>

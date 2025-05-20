@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View } from 'react-native';
-import WelcomeScreen from '@/app/welcome';       
+import WelcomeScreen from '@/app/welcome';     
 
 export default function Index() {
   return (

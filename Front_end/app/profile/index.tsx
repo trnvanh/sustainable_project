@@ -2,13 +2,15 @@ import React from 'react';
 import { router, useRouter } from 'expo-router';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useAuthStore } from '@/store/useAuthStore';
 
 export default function ProfileScreen() {
     const router = useRouter();
+    const logout = useAuthStore((state) => state.logout);
 
     const handleLogout = () => {
-        router.replace('/welcome'); // redirect to main app
-      };
+      logout();
+    };
 
     const CREDITS = 120;
     const RESCUED = 100;

@@ -1,3 +1,4 @@
+import React from 'react'
 import { View, Text, StyleSheet, Image, Pressable } from 'react-native';
 
 interface CategoryCardProps {
