@@ -2,12 +2,14 @@ import React from 'react';
 import { router, useRouter } from 'expo-router';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function ProfileScreen() {
     const router = useRouter();
 
-    const handleLogout = () => {
+    const handleLogout = async () => {
         router.replace('/welcome'); // redirect to main app
+        await AsyncStorage.setItem('isLoggedIn', 'false'); // change the state to logged out
       };
 
     const CREDITS = 120;

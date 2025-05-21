@@ -3,6 +3,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { FontAwesome, MaterialIcons, Entypo } from '@expo/vector-icons';
 import ScreenWithBack from '@/components/ScreenBack';
 import RescueBar from '@/components/RescueBar';
+import React from 'react';
 
 export default function OfferItemScreen() {
   return (

@@ -64,6 +64,9 @@ export default function Explore() {
       <View style={styles.locationContainer}>
         <Ionicons name="location-sharp" size={20} color="#4CAF50" />
         <Text style={styles.locationText}>Tampere 33100</Text>
+        <TouchableOpacity onPress={() => router.push('/map')}>
+          <Ionicons name="map-outline" size={26} color="#335248" />
+        </TouchableOpacity>
       </View>
 
       {/*Categories */}

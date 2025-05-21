@@ -1,17 +1,25 @@
-import { router, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { Link } from 'expo-router';
-import { View, Text, TextInput, StyleSheet, Pressable } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Pressable, ActivityIndicator } from 'react-native';
 import { useAuth } from '@/hooks/useAuth';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function LoginScreen() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const router = useRouter();
   const { login } = useAuth();
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
+    if (!username || !password) {
+      alert('Please enter username and password');
+      return;
+    }
+    setLoading(true);
+    await AsyncStorage.setItem('isLoggedIn', 'true'); // change the state to logged in
     login({ name: 'testuser', password: '1234' }); // mock login
     router.replace('/explore'); // redirect to main app
   };
@@ -33,9 +41,13 @@ export default function LoginScreen() {
         style={styles.input}
       />
 
-      <Pressable style={styles.loginButton} onPress={handleLogin}>
-        <Text style={styles.buttonText}>Log In</Text>
-      </Pressable>
+      {loading ? (
+        <ActivityIndicator size="large" color="#3D6D61" style={{ marginTop: 20 }} />
+      ) : (
+        <Pressable style={styles.loginButton} onPress={handleLogin}>
+          <Text style={styles.buttonText}>Log In</Text>
+        </Pressable>
+      )}
 
       <Pressable style={styles.link}>
         <Text style={styles.linkText}>Forget password?</Text>

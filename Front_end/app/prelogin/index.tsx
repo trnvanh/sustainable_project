@@ -1,36 +1,38 @@
 import {Image, View, Text, StyleSheet, Pressable, Button } from 'react-native';
 import { router, useRouter } from 'expo-router';
 import { Link } from 'expo-router';
+import React from 'react';
 
 export default function PreloginScreen() {
   const router = useRouter();
-
-  const createAcc = () => {
-    router.replace('/welcome');
-  }
 
   return (
     <View style={styles.container}>
       <Text style={styles.name}>HeroEats</Text>
 
-      <Text>Are you signing up as</Text>
-
       <View style={styles.buttonGroup}>
-        <Link href="/login" asChild>
-          <Pressable style={styles.button}>
-            <Text style={styles.buttonText}>HeroEater</Text>
-          </Pressable>
-        </Link>
-        <Link href="/login" asChild>
-          <Pressable style={styles.buttonSecondary}>
-            <Text style={styles.buttonText}>Business</Text>
-          </Pressable>
-        </Link>
+
+        <View style={styles.buttonGroup}>
+          <Link href="/register" asChild>
+            <Pressable style={styles.button}>
+                <Text style={styles.buttonText}>Create Account</Text>
+            </Pressable>
+          </Link>
+          <Link href="/login" asChild>
+            <Pressable style={styles.buttonSecondary}>
+                <Text style={styles.buttonText}>Log In</Text>
+            </Pressable>
+          </Link>
+        </View>
+        
         <Text style={{ color: '#16423C', textDecorationLine: 'underline' }}>
-          <Link href="/welcome">Don't have account yet?</Link>
+            <Link href="/explore">Wanna see offers before signing up?</Link>
         </Text>
       </View>
     </View>
+
+
+
   );
 }
 

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function RescueBar() {
   const [count, setCount] = useState(0);
@@ -14,9 +15,10 @@ export default function RescueBar() {
     if (count > 0) setCount(count - 1);
   };
 
-  const handleSwipe = () => {
+  const handleSwipe = async () => {
     // connect to Google auth logic
     console.log('User swipe to rescue');
+    await AsyncStorage.setItem('isLoggedIn', 'false');
   };
 
   return (

@@ -2,6 +2,7 @@ import { Stack, useNavigation, useRouter, usePathname, Slot } from 'expo-router'
 import { Pressable, Text, View, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons/';
 import { AuthProvider, useAuth } from '@/hooks/useAuth';
+import React from 'react';
 
 function AppLayout() {
   const navigation = useNavigation();
