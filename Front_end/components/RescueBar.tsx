@@ -2,9 +2,14 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
-export default function RescueBar() {
+type RescueBarProps = {
+  portionsLeft: number;
+};
+
+export default function RescueBar({ portionsLeft }: RescueBarProps) {
   const [count, setCount] = useState(0);
-  const maxCount = 5;
+  const maxCount = portionsLeft;
+  const isDisabled = portionsLeft === 0;
 
   const increment = () => {
     if (count < maxCount) setCount(count + 1);
@@ -16,7 +21,7 @@ export default function RescueBar() {
 
   const handleSwipe = () => {
     // connect to Google auth logic
-    console.log('User swipe to rescue');
+    console.log(`User swiped to rescue ${count} item(s)`);
   };
 
   return (
@@ -24,7 +29,7 @@ export default function RescueBar() {
       {/* Portion + Counter */}
       <View style={styles.counterRow}>
         <View>
-          <Text style={styles.leftText}>5 left</Text>
+          <Text style={styles.leftText}>{maxCount} left</Text>
           <Text style={styles.subText}>I’ll rescue</Text>
         </View>
 
@@ -40,8 +45,10 @@ export default function RescueBar() {
       </View>
 
       {/* Swipe to Rescue */}
-      <TouchableOpacity style={styles.swipeContainer} onPress={handleSwipe}>
-        <Text style={styles.swipeText}>Swipe To Rescue</Text>
+      <TouchableOpacity style={[styles.swipeContainer, isDisabled && styles.swipeDisabled]} onPress={handleSwipe} disabled={isDisabled}>
+        <Text style={styles.swipeText}>
+          {isDisabled ? 'Unavailable' : 'Swipe To Rescue'}
+        </Text>
       </TouchableOpacity>
     </View>
   );
@@ -100,6 +107,9 @@ const styles = StyleSheet.create({
       color: 'white',
       fontSize: 16,
       fontWeight: '600',
+    },
+    swipeDisabled: {
+      backgroundColor: '#ccc',
     },
   });
   

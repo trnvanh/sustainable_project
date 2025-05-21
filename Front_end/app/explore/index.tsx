@@ -14,6 +14,7 @@ export default function Explore() {
     currentDeals,
     loadExploreData,
     loading,
+    setSelectedOffer,
   } = useProductsStore();
 
   useEffect(() => {
@@ -42,12 +43,18 @@ export default function Explore() {
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           // Use TouchableOpacity to navigate to the offer details page
-          <TouchableOpacity onPress={() => router.push('/offer')}>
+          <TouchableOpacity onPress={() => {
+            setSelectedOffer(item);
+            //router.push({ pathname: '/offer', params: { offerId: item.id } });
+            router.push(`/offer/${item.id}`);
+          }}>
             <OfferCard
+              id={item.id}
               name={item.name}
               price={item.price}
               image={item.image}
               pickupTime={item.pickupTime}
+              rating={item.rating}
               distance={item.distance}
               portionsLeft={item.portionsLeft}
             />

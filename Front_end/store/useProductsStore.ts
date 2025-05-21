@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 import {
   fetchHistoryOrders,
   fetchNearbyOffers,
@@ -12,7 +13,13 @@ export type Offer = {
   pickupTime?: string;
   distance?: string;
   portionsLeft: number;
+  rating?: number;
   image?: string | number;
+  location?: {
+    restaurant: string;
+    address: string;
+  };
+  description?: string;
 };
 
 type ExploreState = {
@@ -20,23 +27,34 @@ type ExploreState = {
   nearbyOffers: Offer[];
   currentDeals: Offer[];
   loading: boolean;
+  selectedOffer: Offer | null;
+  setSelectedOffer: (offer: Offer) => void;
   loadExploreData: () => Promise<void>;
 };
 
-export const useProductsStore = create<ExploreState>((set) => ({
-  historyOrders: [],
-  nearbyOffers: [],
-  currentDeals: [],
-  loading: false,
+export const useProductsStore = create<ExploreState>()(
+  persist(
+    (set) => ({
+      historyOrders: [],
+      nearbyOffers: [],
+      currentDeals: [],
+      loading: false,
+      selectedOffer: null,
 
-  loadExploreData: async () => {
-    set({ loading: true });
-    const [historyOrders, nearbyOffers, currentDeals] = await Promise.all([
-      fetchHistoryOrders(),
-      fetchNearbyOffers(),
-      fetchCurrentDeals(),
-    ]);
+      setSelectedOffer: (offer) => set({ selectedOffer: offer }),
 
-    set({ historyOrders, nearbyOffers, currentDeals, loading: false });
-  },
-}));
+      loadExploreData: async () => {
+        set({ loading: true });
+        const [historyOrders, nearbyOffers, currentDeals] = await Promise.all([
+          fetchHistoryOrders(),
+          fetchNearbyOffers(),
+          fetchCurrentDeals(),
+        ]);
+        set({ historyOrders, nearbyOffers, currentDeals, loading: false });
+      },
+    }),
+    {
+      name: 'products-storage', // storage key
+    }
+  )
+);

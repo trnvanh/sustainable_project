@@ -1,19 +1,21 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, Pressable, ImageSourcePropType } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { FontAwesome, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import type { Offer } from '@/store/useProductsStore';
 
-export type OfferCardProps = Pick<Offer, 'name' | 'price' | 'image' | 'pickupTime' | 'distance' | 'portionsLeft'>;
+// export type OfferCardProps = Pick<Offer, 'name' | 'price' | 'image' | 'pickupTime' | 'distance' | 'portionsLeft'>;
 
 export default function OfferCard({
+  id,
   name,
   price,
   image,
   pickupTime,
+  rating,
   distance,
   portionsLeft,
-}: OfferCardProps) {
+}: Offer) {
   const router = useRouter();
 
   // Normalize image value into ImageSourcePropType
@@ -34,11 +36,16 @@ export default function OfferCard({
   };
 
   return (
-    <Pressable style={styles.card} onPress={() => router.push('/offer')}>
+    <Pressable style={styles.card} onPress={() => router.push(`/offer/${id}`)}>
       <Image source={getImageSource()} style={styles.cardImage} />
       <View style={styles.cardContent}>
         <Text style={styles.cardName}>{name}</Text>
         <Text style={styles.cardPrice}>{price}</Text>
+        
+        <View style={styles.infoRow}>
+          <FontAwesome name="star" size={20} color="gold" />
+          <Text style={styles.infoText}>{rating}</Text>
+        </View>
 
         <View style={styles.infoRow}>
           <Ionicons name="time-outline" size={14} color="#777" />
