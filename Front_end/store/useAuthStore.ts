@@ -1,23 +1,20 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { loginRequest, registerRequest } from '@/api/authentication';
+import { loginRequest, registerRequest, updateUserRequest } from '@/api/authentication';
 import { router } from 'expo-router';
-
-type User = {
-  email: string;
-  name: string;
-};
+import { UserProfile } from '@/types/user';
 
 type AuthState = {
-  user: User | null;
+  user: UserProfile | null;
   login: (email: string, password: string) => Promise<void>;
   register: (fullName: string, email: string, password: string) => Promise<void>;
   logout: () => void;
+  updateUser: (updatedFields: Partial<UserProfile>) => void;
 };
 
 export const useAuthStore = create<AuthState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       user: null,
 
       // Function to set the user state
@@ -38,6 +35,16 @@ export const useAuthStore = create<AuthState>()(
       logout: () => {
         set({ user: null });
         router.replace('/welcome');
+      },
+
+      // Update user fields (name, preferences, etc.)
+      updateUser: async (updatedFields) => {
+        const currentUser = get().user;
+        if (!currentUser) return;
+
+        const updatedUser = await updateUserRequest(currentUser.id, updatedFields);
+
+        set({ user: updatedUser });
       },
     }),
     {

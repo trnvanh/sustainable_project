@@ -5,30 +5,15 @@ import {
   fetchNearbyOffers,
   fetchCurrentDeals,
 } from '@/api/products';
-
-export type Offer = {
-  id: string;
-  name: string;
-  price: string;
-  pickupTime?: string;
-  distance?: string;
-  portionsLeft: number;
-  rating?: number;
-  image?: string | number;
-  location?: {
-    restaurant: string;
-    address: string;
-  };
-  description?: string;
-};
+import { OrderItem } from '@/types/order';
 
 type ExploreState = {
-  historyOrders: Offer[];
-  nearbyOffers: Offer[];
-  currentDeals: Offer[];
+  historyOrders: OrderItem[];
+  nearbyOffers: OrderItem[];
+  currentDeals: OrderItem[];
   loading: boolean;
-  selectedOffer: Offer | null;
-  setSelectedOffer: (offer: Offer) => void;
+  selectedOffer: OrderItem | null;
+  setSelectedOffer: (offer: OrderItem) => void;
   loadExploreData: () => Promise<void>;
 };
 

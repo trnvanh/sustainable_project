@@ -12,6 +12,7 @@
 
 // Using mock data for login for testing purposes
 import { mockUsers } from '@/mocks/data/users';
+import { UserProfile } from '@/types/user';
 
 // This function simulates a delay to mimic network latency
 const simulateDelay = (ms: number) => new Promise((res) => setTimeout(res, ms));
@@ -27,7 +28,7 @@ export const loginRequest = async (email: string, password: string) => {
     throw new Error('Invalid email or password');
   }
 
-  return { email: foundUser.email, name: foundUser.name };
+  return foundUser;
 };
 
 // This function simulates a registration request
@@ -37,13 +38,58 @@ export const registerRequest = async (
   password: string
 ) => {
   await simulateDelay(500);
-  const exists = mockUsers.some((user) => user.email === email);
 
+  const exists = mockUsers.some((user) => user.email === email);
   if (exists) {
     throw new Error('Email already exists');
   }
 
-  mockUsers.push({ email, password, name: fullName });
+  const newUserId = `u00${mockUsers.length + 1}`;
 
-  return { email, name: fullName };
+  const newUser = {
+    id: newUserId,
+    name: fullName,
+    email,
+    password,
+    phone: '',
+    credits: 0,
+    rescuedMeals: 0,
+    co2SavedKg: 0,
+    moneySavedEur: 0,
+    historyOrderIds: [],
+    preferences: {
+      theme: 'light',
+      language: 'en',
+      notifications: true,
+    } as const,
+  };
+
+  mockUsers.push(newUser);
+  return newUser; // Return full user object
+};
+
+export const updateUserRequest = async (
+  userId: string,
+  updatedFields: Partial<UserProfile>
+): Promise<UserProfile> => {
+  await simulateDelay(500);
+
+  const userIndex = mockUsers.findIndex((user) => user.id === userId);
+  if (userIndex === -1) {
+    throw new Error('User not found');
+  }
+
+  // Merge updates
+  const updatedUser = {
+    ...mockUsers[userIndex],
+    ...updatedFields,
+    preferences: {
+      ...mockUsers[userIndex].preferences,
+      ...updatedFields.preferences,
+    },
+  };
+
+  mockUsers[userIndex] = updatedUser;
+
+  return updatedUser;
 };
