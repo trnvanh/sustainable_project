@@ -1,7 +1,7 @@
 package com.sustanable.foodproduct.controller;
 
 import com.sustanable.foodproduct.dtos.ChangePasswordRequest;
-import com.sustanable.foodproduct.services.UserService;
+import com.sustanable.foodproduct.services.impl.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PatchMapping;

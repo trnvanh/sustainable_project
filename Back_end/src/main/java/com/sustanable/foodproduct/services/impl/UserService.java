@@ -1,4 +1,4 @@
-package com.sustanable.foodproduct.services;
+package com.sustanable.foodproduct.services.impl;
 
 import com.sustanable.foodproduct.entities.User;
 import com.sustanable.foodproduct.repositories.UserRepository;
