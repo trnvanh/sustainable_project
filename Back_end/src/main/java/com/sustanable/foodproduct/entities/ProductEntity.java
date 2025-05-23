@@ -3,8 +3,8 @@ package com.sustanable.foodproduct.entities;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.DecimalMax;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -47,14 +47,15 @@ public class ProductEntity extends BaseEntity {
 
     @Column(name = "rating")
     @DecimalMin(value = "0.0")
-    @DecimalMin(value = "5.0")
+    @DecimalMax(value = "5.0")
     private Double rating;
 
     @Column(name = "expiring_date")
     private Date expiringDate;
 
     @Column(name = "status")
-    private Boolean status;
+    @Builder.Default
+    private Boolean status = true;
 
     @NotNull
     @Min(0)

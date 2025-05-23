@@ -1,0 +1,16 @@
+{
+  "name": "testdatageneration",
+  "version": "1.0.0",
+  "main": "dataGeneration.js",
+  "scripts": {
+    "generate": "node dataGeneration.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "Test data generation for Sustainable Food Product application",
+  "dependencies": {
+    "@faker-js/faker": "^9.8.0",
+    "axios": "^1.9.0"
+  }
+}

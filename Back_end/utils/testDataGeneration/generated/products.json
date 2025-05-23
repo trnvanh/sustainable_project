@@ -1,0 +1,344 @@
+{
+  "products": [
+    {
+      "name": "Sushi Roll Set",
+      "description": "Fresh sushi rolls with various fillings including salmon, tuna, and vegetables",
+      "image": "https://example.com/images/sushi-roll.jpg",
+      "price": 15.99,
+      "pickupTime": "18:00-20:00",
+      "distance": 2.5,
+      "portionsLeft": 5,
+      "rating": 4.5,
+      "expiringDate": "2025-05-24T00:00:00.000Z",
+      "status": true,
+      "favourite": 12,
+      "location": {
+        "restaurant": "Sushi Master",
+        "address": "123 Food Street, City Center"
+      }
+    },
+    {
+      "name": "Pizza Margherita",
+      "description": "Traditional Italian pizza with tomato sauce, mozzarella, and fresh basil",
+      "image": "https://example.com/images/pizza.jpg",
+      "price": 12.99,
+      "pickupTime": "19:00-21:00",
+      "distance": 1.8,
+      "portionsLeft": 3,
+      "rating": 4.8,
+      "expiringDate": "2025-05-24T00:00:00.000Z",
+      "status": true,
+      "favourite": 25,
+      "location": {
+        "restaurant": "Pizza Express",
+        "address": "456 Main Avenue, Downtown"
+      }
+    },
+    {
+      "name": "Pad Thai",
+      "description": "Authentic Thai stir-fried rice noodles with tofu, shrimp, and peanuts",
+      "image": "https://example.com/images/pad-thai.jpg",
+      "price": 10.99,
+      "pickupTime": "17:30-19:30",
+      "distance": 3.2,
+      "portionsLeft": 4,
+      "rating": 4.3,
+      "expiringDate": "2025-05-24T00:00:00.000Z",
+      "status": true,
+      "favourite": 18,
+      "location": {
+        "restaurant": "Thai Delight",
+        "address": "789 Eastern Road, Food District"
+      }
+    },
+    {
+      "name": "Oriental Marble Chicken",
+      "description": "Our salty-inspired Chips brings a taste of luxury to your watery lifestyle",
+      "image": "https://picsum.photos/seed/ZviEYlz3/640/480",
+      "price": "26.35",
+      "pickupTime": "19:00-22:00",
+      "distance": 0.9556273680840848,
+      "portionsLeft": 3,
+      "rating": 3.8951545137706387,
+      "expiringDate": "2025-05-24T18:16:05.238Z",
+      "status": true,
+      "favourite": 61,
+      "location": {
+        "restaurant": "Hagenes, Schowalter and Howell Restaurant",
+        "address": "5120 O'Keefe Plaza, Detroit"
+      }
+    },
+    {
+      "name": "Sleek Aluminum Fish",
+      "description": "Featuring Thallium-enhanced technology, our Towels offers unparalleled heavy performance",
+      "image": "https://loremflickr.com/640/480?lock=7095671492544066",
+      "price": "29.89",
+      "pickupTime": "17:00-22:00",
+      "distance": 1.032413779762553,
+      "portionsLeft": 7,
+      "rating": 4.920852457650774,
+      "expiringDate": "2025-05-24T15:50:28.628Z",
+      "status": true,
+      "favourite": 37,
+      "location": {
+        "restaurant": "Schoen Inc Café",
+        "address": "431 Hayes Lights, Bakersfield"
+      }
+    },
+    {
+      "name": "Frozen Bronze Salad",
+      "description": "Our lion-friendly Keyboard ensures vain comfort for your pets",
+      "image": "https://picsum.photos/seed/VRvAXC/640/480",
+      "price": "14.69",
+      "pickupTime": "19:00-22:00",
+      "distance": 4.671865269669612,
+      "portionsLeft": 1,
+      "rating": 3.749280347735546,
+      "expiringDate": "2025-05-23T23:35:15.295Z",
+      "status": true,
+      "favourite": 10,
+      "location": {
+        "restaurant": "Berge, Hyatt and Wilkinson Diner",
+        "address": "77478 Mosciski Row, Valentinatown"
+      }
+    },
+    {
+      "name": "Handmade Metal Chair",
+      "description": "Featuring Nitrogen-enhanced technology, our Table offers unparalleled critical performance",
+      "image": "https://picsum.photos/seed/sHSBA/640/480",
+      "price": "18.59",
+      "pickupTime": "19:00-22:00",
+      "distance": 1.78619116462593,
+      "portionsLeft": 10,
+      "rating": 4.1142286158461925,
+      "expiringDate": "2025-05-24T00:32:46.252Z",
+      "status": true,
+      "favourite": 12,
+      "location": {
+        "restaurant": "Walsh - Kihn Diner",
+        "address": "2037 Corbin Parks, West Lina"
+      }
+    },
+    {
+      "name": "Recycled Marble Ball",
+      "description": "Innovative Salad featuring rubbery technology and Rubber construction",
+      "image": "https://picsum.photos/seed/TzXK8lZ/640/480",
+      "price": "8.45",
+      "pickupTime": "18:00-23:00",
+      "distance": 2.799518063788814,
+      "portionsLeft": 8,
+      "rating": 4.618752970530544,
+      "expiringDate": "2025-05-23T17:16:37.232Z",
+      "status": true,
+      "favourite": 98,
+      "location": {
+        "restaurant": "Ledner, Moen and Lueilwitz Restaurant",
+        "address": "220 Mayert Gateway, Kingburgh"
+      }
+    },
+    {
+      "name": "Intelligent Steel Shoes",
+      "description": "Introducing the Heard Island and McDonald Islands-inspired Hat, blending nifty style with local craftsmanship",
+      "image": "https://picsum.photos/seed/dHLvg4f/640/480",
+      "price": "15.49",
+      "pickupTime": "18:00-23:00",
+      "distance": 4.474238967996136,
+      "portionsLeft": 1,
+      "rating": 3.837574959949828,
+      "expiringDate": "2025-05-23T22:57:12.370Z",
+      "status": true,
+      "favourite": 77,
+      "location": {
+        "restaurant": "Reynolds - Dickinson Bistro",
+        "address": "246 Abbott River, Fort Jacqueshaven"
+      }
+    },
+    {
+      "name": "Handmade Plastic Mouse",
+      "description": "Our sour-inspired Pizza brings a taste of luxury to your leading lifestyle",
+      "image": "https://picsum.photos/seed/D8kSu/640/480",
+      "price": "10.39",
+      "pickupTime": "19:00-22:00",
+      "distance": 3.590661239957532,
+      "portionsLeft": 6,
+      "rating": 3.361995256838906,
+      "expiringDate": "2025-05-25T10:22:09.816Z",
+      "status": true,
+      "favourite": 38,
+      "location": {
+        "restaurant": "McLaughlin, Jerde and Kshlerin Eatery",
+        "address": "364 Austyn Avenue, West Kamillefort"
+      }
+    },
+    {
+      "name": "Awesome Plastic Cheese",
+      "description": "Savor the sour essence in our Mouse, designed for grave culinary adventures",
+      "image": "https://picsum.photos/seed/Mpd1lnl/640/480",
+      "price": "22.68",
+      "pickupTime": "18:00-21:00",
+      "distance": 4.759936001477579,
+      "portionsLeft": 2,
+      "rating": 3.535061282906784,
+      "expiringDate": "2025-05-23T23:34:32.945Z",
+      "status": true,
+      "favourite": 99,
+      "location": {
+        "restaurant": "Konopelski Group Diner",
+        "address": "39961 Jefferson Street, Abbymouth"
+      }
+    },
+    {
+      "name": "Awesome Silk Towels",
+      "description": "Discover the hamster-like agility of our Towels, perfect for defenseless users",
+      "image": "https://loremflickr.com/640/480?lock=3680722178397757",
+      "price": "28.66",
+      "pickupTime": "19:00-21:00",
+      "distance": 2.955134311360621,
+      "portionsLeft": 10,
+      "rating": 4.609567509864428,
+      "expiringDate": "2025-05-24T10:09:14.396Z",
+      "status": true,
+      "favourite": 28,
+      "location": {
+        "restaurant": "Hodkiewicz Group Restaurant",
+        "address": "128 Ritchie Field, New Ervincester"
+      }
+    },
+    {
+      "name": "Electronic Bamboo Tuna",
+      "description": "Featuring Astatine-enhanced technology, our Gloves offers unparalleled serpentine performance",
+      "image": "https://loremflickr.com/640/480?lock=1012776583215464",
+      "price": "21.99",
+      "pickupTime": "19:00-23:00",
+      "distance": 4.437819082510905,
+      "portionsLeft": 9,
+      "rating": 4.6186052072811785,
+      "expiringDate": "2025-05-25T05:23:58.526Z",
+      "status": true,
+      "favourite": 51,
+      "location": {
+        "restaurant": "Mills Group Restaurant",
+        "address": "6127 Broad Lane, Metzburgh"
+      }
+    },
+    {
+      "name": "Generic Steel Towels",
+      "description": "Ergonomic Keyboard made with Bronze for all-day handsome support",
+      "image": "https://loremflickr.com/640/480?lock=2862149881149468",
+      "price": "7.05",
+      "pickupTime": "20:00-21:00",
+      "distance": 3.808987952046814,
+      "portionsLeft": 3,
+      "rating": 4.277414816978343,
+      "expiringDate": "2025-05-23T15:13:01.315Z",
+      "status": true,
+      "favourite": 28,
+      "location": {
+        "restaurant": "Walsh, Kuvalis and Dickens Diner",
+        "address": "2323 W Pine Street, East Leilaview"
+      }
+    },
+    {
+      "name": "Small Rubber Sausages",
+      "description": "The Horizontal immersive methodology Ball offers reliable performance and unselfish design",
+      "image": "https://loremflickr.com/640/480?lock=1020705920178310",
+      "price": "19.19",
+      "pickupTime": "19:00-21:00",
+      "distance": 2.5312592932949425,
+      "portionsLeft": 2,
+      "rating": 4.287108697530163,
+      "expiringDate": "2025-05-25T08:10:51.272Z",
+      "status": true,
+      "favourite": 15,
+      "location": {
+        "restaurant": "Ward and Sons Restaurant",
+        "address": "5469 Boyer Plain, North Prince"
+      }
+    },
+    {
+      "name": "Small Plastic Hat",
+      "description": "The Synchronised leading edge paradigm Cheese offers reliable performance and late design",
+      "image": "https://loremflickr.com/640/480?lock=7562237484519053",
+      "price": "23.70",
+      "pickupTime": "17:00-23:00",
+      "distance": 4.30496213883627,
+      "portionsLeft": 9,
+      "rating": 3.3971223936235213,
+      "expiringDate": "2025-05-23T23:40:51.693Z",
+      "status": true,
+      "favourite": 58,
+      "location": {
+        "restaurant": "Little - Hansen Bistro",
+        "address": "1448 Kelly Pine, West Jovanifurt"
+      }
+    },
+    {
+      "name": "Sleek Silk Tuna",
+      "description": "The lime Pizza combines Guatemala aesthetics with Thulium-based durability",
+      "image": "https://picsum.photos/seed/tWuKau/640/480",
+      "price": "22.70",
+      "pickupTime": "18:00-23:00",
+      "distance": 2.4800571253484716,
+      "portionsLeft": 3,
+      "rating": 4.571186177793362,
+      "expiringDate": "2025-05-24T02:59:16.215Z",
+      "status": true,
+      "favourite": 16,
+      "location": {
+        "restaurant": "Schulist and Sons Eatery",
+        "address": "88146 Beechwood Avenue, East Anne"
+      }
+    },
+    {
+      "name": "Small Plastic Car",
+      "description": "Innovative Mouse featuring shameless technology and Concrete construction",
+      "image": "https://picsum.photos/seed/wijVTK/640/480",
+      "price": "28.29",
+      "pickupTime": "19:00-23:00",
+      "distance": 3.90996246678012,
+      "portionsLeft": 5,
+      "rating": 4.332787796045673,
+      "expiringDate": "2025-05-23T14:11:59.226Z",
+      "status": true,
+      "favourite": 47,
+      "location": {
+        "restaurant": "Bailey Inc Restaurant",
+        "address": "99308 E River Road, Cicero"
+      }
+    },
+    {
+      "name": "Oriental Gold Car",
+      "description": "Experience the indigo brilliance of our Mouse, perfect for trivial environments",
+      "image": "https://loremflickr.com/640/480?lock=2949335771319697",
+      "price": "18.99",
+      "pickupTime": "20:00-22:00",
+      "distance": 1.4338214492125776,
+      "portionsLeft": 1,
+      "rating": 3.5350236500371643,
+      "expiringDate": "2025-05-23T13:54:29.251Z",
+      "status": true,
+      "favourite": 0,
+      "location": {
+        "restaurant": "Rodriguez, Nader and Borer Café",
+        "address": "348 Williamson Springs, New Audreanne"
+      }
+    },
+    {
+      "name": "Intelligent Bamboo Pants",
+      "description": "Our ostrich-friendly Shirt ensures brave comfort for your pets",
+      "image": "https://loremflickr.com/640/480?lock=5336332644810202",
+      "price": "18.49",
+      "pickupTime": "19:00-22:00",
+      "distance": 4.614738812316978,
+      "portionsLeft": 4,
+      "rating": 4.116415688908748,
+      "expiringDate": "2025-05-23T18:54:35.548Z",
+      "status": true,
+      "favourite": 34,
+      "location": {
+        "restaurant": "Smitham, Lakin and Sawayn Restaurant",
+        "address": "146 Gorczany Loop, Port Hortenseworth"
+      }
+    }
+  ]
+}

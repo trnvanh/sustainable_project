@@ -1,0 +1,55 @@
+{
+    "products": [
+        {
+            "name": "Sushi Roll Set",
+            "description": "Fresh sushi rolls with various fillings including salmon, tuna, and vegetables",
+            "image": "https://example.com/images/sushi-roll.jpg",
+            "price": 15.99,
+            "pickupTime": "18:00-20:00",
+            "distance": 2.5,
+            "portionsLeft": 5,
+            "rating": 4.5,
+            "expiringDate": "2025-05-24",
+            "status": true,
+            "favourite": 12,
+            "location": {
+                "restaurant": "Sushi Master",
+                "address": "123 Food Street, City Center"
+            }
+        },
+        {
+            "name": "Pizza Margherita",
+            "description": "Traditional Italian pizza with tomato sauce, mozzarella, and fresh basil",
+            "image": "https://example.com/images/pizza.jpg",
+            "price": 12.99,
+            "pickupTime": "19:00-21:00",
+            "distance": 1.8,
+            "portionsLeft": 3,
+            "rating": 4.8,
+            "expiringDate": "2025-05-24",
+            "status": true,
+            "favourite": 25,
+            "location": {
+                "restaurant": "Pizza Express",
+                "address": "456 Main Avenue, Downtown"
+            }
+        },
+        {
+            "name": "Pad Thai",
+            "description": "Authentic Thai stir-fried rice noodles with tofu, shrimp, and peanuts",
+            "image": "https://example.com/images/pad-thai.jpg",
+            "price": 10.99,
+            "pickupTime": "17:30-19:30",
+            "distance": 3.2,
+            "portionsLeft": 4,
+            "rating": 4.3,
+            "expiringDate": "2025-05-24",
+            "status": true,
+            "favourite": 18,
+            "location": {
+                "restaurant": "Thai Delight",
+                "address": "789 Eastern Road, Food District"
+            }
+        }
+    ]
+}
