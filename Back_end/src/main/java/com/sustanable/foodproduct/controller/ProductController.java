@@ -2,7 +2,10 @@ package com.sustanable.foodproduct.controller;
 
 import java.util.List;
 
+import com.sustanable.foodproduct.auth.CustomUserDetails;
+import com.sustanable.foodproduct.dtos.ProductResponseDto;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import com.sustanable.foodproduct.converter.Converter;
@@ -34,8 +37,64 @@ public class ProductController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ProductDto>> getAllProducts() {
+    public ResponseEntity<List<ProductResponseDto>> getAllProducts(
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
         var products = productService.getAllProducts();
+        var productDtos = Converter.toList(products, ProductResponseDto.class);
+        
+        // Set favorite information for each product
+        productDtos.forEach(dto -> {
+            dto.setFavoriteCount(products.stream()
+                    .filter(p -> p.getId().equals(dto.getId()))
+                    .findFirst()
+                    .map(ProductEntity::getFavourite)
+                    .orElse(0L));
+            dto.setFavorited(productService.isFavorited(dto.getId(), userDetails.getId()));
+        });
+        
+        return ResponseEntity.ok(productDtos);
+    }
+
+    @GetMapping("/category/{categoryId}")
+    public ResponseEntity<List<ProductResponseDto>> getProductsByCategory(
+            @PathVariable Long categoryId,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+        var products = productService.getProductsByCategory(categoryId);
+        var productDtos = Converter.toList(products, ProductResponseDto.class);
+        
+        // Set favorite information for each product
+        productDtos.forEach(dto -> {
+            dto.setFavoriteCount(products.stream()
+                    .filter(p -> p.getId().equals(dto.getId()))
+                    .findFirst()
+                    .map(ProductEntity::getFavourite)
+                    .orElse(0L));
+            dto.setFavorited(productService.isFavorited(dto.getId(), userDetails.getId()));
+        });
+        
+        return ResponseEntity.ok(productDtos);
+    }
+
+    @PostMapping("/{productId}/favorite")
+    public ResponseEntity<Void> toggleFavorite(
+            @PathVariable Long productId,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+        productService.toggleFavorite(productId, userDetails.getId());
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/favorites")
+    public ResponseEntity<List<ProductDto>> getFavoriteProducts(
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+        var products = productService.getFavoriteProducts(userDetails.getId());
         return ResponseEntity.ok(Converter.toList(products, ProductDto.class));
+    }
+
+    @GetMapping("/{productId}/is-favorited")
+    public ResponseEntity<Boolean> isFavorited(
+            @PathVariable Long productId,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+        boolean isFavorited = productService.isFavorited(productId, userDetails.getId());
+        return ResponseEntity.ok(isFavorited);
     }
 }

@@ -10,4 +10,12 @@ public interface ProductService {
     List<ProductEntity> createProducts(List<ProductEntity> products);
 
     List<ProductEntity> getAllProducts();
+    
+    List<ProductEntity> getProductsByCategory(Long categoryId);
+
+    void toggleFavorite(Long productId, Integer userId);
+
+    List<ProductEntity> getFavoriteProducts(Integer userId);
+
+    boolean isFavorited(Long productId, Integer userId);
 }

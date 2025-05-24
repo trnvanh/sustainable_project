@@ -41,5 +41,9 @@ public class User {
     @JsonIgnore
     @EqualsAndHashCode.Exclude
     private Set<StoreEntity> stores = new HashSet<>();
-
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @ToString.Exclude
+    @JsonIgnore
+    @EqualsAndHashCode.Exclude
+    private Set<UserFavoriteProduct> favoriteProducts = new HashSet<>();
 }

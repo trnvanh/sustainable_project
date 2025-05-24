@@ -3,12 +3,18 @@ package com.sustanable.foodproduct.services.impl;
 import com.sustanable.foodproduct.entities.CategoryEntity;
 import com.sustanable.foodproduct.entities.ProductEntity;
 import com.sustanable.foodproduct.entities.StoreEntity;
+import com.sustanable.foodproduct.entities.User;
+import com.sustanable.foodproduct.entities.UserFavoriteProduct;
 import com.sustanable.foodproduct.repositories.CategoryRepository;
 import com.sustanable.foodproduct.repositories.ProductRepository;
 import com.sustanable.foodproduct.repositories.StoreRepository;
+import com.sustanable.foodproduct.repositories.UserFavoriteProductRepository;
+import com.sustanable.foodproduct.repositories.UserRepository;
 import com.sustanable.foodproduct.services.ProductService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Set;
@@ -21,6 +27,8 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final StoreRepository storeRepository;
     private final CategoryRepository categoryRepository;
+    private final UserRepository userRepository;
+    private final UserFavoriteProductRepository userFavoriteProductRepository;
 
     @Override
     public ProductEntity createProduct(ProductEntity product) {
@@ -61,5 +69,52 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<ProductEntity> getAllProducts() {
         return productRepository.findAll();
+    }
+
+    @Override
+    public List<ProductEntity> getProductsByCategory(Long categoryId) {
+        // Verify that the category exists
+        if (!categoryRepository.existsById(categoryId)) {
+            throw new EntityNotFoundException("Category not found with id: " + categoryId);
+        }
+        return productRepository.findByCategoriesId(categoryId);
+    }
+
+    @Override
+    @Transactional
+    public void toggleFavorite(Long productId, Integer userId) {
+        ProductEntity product = productRepository.findById(productId)
+                .orElseThrow(() -> new EntityNotFoundException("Product not found with id: " + productId));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
+
+        boolean isFavorited = userFavoriteProductRepository.existsByUserIdAndProductId(userId, productId);
+
+        if (isFavorited) {
+            userFavoriteProductRepository.deleteByUserIdAndProductId(userId, productId);
+        } else {
+            UserFavoriteProduct favorite = new UserFavoriteProduct();
+            favorite.setId(new UserFavoriteProduct.UserFavoriteProductId(userId, productId));
+            favorite.setUser(user);
+            favorite.setProduct(product);
+            userFavoriteProductRepository.save(favorite);
+        }
+
+        // Update favorite count
+        Long favoriteCount = userFavoriteProductRepository.countByProductId(productId);
+        product.setFavourite(favoriteCount);
+        productRepository.save(product);
+    }
+
+    @Override
+    public List<ProductEntity> getFavoriteProducts(Integer userId) {
+        return userFavoriteProductRepository.findByUserId(userId).stream()
+                .map(UserFavoriteProduct::getProduct)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean isFavorited(Long productId, Integer userId) {
+        return userFavoriteProductRepository.existsByUserIdAndProductId(userId, productId);
     }
 }
