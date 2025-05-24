@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker';
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
+import { readFileSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import {authenticate, client} from './axiosClient.js';
@@ -70,6 +70,132 @@ async function createStores() {
     return stores;
 }
 
+// Load products template
+const productsTemplate = JSON.parse(
+    readFileSync(join(__dirname, 'templates', 'Products.json'), 'utf8')
+);
+
+// Create products
+async function createProducts(stores, categories) {
+    console.log('Creating products...');
+    const products = [];
+
+    // Validate input arrays
+    if (!Array.isArray(stores) || stores.length === 0) {
+        throw new Error('No valid stores provided to createProducts');
+    }
+    if (!Array.isArray(categories) || categories.length === 0) {
+        throw new Error('No valid categories provided to createProducts');
+    }
+
+    // Filter valid stores and categories
+    const validStores = stores.filter(s => s && s.id);
+    const validCategories = categories.filter(c => c && c.id);
+
+    if (validStores.length === 0) throw new Error('No valid stores found');
+    if (validCategories.length === 0) throw new Error('No valid categories found');
+
+    // Helper function to get random items from array
+    const getRandomItems = (array, min = 1, max = 3) => {
+        const count = faker.number.int({ min, max });
+        const shuffled = [...array].sort(() => 0.5 - Math.random());
+        return shuffled.slice(0, count);
+    };
+
+    // Helper function to create a product with random assignments
+    const createProductData = (name, description, basePrice) => {
+        // Get random store
+        const store = faker.helpers.arrayElement(validStores);
+        
+        // Get 1-3 random categories
+        const productCategories = getRandomItems(validCategories);
+        
+        return {
+            name: name,
+            description: description || faker.commerce.productDescription(),
+            image: faker.image.url({ width: 640, height: 480, category: 'food' }),
+            price: basePrice || parseFloat(faker.number.float({ min: 5.99, max: 25.99, precision: 0.01 })),
+            pickupTime: `${faker.number.int({ min: 17, max: 20 })}:00-${faker.number.int({ min: 21, max: 23 })}:00`,
+            portionsLeft: faker.number.int({ min: 1, max: 10 }),
+            rating: parseFloat(faker.number.float({ min: 3.5, max: 5.0, precision: 0.1 })),
+            expiringDate: faker.date.soon({ days: 2 }).toISOString().split('T')[0],
+            status: true,
+            favourite: faker.number.int({ min: 0, max: 50 }),
+            store: store,
+            categories: productCategories  // Send the full category objects instead of just IDs
+        };
+    };
+
+    // First, create products from template
+    for (const product of productsTemplate.products) {
+        const productData = createProductData(product.name, product.description, product.price);
+
+        try {
+            const response = await client.post('/api/v1/products', productData);
+            if (response.data?.id) {
+                products.push(response.data);
+                console.log(`✅ Created product: ${productData.name} (ID: ${response.data.id}) in store: ${productData.store.name}`);
+            } else {
+                console.warn(`⚠️ Created product without ID:`, response.data);
+            }
+        } catch (error) {
+            console.error(`❌ Error creating product ${productData.name}:`, error.response?.data || error.message);
+        }
+    }
+
+    // Create additional products with specific types
+    const productTemplates = [
+        {
+            type: 'Main Dishes',
+            items: [
+                { name: 'Homemade Pasta' },
+                { name: 'Grilled Salmon' },
+                { name: 'Vegetarian Buddha Bowl' },
+                { name: 'Classic Burger' },
+                { name: 'Asian Stir-Fry' }
+            ]
+        },
+        {
+            type: 'Appetizers',
+            items: [
+                { name: 'Spring Rolls' },
+                { name: 'Bruschetta' },
+                { name: 'Fresh Salad' },
+                { name: 'Soup of the Day' }
+            ]
+        },
+        {
+            type: 'Desserts',
+            items: [
+                { name: 'Tiramisu' },
+                { name: 'Mango Sticky Rice' },
+                { name: 'Fresh Fruit Tart' },
+                { name: 'Chocolate Cake' }
+            ]
+        }
+    ];
+
+    // Create additional products based on templates
+    for (const template of productTemplates) {
+        for (const item of template.items) {
+            const productData = createProductData(item.name);
+
+            try {
+                const response = await client.post('/api/v1/products', productData);
+                if (response.data?.id) {
+                    products.push(response.data);
+                    console.log(`✅ Created product: ${productData.name} (ID: ${response.data.id}) in store: ${productData.store.name}`);
+                } else {
+                    console.warn(`⚠️ Created product without ID:`, response.data);
+                }
+            } catch (error) {
+                console.error(`❌ Error creating product ${productData.name}:`, error.response?.data || error.message);
+            }
+        }
+    }
+
+    return products;
+}
 
 // Main runner
 async function main() {
@@ -78,16 +204,9 @@ async function main() {
         await authenticate('admin@sustanable.com', 'Admin123!');
         const categories = await createCategories();
         const stores = await createStores();
+        const products = await createProducts(stores, categories);
 
-        const outputDir = join(__dirname, 'generated');
-        if (!existsSync(outputDir)) {
-            mkdirSync(outputDir);
-        }
-
-        writeFileSync(join(outputDir, 'categories.json'), JSON.stringify(categories, null, 2));
-        writeFileSync(join(outputDir, 'stores.json'), JSON.stringify(stores, null, 2));
-
-        console.log(`🎉 Done! Created ${categories.length} categories and ${stores.length} stores.`);
+        console.log(`🎉 Done! Created ${categories.length} categories, ${stores.length} stores, and ${products.length} products.`);
     } catch (error) {
         console.error('❌ Error during generation:', error.message);
         process.exit(1);
