@@ -1,1 +1,102 @@
-[]
+[
+  {
+    "createdDate": "2025-05-24T20:30:26.825+00:00",
+    "modifiedDate": "2025-05-24T20:30:26.825+00:00",
+    "createdBy": 1,
+    "modifiedBy": 1,
+    "id": 1,
+    "name": "Main Dishes",
+    "description": "Complete meals and main course items",
+    "products": []
+  },
+  {
+    "createdDate": "2025-05-24T20:30:26.866+00:00",
+    "modifiedDate": "2025-05-24T20:30:26.866+00:00",
+    "createdBy": 1,
+    "modifiedBy": 1,
+    "id": 2,
+    "name": "Appetizers",
+    "description": "Starters and small plates",
+    "products": []
+  },
+  {
+    "createdDate": "2025-05-24T20:30:26.941+00:00",
+    "modifiedDate": "2025-05-24T20:30:26.941+00:00",
+    "createdBy": 1,
+    "modifiedBy": 1,
+    "id": 3,
+    "name": "Desserts",
+    "description": "Sweet treats and confections",
+    "products": []
+  },
+  {
+    "createdDate": "2025-05-24T20:30:27.007+00:00",
+    "modifiedDate": "2025-05-24T20:30:27.007+00:00",
+    "createdBy": 1,
+    "modifiedBy": 1,
+    "id": 4,
+    "name": "Beverages",
+    "description": "Drinks and refreshments",
+    "products": []
+  },
+  {
+    "createdDate": "2025-05-24T20:30:27.066+00:00",
+    "modifiedDate": "2025-05-24T20:30:27.066+00:00",
+    "createdBy": 1,
+    "modifiedBy": 1,
+    "id": 5,
+    "name": "Asian Cuisine",
+    "description": "Dishes from various Asian cultures",
+    "products": []
+  },
+  {
+    "createdDate": "2025-05-24T20:30:27.128+00:00",
+    "modifiedDate": "2025-05-24T20:30:27.128+00:00",
+    "createdBy": 1,
+    "modifiedBy": 1,
+    "id": 6,
+    "name": "European Cuisine",
+    "description": "Traditional European dishes",
+    "products": []
+  },
+  {
+    "createdDate": "2025-05-24T20:30:27.192+00:00",
+    "modifiedDate": "2025-05-24T20:30:27.192+00:00",
+    "createdBy": 1,
+    "modifiedBy": 1,
+    "id": 7,
+    "name": "Vegetarian",
+    "description": "Meat-free dishes and plant-based options",
+    "products": []
+  },
+  {
+    "createdDate": "2025-05-24T20:30:27.257+00:00",
+    "modifiedDate": "2025-05-24T20:30:27.257+00:00",
+    "createdBy": 1,
+    "modifiedBy": 1,
+    "id": 8,
+    "name": "Bakery",
+    "description": "Fresh bread, pastries, and baked goods",
+    "products": []
+  },
+  {
+    "createdDate": "2025-05-24T20:30:27.314+00:00",
+    "modifiedDate": "2025-05-24T20:30:27.314+00:00",
+    "createdBy": 1,
+    "modifiedBy": 1,
+    "id": 9,
+    "name": "Fast Food",
+    "description": "Quick service and takeaway items",
+    "products": []
+  },
+  {
+    "createdDate": "2025-05-24T20:30:27.367+00:00",
+    "modifiedDate": "2025-05-24T20:30:27.367+00:00",
+    "createdBy": 1,
+    "modifiedBy": 1,
+    "id": 10,
+    "name": "Healthy Options",
+    "description": "Nutritious and balanced meals",
+    "products": []
+  }
+]
