@@ -1,6 +1,7 @@
-package com.sustanable.foodproduct.auth;
+package com.sustanable.foodproduct.services.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sustanable.foodproduct.auth.*;
 import com.sustanable.foodproduct.config.JwtService;
 import com.sustanable.foodproduct.config.SecurityEventLogger;
 import com.sustanable.foodproduct.entities.Token;
@@ -8,7 +9,7 @@ import com.sustanable.foodproduct.entities.User;
 import com.sustanable.foodproduct.repositories.TokenRepository;
 import com.sustanable.foodproduct.repositories.UserRepository;
 import com.sustanable.foodproduct.token.TokenType;
-import com.sustanable.foodproduct.user.Role;
+import com.sustanable.foodproduct.entities.Role;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -36,21 +38,21 @@ public class AuthenticationService {
 
     public RegisterResponse register(RegisterRequest request) {
         try {
-            // Create and save user with default USER role
             var user = User.builder()
                     .firstname(request.getFirstname())
                     .lastname(request.getLastname())
                     .email(request.getEmail())
                     .password(passwordEncoder.encode(request.getPassword()))
-                    .role(Role.USER) // Set default role to USER
+                    .role(Role.ADMIN)
                     .build();
+
             var savedUser = repository.save(user);
 
-            // Create success response with user data
             return RegisterResponse.builder()
                     .success(true)
                     .message("Registration successful!")
                     .userData(RegisterResponse.UserData.builder()
+                            .id(savedUser.getId())
                             .email(savedUser.getEmail())
                             .firstname(savedUser.getFirstname())
                             .lastname(savedUser.getLastname())
@@ -58,7 +60,6 @@ public class AuthenticationService {
                             .build())
                     .build();
         } catch (DataIntegrityViolationException e) {
-            // This exception is thrown when trying to insert a duplicate email
             return RegisterResponse.builder()
                     .success(false)
                     .message("Registration failed")
@@ -83,20 +84,63 @@ public class AuthenticationService {
             var user = repository.findByEmail(request.getEmail())
                     .orElseThrow();
 
+            var userDetails = new CustomUserDetails(user);
+
             securityEventLogger.logAuthenticationSuccess(user.getEmail(), this.request);
 
-            var jwtToken = jwtService.generateToken(user);
-            var refreshToken = jwtService.generateRefreshToken(user);
+            var jwtToken = jwtService.generateToken(userDetails);
+            var refreshToken = jwtService.generateRefreshToken(userDetails);
             revokeAllUserTokens(user);
             saveUserToken(user, jwtToken);
 
             return AuthenticationResponse.builder()
+                    .success(true)
                     .accessToken(jwtToken)
                     .refreshToken(refreshToken)
+                    .user(AuthenticationResponse.UserData.builder()
+                            .id(user.getId())
+                            .firstname(user.getFirstname())
+                            .lastname(user.getLastname())
+                            .email(user.getEmail())
+                            .role(user.getRole())
+                            .build())
                     .build();
         } catch (Exception e) {
             securityEventLogger.logAuthenticationFailure(request.getEmail(), this.request, e.getMessage());
-            throw e;
+            return AuthenticationResponse.builder()
+                    .success(false)
+                    .build();
+        }
+    }
+
+    public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+        final String refreshToken;
+        final String userEmail;
+
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return;
+        }
+
+        refreshToken = authHeader.substring(7);
+        userEmail = jwtService.extractUsername(refreshToken);
+
+        if (userEmail != null) {
+            var user = this.repository.findByEmail(userEmail).orElseThrow();
+            var userDetails = new CustomUserDetails(user);
+
+            if (jwtService.isTokenValid(refreshToken, userDetails)) {
+                var accessToken = jwtService.generateToken(userDetails);
+                revokeAllUserTokens(user);
+                saveUserToken(user, accessToken);
+
+                var authResponse = AuthenticationResponse.builder()
+                        .accessToken(accessToken)
+                        .refreshToken(refreshToken)
+                        .build();
+
+                new ObjectMapper().writeValue(response.getOutputStream(), authResponse);
+            }
         }
     }
 
@@ -121,32 +165,5 @@ public class AuthenticationService {
             securityEventLogger.logTokenRevoked(user.getEmail());
         });
         tokenRepository.saveAll(validUserTokens);
-    }
-
-    public void refreshToken(
-            HttpServletRequest request,
-            HttpServletResponse response) throws IOException {
-        final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-        final String refreshToken;
-        final String userEmail;
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            return;
-        }
-        refreshToken = authHeader.substring(7);
-        userEmail = jwtService.extractUsername(refreshToken);
-        if (userEmail != null) {
-            var user = this.repository.findByEmail(userEmail)
-                    .orElseThrow();
-            if (jwtService.isTokenValid(refreshToken, user)) {
-                var accessToken = jwtService.generateToken(user);
-                revokeAllUserTokens(user);
-                saveUserToken(user, accessToken);
-                var authResponse = AuthenticationResponse.builder()
-                        .accessToken(accessToken)
-                        .refreshToken(refreshToken)
-                        .build();
-                new ObjectMapper().writeValue(response.getOutputStream(), authResponse);
-            }
-        }
     }
 }

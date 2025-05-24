@@ -1,81 +1,98 @@
-const fs = require('fs');
-const path = require('path');
-const { faker } = require('@faker-js/faker');
-const axios = require('axios');
+import { faker } from '@faker-js/faker';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
+import {authenticate, client} from './axiosClient.js';
 
-// Create axios client
-const client = axios.create({
-    baseURL: 'http://localhost:8080',
-    headers: {
-        'Content-Type': 'application/json'
-    }
-});
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
-// Read the template
-const productsTemplate = JSON.parse(
-    fs.readFileSync(path.join(__dirname, 'templates', 'Products.json'), 'utf8')
+// Load category template
+const categoriesTemplate = JSON.parse(
+    readFileSync(join(__dirname, 'templates', 'Categories.json'), 'utf8')
 );
 
-function generateRandomProduct() {
-    const restaurantTypes = ['Restaurant', 'Café', 'Bistro', 'Diner', 'Eatery'];
-    const cuisineTypes = ['Italian', 'Japanese', 'Thai', 'Mexican', 'Indian', 'American', 'Chinese'];
+// Create categories
+async function createCategories() {
+    console.log('Creating categories...');
+    const categories = [];
 
-    return {
-        name: faker.commerce.productName(),
-        description: faker.commerce.productDescription(),
-        image: faker.image.url({ width: 640, height: 480, category: 'food' }),
-        price: faker.commerce.price({ min: 5, max: 30, dec: 2 }), // BigDecimal in Java
-        pickupTime: `${faker.number.int({ min: 17, max: 20 })}:00-${faker.number.int({ min: 21, max: 23 })}:00`,
-        distance: parseFloat(faker.number.float({ min: 0.1, max: 5.0, precision: 0.1 })),
-        portionsLeft: faker.number.int({ min: 1, max: 10 }),
-        rating: parseFloat(faker.number.float({ min: 3.0, max: 5.0, precision: 0.1 })),
-        expiringDate: new Date(faker.date.soon({ days: 2 })).toISOString(), // Date in Java
-        status: true,
-        favourite: faker.number.int({ min: 0, max: 100 }),
-        location: {
-            restaurant: `${faker.company.name()} ${restaurantTypes[faker.number.int({ min: 0, max: 4 })]}`,
-            address: faker.location.streetAddress() + ', ' + faker.location.city()
+    for (const category of categoriesTemplate.categories) {
+        try {
+            const response = await client.post('/api/v1/categories', category);
+            if (response.data?.id) {
+                categories.push(response.data);
+                console.log(`✅ Created category: ${category.name} (ID: ${response.data.id})`);
+            } else {
+                console.warn(`⚠️ Created category without ID:`, response.data);
+            }
+        } catch (error) {
+            console.error(`❌ Error creating category ${category.name}:`, error.response?.data || error.message);
         }
-    };
-}
-
-// Generate random products
-function generateProducts(count) {
-    const products = [];
-
-    // Add template products first but convert the date format
-    products.push(...productsTemplate.products.map(product => ({
-        ...product,
-        expiringDate: new Date(product.expiringDate).toISOString() // Convert string date to ISO format
-    })));
-
-    // Generate additional random products
-    for (let i = 0; i < count - productsTemplate.products.length; i++) {
-        products.push(generateRandomProduct());
     }
 
-    return products;
+    return categories;
 }
 
-// Main execution
+// Create stores
+async function createStores() {
+    console.log('Creating stores...');
+    const stores = [];
+    const numStores = 5;
+    const ownerId = 1; // Make sure this user ID exists in your DB
+
+    for (let i = 0; i < numStores; i++) {
+        const store = {
+            name: `${faker.company.name()} ${faker.helpers.arrayElement(['Restaurant', 'Café', 'Bistro', 'Diner', 'Eatery'])}`,
+            description: faker.company.catchPhrase(),
+            address: faker.location.streetAddress() + ', ' + faker.location.city(),
+            phoneNumber: faker.phone.number(),
+            email: faker.internet.email(),
+            website: faker.internet.url(),
+            image: faker.image.url({ width: 640, height: 480, category: 'restaurant' }),
+            rating: parseFloat(faker.number.float({ min: 3.0, max: 5.0, precision: 0.1 })),
+            openingHours: `${faker.number.int({ min: 6, max: 11 })}:00-${faker.number.int({ min: 20, max: 23 })}:00`
+        };
+
+        try {
+            const response = await client.post(`/api/v1/stores?ownerId=${ownerId}`, store);
+            if (response.data?.id) {
+                stores.push(response.data);
+                console.log(`✅ Created store: ${store.name} (ID: ${response.data.id})`);
+            } else {
+                console.warn(`⚠️ Created store without ID:`, response.data);
+            }
+        } catch (error) {
+            console.error(`❌ Error creating store ${store.name}:`, error.response?.data || error.message);
+        }
+    }
+
+    return stores;
+}
+
+
+// Main runner
 async function main() {
     try {
-        const totalProductsToGenerate = 20; // Adjust this number as needed
-        console.log(`Generating ${totalProductsToGenerate} products...`);
+        // 🔐 Authenticate as a user (must match a real user in DB)
+        await authenticate('admin@sustanable.com', 'Admin123!');
+        const categories = await createCategories();
+        const stores = await createStores();
 
-        const products = generateProducts(totalProductsToGenerate);
-        console.log('Products generated, uploading to server...');
+        const outputDir = join(__dirname, 'generated');
+        if (!existsSync(outputDir)) {
+            mkdirSync(outputDir);
+        }
 
-        const response = await client.post('/api/v1/products/batch', products);
-        console.log(`Successfully created ${response.data.length} products`);
-        console.log('Data generation completed successfully!');
+        writeFileSync(join(outputDir, 'categories.json'), JSON.stringify(categories, null, 2));
+        writeFileSync(join(outputDir, 'stores.json'), JSON.stringify(stores, null, 2));
+
+        console.log(`🎉 Done! Created ${categories.length} categories and ${stores.length} stores.`);
     } catch (error) {
-        console.error('Error in data generation:', error);
+        console.error('❌ Error during generation:', error.message);
         process.exit(1);
     }
 }
 
 // Run the script
-if (require.main === module) {
-    main();
-}
+main();

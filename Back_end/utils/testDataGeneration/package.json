@@ -2,6 +2,7 @@
   "name": "testdatageneration",
   "version": "1.0.0",
   "main": "dataGeneration.js",
+  "type": "module",
   "scripts": {
     "generate": "node dataGeneration.js"
   },

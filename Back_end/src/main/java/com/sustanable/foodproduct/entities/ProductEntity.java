@@ -1,14 +1,30 @@
 package com.sustanable.foodproduct.entities;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.DecimalMax;
-import lombok.*;
-
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "products")
@@ -38,9 +54,6 @@ public class ProductEntity extends BaseEntity {
     @Column(name = "pickup_time", nullable = false)
     private String pickupTime;
 
-    @Column(name = "distance")
-    private Double distance;
-
     @Column(name = "portions_left", nullable = false)
     @Min(0)
     private Integer portionsLeft;
@@ -63,19 +76,12 @@ public class ProductEntity extends BaseEntity {
     @Column(name = "favourite")
     private Long favourite = 0L;
 
-    @Embedded
-    private Location location;
+    @ManyToMany
+    @JoinTable(name = "product_categories", joinColumns = @JoinColumn(name = "product_id"), inverseJoinColumns = @JoinColumn(name = "category_id"))
+    @Builder.Default
+    private Set<CategoryEntity> categories = new HashSet<>();
 
-    @Embeddable
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Builder
-    public static class Location {
-        @Column(name = "restaurant")
-        private String restaurant;
-
-        @Column(name = "address")
-        private String address;
-    }
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "store_id", nullable = false)
+    private StoreEntity store;
 }

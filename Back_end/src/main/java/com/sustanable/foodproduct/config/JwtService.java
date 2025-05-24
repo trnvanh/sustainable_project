@@ -57,15 +57,15 @@ public class JwtService {
             UserDetails userDetails,
             long expiration
     ) {
-        return Jwts
-                .builder()
+        return Jwts.builder()
                 .setClaims(extraClaims)
-                .setSubject(userDetails.getUsername())
+                .setSubject(userDetails.getUsername()) // ✅ email (String)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
+
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
         final String username = extractUsername(token);

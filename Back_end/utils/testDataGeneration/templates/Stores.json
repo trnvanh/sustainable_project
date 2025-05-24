@@ -1,0 +1,26 @@
+{
+    "stores": [
+        {
+            "name": "Green Garden Restaurant",
+            "description": "A sustainable restaurant focused on reducing food waste and serving delicious meals.",
+            "address": "123 Green Street, Eco City",
+            "phoneNumber": "+1-555-123-4567",
+            "email": "contact@greengarden.com",
+            "website": "https://greengarden.com",
+            "image": "https://example.com/images/greengarden.jpg",
+            "rating": 4.5,
+            "openingHours": "10:00-22:00"
+        },
+        {
+            "name": "Sustainable Bites Café",
+            "description": "Local café committed to sustainability and zero food waste.",
+            "address": "456 Eco Avenue, Green Town",
+            "phoneNumber": "+1-555-987-6543",
+            "email": "hello@sustainablebites.com",
+            "website": "https://sustainablebites.com",
+            "image": "https://example.com/images/sustainablebites.jpg",
+            "rating": 4.3,
+            "openingHours": "08:00-20:00"
+        }
+    ]
+}

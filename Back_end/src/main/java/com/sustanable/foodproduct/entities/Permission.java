@@ -1,4 +1,4 @@
-package com.sustanable.foodproduct.user;
+package com.sustanable.foodproduct.entities;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

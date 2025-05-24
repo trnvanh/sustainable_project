@@ -2,6 +2,7 @@ package com.sustanable.foodproduct.config;
 
 
 import com.sustanable.foodproduct.auditing.ApplicationAuditAware;
+import com.sustanable.foodproduct.auth.CustomUserDetails;
 import com.sustanable.foodproduct.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -25,6 +26,7 @@ public class ApplicationConfig {
     @Bean
     public UserDetailsService userDetailsService() {
         return username -> repository.findByEmail(username)
+                .map(CustomUserDetails::new) // ✅ Wrap in CustomUserDetails
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 
@@ -50,5 +52,4 @@ public class ApplicationConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
 }

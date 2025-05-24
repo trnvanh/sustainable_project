@@ -12,6 +12,7 @@
             "expiringDate": "2025-05-24",
             "status": true,
             "favourite": 12,
+            "categories": ["Japanese"],
             "location": {
                 "restaurant": "Sushi Master",
                 "address": "123 Food Street, City Center"

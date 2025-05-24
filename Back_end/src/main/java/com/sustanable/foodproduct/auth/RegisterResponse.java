@@ -1,7 +1,7 @@
 package com.sustanable.foodproduct.auth;
 
 import java.util.List;
-import com.sustanable.foodproduct.user.Role;
+import com.sustanable.foodproduct.entities.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,6 +22,7 @@ public class RegisterResponse {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class UserData {
+        private Integer id;
         private String email;
         private String firstname;
         private String lastname;
