@@ -57,8 +57,8 @@ public class SecurityConfiguration {
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
                 .authorizeHttpRequests(req -> req
                         .requestMatchers(WHITE_LIST_URL).permitAll()
-
-                        // ✅ Add this:
+                        .requestMatchers(GET, "/api/v1/products/**").permitAll() // Allow public access to GET products
+                        .requestMatchers(GET, "/api/v1/categories/**").permitAll() // Allow public access to GET categories
                         .requestMatchers(POST, "/api/v1/categories/**").permitAll()
                         .requestMatchers(POST, "/api/v1/stores/**").permitAll()
                         .requestMatchers(POST, "/api/v1/products/**").permitAll()
