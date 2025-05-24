@@ -3,12 +3,10 @@ package com.sustanable.foodproduct.controller;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import com.sustanable.foodproduct.converter.Converter;
+import com.sustanable.foodproduct.dtos.ProductDto;
 import com.sustanable.foodproduct.entities.ProductEntity;
 import com.sustanable.foodproduct.services.ProductService;
 
@@ -22,17 +20,22 @@ public class ProductController {
     private final ProductService productService;
 
     @PostMapping
-    public ResponseEntity<ProductEntity> createProduct(@RequestBody ProductEntity product) {
-        return ResponseEntity.ok(productService.createProduct(product));
+    public ResponseEntity<ProductDto> createProduct(@RequestBody ProductDto productDto) {
+        var product = Converter.toModel(productDto, ProductEntity.class);
+        var savedProduct = productService.createProduct(product);
+        return ResponseEntity.ok(Converter.toModel(savedProduct, ProductDto.class));
     }
 
     @PostMapping("/batch")
-    public ResponseEntity<List<ProductEntity>> createProducts(@RequestBody List<ProductEntity> products) {
-        return ResponseEntity.ok(productService.createProducts(products));
+    public ResponseEntity<List<ProductDto>> createProducts(@RequestBody List<ProductDto> productDtos) {
+        var products = Converter.toList(productDtos, ProductEntity.class);
+        var savedProducts = productService.createProducts(products);
+        return ResponseEntity.ok(Converter.toList(savedProducts, ProductDto.class));
     }
 
     @GetMapping
-    public ResponseEntity<List<ProductEntity>> getAllProducts() {
-        return ResponseEntity.ok(productService.getAllProducts());
+    public ResponseEntity<List<ProductDto>> getAllProducts() {
+        var products = productService.getAllProducts();
+        return ResponseEntity.ok(Converter.toList(products, ProductDto.class));
     }
 }
