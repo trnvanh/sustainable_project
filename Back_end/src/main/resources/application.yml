@@ -5,15 +5,15 @@ spring:
         name: foodproduct
     datasource:
         password: P@ssword*123
-        url: jdbc:postgresql://code4fun.xyz:5432/sustanable_project?currentSchema=sustanable
-        username: dev
+        url: jdbc:mysql://code4fun.xyz:3307/sustanable_project?jdbcCompliantTruncation=false
+        username: root
     jpa:
         generate-ddl: true
         hibernate:
             ddl-auto: update
         properties:
             hibernate:
-                dialect: org.hibernate.dialect.PostgreSQLDialect
+                dialect: org.hibernate.dialect.MySQL8Dialect
                 jdbc:
                     lob:
                         non_contextual_creation: true
