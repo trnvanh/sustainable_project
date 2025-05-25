@@ -4,6 +4,7 @@ import {
   fetchHistoryOrders,
   fetchNearbyOffers,
   fetchCurrentDeals,
+  updateOrderFeedback,
 } from '@/api/products';
 import { OrderItem } from '@/types/order';
 
@@ -15,6 +16,10 @@ type ExploreState = {
   selectedOffer: OrderItem | null;
   setSelectedOffer: (offer: OrderItem) => void;
   loadExploreData: () => Promise<void>;
+  updateOrderFeedback: (
+    orderId: string,
+    customerFeedback: { customerRating: number; feedback: string }
+  ) => Promise<void>;
 };
 
 export const useProductsStore = create<ExploreState>()(
@@ -36,6 +41,16 @@ export const useProductsStore = create<ExploreState>()(
           fetchCurrentDeals(),
         ]);
         set({ historyOrders, nearbyOffers, currentDeals, loading: false });
+      },
+
+      // Update an order’s feedback and rating
+      updateOrderFeedback: async (orderId, customerFeedback) => {
+        const updatedOrder = await updateOrderFeedback(orderId, customerFeedback);
+        set((state) => ({
+          historyOrders: state.historyOrders.map((order) =>
+            order.id === orderId ? updatedOrder : order
+          ),
+        }));
       },
     }),
     {

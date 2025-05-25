@@ -14,55 +14,76 @@ const pasta = require('@/assets/images/products/pasta.jpg');
 const pizzaSlice = require('@/assets/images/products/pizza_slice.jpg');
 
 export const mockHistoryOrders = [
-    {
-      id: '101',
-      name: 'Sushi Set',
-      price: '5 €',
-      pickupTime: '12:00 - 14:00',
-      distance: '1.5 km',
-      portionsLeft: 0,
-      rating: 4.5,
-      image: sushiSet,
-      location: {restaurant: 'C Sushi Restaurant', address: 'Opiskelijankatu 1, 33720 Tampere'},
-      description: 'A delicious sushi set with a variety of rolls and sashimi.',
-    },
-    {
-      id: '102',
-      name: 'Veggie Box',
-      price: '3.5 €',
-      pickupTime: '11:30 - 13:30',
-      distance: '2.0 km',
-      portionsLeft: 0,
-      rating: 4.0,
-      image: veggieBox,
-      location: {restaurant: 'Zarillo Hervanta', address: 'Pietilänkatu 2, 33720 Tampere'},
-      description: 'A box filled with fresh vegetables and a tasty dip.',
-    },
-    {
-      id: '103',
-      name: 'Pasta Salad',
-      price: '4 €',
-      pickupTime: '13:00 - 15:00',
-      distance: '0.8 km',
-      portionsLeft: 0,
-      rating: 4.2,
-      image: pastaSalad,
-      location: {restaurant: 'Juvenes Ravintola Newton', address: 'Korkeakoulunkatu 6, 33720 Tampere'},
-      description: 'A refreshing pasta salad with seasonal vegetables and dressing.',
-    },
-    {
-      id: '104',
-      name: 'Fruit Basket',
-      price: '2.5 €',
-      pickupTime: '14:00 - 16:00',
-      distance: '1.2 km',
-      portionsLeft: 0,
-      rating: 4.8,
-      image: fruitBasket,
-      location: {restaurant: 'Café Konehuone', address: 'Korkeakoulunkatu 6 a, 33720 Tampere'},
-      description: 'A basket filled with a variety of fresh fruits.',
-    },
-  ];
+  {
+    id: '101',
+    name: 'Sushi Set',
+    price: '5 €',
+    pickupTime: '12:00 - 14:00',
+    distance: '1.5 km',
+    portionsLeft: 0,
+    rating: 4.5,
+    image: sushiSet,
+    location: { restaurant: 'C Sushi Restaurant', address: 'Opiskelijankatu 1, 33720 Tampere' },
+    description: 'A delicious sushi set with a variety of rolls and sashimi.',
+    date: '2025-05-01',
+    customerFeedback: {
+      customerRating: 5,
+      feedback: 'Absolutely delicious and fresh!',
+    }
+  },
+  {
+    id: '102',
+    name: 'Veggie Box',
+    price: '3.5 €',
+    pickupTime: '11:30 - 13:30',
+    distance: '2.0 km',
+    portionsLeft: 0,
+    rating: 4.0,
+    image: veggieBox,
+    location: { restaurant: 'Zarillo Hervanta', address: 'Pietilänkatu 2, 33720 Tampere' },
+    description: 'A box filled with fresh vegetables and a tasty dip.',
+    date: '2025-05-02',
+    customerFeedback: {
+      customerRating: 4,
+      feedback: 'Nice variety of veggies, good value for money!',
+    }
+  },
+  {
+    id: '103',
+    name: 'Pasta Salad',
+    price: '4 €',
+    pickupTime: '13:00 - 15:00',
+    distance: '0.8 km',
+    portionsLeft: 0,
+    rating: 4.2,
+    image: pastaSalad,
+    location: { restaurant: 'Juvenes Ravintola Newton', address: 'Korkeakoulunkatu 6, 33720 Tampere' },
+    description: 'A refreshing pasta salad with seasonal vegetables and dressing.',
+    date: '2025-05-03',
+    customerFeedback: {
+      customerRating: 3.5,
+      feedback: 'Tasty, but could use more dressing.',
+    }
+  },
+  {
+    id: '104',
+    name: 'Fruit Basket',
+    price: '2.5 €',
+    pickupTime: '14:00 - 16:00',
+    distance: '1.2 km',
+    portionsLeft: 0,
+    rating: 4.8,
+    image: fruitBasket,
+    location: { restaurant: 'Café Konehuone', address: 'Korkeakoulunkatu 6 a, 33720 Tampere' },
+    description: 'A basket filled with a variety of fresh fruits.',
+    date: '2025-05-04',
+    customerFeedback: {
+      customerRating: 4.7,
+      feedback: 'Super fresh and sweet!',
+    }
+  },
+];
+
   
   export const mockNearbyOffers = [
     {
