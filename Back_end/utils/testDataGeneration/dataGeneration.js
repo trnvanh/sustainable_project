@@ -1,8 +1,8 @@
 import { faker } from '@faker-js/faker';
 import { readFileSync } from 'fs';
-import { join, dirname } from 'path';
+import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
-import {authenticate, client} from './axiosClient.js';
+import { authenticate, client } from './axiosClient.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -106,10 +106,10 @@ async function createProducts(stores, categories) {
     const createProductData = (name, description, basePrice) => {
         // Get random store
         const store = faker.helpers.arrayElement(validStores);
-        
+
         // Get 1-3 random categories
         const productCategories = getRandomItems(validCategories);
-        
+
         return {
             name: name,
             description: description || faker.commerce.productDescription(),
@@ -118,6 +118,7 @@ async function createProducts(stores, categories) {
             pickupTime: `${faker.number.int({ min: 17, max: 20 })}:00-${faker.number.int({ min: 21, max: 23 })}:00`,
             portionsLeft: faker.number.int({ min: 1, max: 10 }),
             rating: parseFloat(faker.number.float({ min: 3.5, max: 5.0, precision: 0.1 })),
+            distance: parseFloat(faker.number.float({ min: 0.5, max: 15.0, precision: 0.1 })),
             expiringDate: faker.date.soon({ days: 2 }).toISOString().split('T')[0],
             status: true,
             favourite: faker.number.int({ min: 0, max: 50 }),

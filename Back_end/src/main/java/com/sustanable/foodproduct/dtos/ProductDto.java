@@ -23,12 +23,13 @@ public class ProductDto {
     private String pickupTime;
     private Integer portionsLeft;
     private Double rating;
+    private Double distance;
     private Date expiringDate;
     private Boolean status;
     private Long favourite;
     private Set<CategoryDto> categories = new HashSet<>();
     private Long storeId;
-    
+
     // Audit fields
     private Date createdDate;
     private Date modifiedDate;

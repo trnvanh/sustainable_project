@@ -63,6 +63,9 @@ public class ProductEntity extends BaseEntity {
     @DecimalMax(value = "5.0")
     private Double rating;
 
+    @Column(name = "distance")
+    private Double distance;
+
     @Column(name = "expiring_date")
     private Date expiringDate;
 
