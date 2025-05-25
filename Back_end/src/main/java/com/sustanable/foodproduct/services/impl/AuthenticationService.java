@@ -1,18 +1,8 @@
 package com.sustanable.foodproduct.services.impl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sustanable.foodproduct.auth.*;
-import com.sustanable.foodproduct.config.JwtService;
-import com.sustanable.foodproduct.config.SecurityEventLogger;
-import com.sustanable.foodproduct.entities.Token;
-import com.sustanable.foodproduct.entities.User;
-import com.sustanable.foodproduct.repositories.TokenRepository;
-import com.sustanable.foodproduct.repositories.UserRepository;
-import com.sustanable.foodproduct.token.TokenType;
-import com.sustanable.foodproduct.entities.Role;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
+import java.io.IOException;
+import java.util.List;
+
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,9 +10,25 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sustanable.foodproduct.auth.AuthenticationRequest;
+import com.sustanable.foodproduct.auth.AuthenticationResponse;
+import com.sustanable.foodproduct.auth.CustomUserDetails;
+import com.sustanable.foodproduct.auth.RegisterRequest;
+import com.sustanable.foodproduct.auth.RegisterResponse;
+import com.sustanable.foodproduct.auth.RegisterValidator;
+import com.sustanable.foodproduct.config.JwtService;
+import com.sustanable.foodproduct.config.SecurityEventLogger;
+import com.sustanable.foodproduct.entities.Role;
+import com.sustanable.foodproduct.entities.Token;
+import com.sustanable.foodproduct.entities.User;
+import com.sustanable.foodproduct.repositories.TokenRepository;
+import com.sustanable.foodproduct.repositories.UserRepository;
+import com.sustanable.foodproduct.token.TokenType;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -48,9 +54,19 @@ public class AuthenticationService {
 
             var savedUser = repository.save(user);
 
+            // Generate tokens for the newly registered user
+            var userDetails = new CustomUserDetails(savedUser);
+            var accessToken = jwtService.generateToken(userDetails);
+            var refreshToken = jwtService.generateRefreshToken(userDetails);
+
+            // Save the access token
+            saveUserToken(savedUser, accessToken);
+
             return RegisterResponse.builder()
                     .success(true)
                     .message("Registration successful!")
+                    .accessToken(accessToken)
+                    .refreshToken(refreshToken)
                     .userData(RegisterResponse.UserData.builder()
                             .id(savedUser.getId())
                             .email(savedUser.getEmail())

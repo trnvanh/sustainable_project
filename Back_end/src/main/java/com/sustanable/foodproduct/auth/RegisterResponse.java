@@ -12,9 +12,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RegisterResponse {
-    private String message;
     private boolean success;
+    private String message;
     private List<String> errors;
+    private String accessToken;
+    private String refreshToken;
     private UserData userData;
 
     @Data
