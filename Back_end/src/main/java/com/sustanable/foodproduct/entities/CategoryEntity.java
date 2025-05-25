@@ -34,6 +34,9 @@ public class CategoryEntity extends BaseEntity {
     @Column(name = "description")
     private String description;
 
+    @Column(name = "image")
+    private String image;
+
     @ManyToMany(mappedBy = "categories")
     @Builder.Default
     private Set<ProductEntity> products = new HashSet<>();

@@ -37,6 +37,7 @@ public class CategoryServiceImpl implements CategoryService {
         CategoryEntity existingCategory = getCategoryById(id);
         existingCategory.setName(category.getName());
         existingCategory.setDescription(category.getDescription());
+        existingCategory.setImage(category.getImage());
         return categoryRepository.save(existingCategory);
     }
 
