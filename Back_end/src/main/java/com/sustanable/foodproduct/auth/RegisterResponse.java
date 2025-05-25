@@ -28,6 +28,7 @@ public class RegisterResponse {
         private String email;
         private String firstname;
         private String lastname;
+        private String phoneNumber;
         private Role role;
     }
 }

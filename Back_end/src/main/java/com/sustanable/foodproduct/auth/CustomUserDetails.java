@@ -1,12 +1,14 @@
 package com.sustanable.foodproduct.auth;
 
-import com.sustanable.foodproduct.entities.User;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import java.util.Collection;
+
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
+import com.sustanable.foodproduct.entities.User;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
@@ -28,6 +30,10 @@ public class CustomUserDetails implements UserDetails {
 
     public String getEmail() {
         return user.getEmail();
+    }
+
+    public String getPhoneNumber() {
+        return user.getPhoneNumber();
     }
 
     @Override

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class RegisterValidator {
     private static final String EMAIL_PATTERN = "^[A-Za-z0-9+_.-]+@(.+)$";
+    private static final String PHONE_PATTERN = "^\\+?[1-9][0-9]{7,14}$";
     private static final int MIN_PASSWORD_LENGTH = 8;
 
     public List<String> validate(RegisterRequest request) {
@@ -29,6 +30,13 @@ public class RegisterValidator {
             errors.add("Email is required");
         } else if (!Pattern.matches(EMAIL_PATTERN, request.getEmail())) {
             errors.add("Invalid email format");
+        }
+
+        // Validate phone number
+        if (isNullOrEmpty(request.getPhoneNumber())) {
+            errors.add("Phone number is required");
+        } else if (!Pattern.matches(PHONE_PATTERN, request.getPhoneNumber())) {
+            errors.add("Invalid phone number format. Please use international format (e.g., +1234567890)");
         }
 
         // Validate password
