@@ -10,6 +10,7 @@ import com.sustanable.foodproduct.dtos.CreateOrderRequest;
 import com.sustanable.foodproduct.entities.OrderEntity;
 import com.sustanable.foodproduct.entities.OrderItemEntity;
 import com.sustanable.foodproduct.entities.OrderStatus;
+import com.sustanable.foodproduct.entities.PaymentStatus;
 import com.sustanable.foodproduct.entities.ProductEntity;
 import com.sustanable.foodproduct.entities.User;
 import com.sustanable.foodproduct.repositories.OrderItemRepository;
@@ -116,5 +117,25 @@ public class OrderServiceImpl implements OrderService {
 
         order.setStatus(OrderStatus.CANCELLED);
         orderRepository.save(order);
+    }
+
+    @Override
+    @Transactional
+    public OrderEntity updatePaymentInfo(Long orderId, String paymentId, PaymentStatus paymentStatus) {
+        OrderEntity order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new EntityNotFoundException("Order not found"));
+
+        order.setPaymentId(paymentId);
+        order.setPaymentStatus(paymentStatus);
+
+        // If payment is completed, update the order status to CONFIRMED
+        if (PaymentStatus.COMPLETED.equals(paymentStatus)) {
+            order.setStatus(OrderStatus.CONFIRMED);
+        } else if (PaymentStatus.CANCELLED.equals(paymentStatus) || PaymentStatus.FAILED.equals(paymentStatus)) {
+            // If payment failed or was cancelled, revert to PENDING
+            order.setStatus(OrderStatus.PENDING);
+        }
+
+        return orderRepository.save(order);
     }
 }

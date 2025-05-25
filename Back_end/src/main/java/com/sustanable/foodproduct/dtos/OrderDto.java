@@ -13,4 +13,6 @@ public class OrderDto {
     private String status;
     private String pickupTime;
     private Set<OrderItemDto> items;
+    private String paymentId;
+    private String paymentStatus;
 }

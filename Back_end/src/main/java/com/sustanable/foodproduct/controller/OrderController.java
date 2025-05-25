@@ -17,8 +17,13 @@ import com.sustanable.foodproduct.auth.CustomUserDetails;
 import com.sustanable.foodproduct.converter.Converter;
 import com.sustanable.foodproduct.dtos.CreateOrderRequest;
 import com.sustanable.foodproduct.dtos.OrderDto;
+import com.sustanable.foodproduct.dtos.PaymentRequest;
+import com.sustanable.foodproduct.dtos.PaymentResponse;
+import com.sustanable.foodproduct.entities.OrderEntity;
 import com.sustanable.foodproduct.services.OrderService;
+import com.sustanable.foodproduct.services.PaymentService;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -26,6 +31,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class OrderController {
     private final OrderService orderService;
+    private final PaymentService paymentService;
 
     @PostMapping
     public ResponseEntity<OrderDto> createOrder(
@@ -33,6 +39,41 @@ public class OrderController {
             @AuthenticationPrincipal CustomUserDetails userDetails) {
         var order = orderService.createOrder(request, userDetails.getId());
         return ResponseEntity.ok(Converter.toModel(order, OrderDto.class));
+    }
+
+    @PostMapping("/{orderId}/pay")
+    public ResponseEntity<PaymentResponse> initiatePayment(
+            @PathVariable Long orderId,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+        try {
+            // Check if order belongs to user
+            OrderEntity order = orderService.getOrderById(orderId, userDetails.getId());
+
+            // Create payment request
+            PaymentRequest paymentRequest = PaymentRequest.builder()
+                    .orderId(orderId)
+                    .currency("USD")
+                    .method("paypal")
+                    .intent("CAPTURE")
+                    .description("Payment for order #" + orderId)
+                    .build();
+
+            // Process payment with PayPal
+            PaymentResponse response = paymentService.createPayment(paymentRequest);
+            return ResponseEntity.ok(response);
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.badRequest()
+                    .body(PaymentResponse.builder()
+                            .success(false)
+                            .message("Order not found or does not belong to user")
+                            .build());
+        } catch (Exception e) {
+            return ResponseEntity.status(500)
+                    .body(PaymentResponse.builder()
+                            .success(false)
+                            .message("Error initiating payment: " + e.getMessage())
+                            .build());
+        }
     }
 
     @GetMapping

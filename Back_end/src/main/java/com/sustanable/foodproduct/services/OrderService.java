@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.sustanable.foodproduct.dtos.CreateOrderRequest;
 import com.sustanable.foodproduct.entities.OrderEntity;
+import com.sustanable.foodproduct.entities.PaymentStatus;
 
 public interface OrderService {
     OrderEntity createOrder(CreateOrderRequest request, Integer userId);
@@ -15,4 +16,14 @@ public interface OrderService {
     OrderEntity updateOrderStatus(Long orderId, String status);
 
     void cancelOrder(Long orderId, Integer userId);
+
+    /**
+     * Update the payment information for an order
+     * 
+     * @param orderId       The ID of the order to update
+     * @param paymentId     The PayPal payment ID
+     * @param paymentStatus The status of the payment
+     * @return The updated order
+     */
+    OrderEntity updatePaymentInfo(Long orderId, String paymentId, PaymentStatus paymentStatus);
 }
