@@ -1,9 +1,14 @@
-import React from 'react';
+import React, { ReactNode }from 'react';
 import { View, TouchableOpacity, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 
-export default function ScreenWithBack({ children, title }) {
+interface ScreenWithBackProps {
+  children: ReactNode;
+  title: string;
+}
+
+export default function ScreenWithBack({ children, title }: ScreenWithBackProps) {
   const navigation = useNavigation();
   return (
     <View style={{ flex: 1, paddingTop: 50 }}>

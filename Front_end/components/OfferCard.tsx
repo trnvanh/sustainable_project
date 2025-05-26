@@ -2,9 +2,9 @@ import React from 'react';
 import { View, Text, StyleSheet, Image, Pressable, ImageSourcePropType } from 'react-native';
 import { useRouter } from 'expo-router';
 import { FontAwesome, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import type { Offer } from '@/store/useProductsStore';
+import { OrderItem } from '@/types/order';
 
-// export type OfferCardProps = Pick<Offer, 'name' | 'price' | 'image' | 'pickupTime' | 'distance' | 'portionsLeft'>;
+export type OfferCardProps = Pick<OrderItem, 'id' |'name' | 'price' | 'image' | 'pickupTime' | 'distance' | 'portionsLeft' | 'rating'>;
 
 export default function OfferCard({
   id,
@@ -15,7 +15,7 @@ export default function OfferCard({
   rating,
   distance,
   portionsLeft,
-}: Offer) {
+}: OfferCardProps) {
   const router = useRouter();
 
   // Normalize image value into ImageSourcePropType
@@ -36,7 +36,10 @@ export default function OfferCard({
   };
 
   return (
-    <Pressable style={styles.card} onPress={() => router.push(`/offer/${id}`)}>
+    <Pressable style={styles.card} onPress={() => router.push({
+                  pathname: '/offer/[offerId]',
+                  params: { offerId: id, from: 'Explore' },
+                })}>
       <Image source={getImageSource()} style={styles.cardImage} />
       <View style={styles.cardContent}>
         <Text style={styles.cardName}>{name}</Text>

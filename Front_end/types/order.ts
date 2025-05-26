@@ -7,7 +7,7 @@ export type OrderItem = {
     portionsLeft: number;
     rating: number;
     image?: any; // or ImageSourcePropType if typed strictly
-    location?: {
+    location: {
       restaurant: string;
       address: string;
     };

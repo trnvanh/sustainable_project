@@ -4,6 +4,7 @@ import { Pressable, Text, View, TouchableOpacity, StyleSheet } from 'react-nativ
 import { Ionicons } from '@expo/vector-icons/';
 //import { AuthProvider, useAuth } from '@/hooks/useAuth';
 import { useAuthStore } from '@/store/useAuthStore';
+import Toast from 'react-native-toast-message';
 
 function AppLayout() {
   const navigation = useNavigation();
@@ -19,6 +20,17 @@ function AppLayout() {
   return (
     <View style={{ flex: 1, paddingBottom: shouldShowNav ? 70 : 0 }}>
       <Slot />
+      <Toast
+        config={{
+          success: (props) => (
+            <View style={{ backgroundColor: '#335248', borderRadius: 8, padding: 10 }}>
+              <Text style={{ color: '#fff', fontWeight: '700' }}>{props.text1}</Text>
+              <Text style={{ color: '#fff' }}>{props.text2}</Text>
+            </View>
+          ),
+        }}
+      />
+
       {shouldShowNav && (
         <View style={styles.navBar}>
           <NavItem

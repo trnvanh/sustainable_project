@@ -7,7 +7,7 @@ import { useProductsStore } from '@/store/useProductsStore';
 import { useLocalSearchParams } from 'expo-router';
 
 export default function OfferItemScreen() {
-  const { offerId } = useLocalSearchParams<{ offerId: string }>();
+  const { offerId, from } = useLocalSearchParams<{ offerId: string; from?: string }>();
 
   const {
     historyOrders,
@@ -52,7 +52,7 @@ export default function OfferItemScreen() {
   } = offer;
 
 return (
-  <ScreenWithBack title="Explore">
+  <ScreenWithBack title={from ?? 'Offer Details'}>
     <ScrollView style={styles.container}>
       <Image source={typeof image === 'string' ? { uri: image } : image} style={styles.image} />
 

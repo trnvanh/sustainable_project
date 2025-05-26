@@ -3,12 +3,14 @@ import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, Modal, TextI
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useProductsStore } from '@/store/useProductsStore';
-import { mockHistoryOrders } from '@/mocks/data/products';
 import { OrderItem } from '@/types/order';
 import Rating from '@/components/Rating';
+import ScreenWithBack from '@/components/ScreenBack';
+import { router } from 'expo-router';
 
 export default function OrderHistoryScreen() {
   const user = useAuthStore((state) => state.user);
+  const {setSelectedOffer} = useProductsStore();
 
   const historyOrders = useProductsStore((s) => s.historyOrders);
 
@@ -43,69 +45,82 @@ export default function OrderHistoryScreen() {
 
   const renderItem = ({ item }: { item: OrderItem }) => (
     <View style={styles.card}>
-      <Image source={item.image} style={styles.image} />
-      <View style={styles.info}>
-        <Text style={styles.name}>{item.name}</Text>
-        <Text style={styles.price}>{item.price}</Text>
-        <Text style={styles.location}>{item.location?.restaurant}</Text>
-        { item.date && <Text style={styles.date}>Ordered on: {item.date}</Text>}
-        {item.customerFeedback?.customerRating !== undefined && (
-          <Text style={styles.feedback}>Your rating: {item.customerFeedback.customerRating} ⭐️</Text>
-        )}
-        {item.customerFeedback?.feedback && <Text style={styles.feedback}>Feedback: {item.customerFeedback.feedback}</Text>}
+      <TouchableOpacity style={styles.card} onPress={() => {
+        setSelectedOffer(item);
+        router.push({
+          pathname: '/offer/[offerId]',
+          params: { offerId: item.id, from: 'Order History' },
+        });
+      }}>
+      
+        <Image source={item.image} style={styles.image} />
+        <View style={styles.info}>
+          <Text style={styles.name}>{item.name}</Text>
+          <Text style={styles.price}>{item.price}</Text>
+          <Text style={styles.location}>{item.location.restaurant}</Text>
+          { item.date && <Text style={styles.date}>Ordered on: {item.date}</Text>}
+          {item.customerFeedback?.customerRating !== undefined && (
+            <Text style={styles.feedback}>Your rating: {item.customerFeedback.customerRating} ⭐️</Text>
+          )}
+          {item.customerFeedback?.feedback && <Text style={styles.feedback}>Feedback: {item.customerFeedback.feedback}</Text>}
 
-        <TouchableOpacity style={styles.feedbackButton} onPress={() => handleOpenFeedbackModal(item)}>
-          <Text style={styles.feedbackButtonText}>
-            {item.customerFeedback ? 'Edit Feedback' : 'Leave Feedback'}
-          </Text>
-        </TouchableOpacity>
-      </View>
+          <TouchableOpacity style={styles.feedbackButton} onPress={() => handleOpenFeedbackModal(item)}>
+            <Text style={styles.feedbackButtonText}>
+              {item.customerFeedback ? 'Edit Feedback' : 'Leave Feedback'}
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+      </TouchableOpacity>
+      
     </View>
   );
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>Order History</Text>
+    <ScreenWithBack title={'Profile'}>
+      <SafeAreaView style={styles.container}>
+        <Text style={styles.title}>Order History</Text>
 
-      {userOrderHistory.length === 0 ? (
-        <Text style={styles.emptyText}>No past orders yet.</Text>
-      ) : (
-        <FlatList
-          data={userOrderHistory}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={styles.list}
-        />
-      )}
+        {userOrderHistory.length === 0 ? (
+          <Text style={styles.emptyText}>No past orders yet.</Text>
+        ) : (
+          <FlatList
+            data={userOrderHistory}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.id}
+            contentContainerStyle={styles.list}
+          />
+        )}
 
-      {/* Modal for feedback */}
-      <Modal visible={modalVisible} animationType="slide" transparent>
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContainer}>
-            <Text style={styles.modalTitle}>Rate & Feedback</Text>
+        {/* Modal for feedback */}
+        <Modal visible={modalVisible} animationType="slide" transparent>
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalContainer}>
+              <Text style={styles.modalTitle}>Rate & Feedback</Text>
 
-            <Rating rating={rating} setRating={setRating} />
+              <Rating rating={rating} setRating={setRating} />
 
-            <TextInput
-              value={feedback}
-              onChangeText={setFeedback}
-              placeholder="Write your feedback..."
-              style={styles.input}
-              multiline
-            />
+              <TextInput
+                value={feedback}
+                onChangeText={setFeedback}
+                placeholder="Write your feedback..."
+                style={styles.input}
+                multiline
+              />
 
-            <TouchableOpacity style={styles.saveButton} onPress={handleSaveFeedback}>
-              <Text style={styles.saveButtonText}>Save</Text>
-            </TouchableOpacity>
+              <TouchableOpacity style={styles.saveButton} onPress={handleSaveFeedback}>
+                <Text style={styles.saveButtonText}>Save</Text>
+              </TouchableOpacity>
 
-            <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.cancelButton}>
-              <Text style={styles.cancelButtonText}>Cancel</Text>
-            </TouchableOpacity>
+              <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.cancelButton}>
+                <Text style={styles.cancelButtonText}>Cancel</Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
-      </Modal>
-
-    </SafeAreaView>
+        </Modal>
+      </SafeAreaView>
+    </ScreenWithBack>
+    
   );
 }
 

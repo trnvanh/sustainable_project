@@ -8,10 +8,14 @@ export type UserProfile = {
     co2SavedKg: number;
     moneySavedEur: number;
     historyOrderIds: string[];
-    preferences?: {
+    preferences: {
       theme: 'light' | 'dark';
       language: 'en' | 'fi' | 'vi';
       notifications: boolean;
+    };
+    favorites: {
+      items: string[];  
+      stores: string[]; 
     };
   };
   

@@ -45,8 +45,10 @@ export default function Explore() {
           // Use TouchableOpacity to navigate to the offer details page
           <TouchableOpacity onPress={() => {
             setSelectedOffer(item);
-            //router.push({ pathname: '/offer', params: { offerId: item.id } });
-            router.push(`/offer/${item.id}`);
+            router.push({
+              pathname: '/offer/[offerId]',
+              params: { offerId: item.id, from: 'Explore' },
+            });
           }}>
             <OfferCard
               id={item.id}

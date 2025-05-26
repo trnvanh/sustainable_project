@@ -4,17 +4,24 @@ import {
   fetchHistoryOrders,
   fetchNearbyOffers,
   fetchCurrentDeals,
+  fetchOtherProducts,
+  fetchStores,
   updateOrderFeedback,
 } from '@/api/products';
 import { OrderItem } from '@/types/order';
+import { Store } from '@/types/store';
 
 type ExploreState = {
   historyOrders: OrderItem[];
   nearbyOffers: OrderItem[];
   currentDeals: OrderItem[];
+  otherProducts: OrderItem[];
+  stores: Store[];
+
   loading: boolean;
   selectedOffer: OrderItem | null;
   setSelectedOffer: (offer: OrderItem) => void;
+
   loadExploreData: () => Promise<void>;
   updateOrderFeedback: (
     orderId: string,
@@ -28,6 +35,9 @@ export const useProductsStore = create<ExploreState>()(
       historyOrders: [],
       nearbyOffers: [],
       currentDeals: [],
+      otherProducts: [],
+      stores: [],
+
       loading: false,
       selectedOffer: null,
 
@@ -35,15 +45,23 @@ export const useProductsStore = create<ExploreState>()(
 
       loadExploreData: async () => {
         set({ loading: true });
-        const [historyOrders, nearbyOffers, currentDeals] = await Promise.all([
+        const [historyOrders, nearbyOffers, currentDeals, otherProducts, stores] = await Promise.all([
           fetchHistoryOrders(),
           fetchNearbyOffers(),
           fetchCurrentDeals(),
+          fetchOtherProducts(),
+          fetchStores(),
         ]);
-        set({ historyOrders, nearbyOffers, currentDeals, loading: false });
+        set({
+          historyOrders,
+          nearbyOffers,
+          currentDeals,
+          otherProducts,
+          stores,
+          loading: false,
+        });
       },
 
-      // Update an order’s feedback and rating
       updateOrderFeedback: async (orderId, customerFeedback) => {
         const updatedOrder = await updateOrderFeedback(orderId, customerFeedback);
         set((state) => ({
@@ -54,7 +72,8 @@ export const useProductsStore = create<ExploreState>()(
       },
     }),
     {
-      name: 'products-storage', // storage key
+      name: 'products-storage',
     }
   )
 );
+

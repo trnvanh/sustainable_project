@@ -15,6 +15,10 @@ export const mockUsers = [
       language: 'en' as 'en' | 'fi' | 'vi',
       notifications: true,
     },
+    favorites: {
+      items: ['101', '202', '303', '404', '205', '104'],
+      stores: ['store1', 'store3', 'store5', 'store7', 'store9'],
+    },
   },
   {
     id: 'u002',
@@ -32,6 +36,10 @@ export const mockUsers = [
       language: 'en' as 'en' | 'fi' | 'vi',
       notifications: true,
     },
+    favorites: {
+      items: ['101', '202', '303', '404', '205', '104'],
+      stores: ['store1', 'store3', 'store5', 'store7', 'store9'],
+    },
   },
   {
     id: 'u001',
@@ -48,6 +56,10 @@ export const mockUsers = [
       theme: 'light' as 'light' | 'dark',
       language: 'en' as 'en' | 'fi' | 'vi',
       notifications: true,
+    },
+    favorites: {
+      items: ['101', '202', '303', '404', '205', '104'],
+      stores: ['store1', 'store3', 'store5', 'store7', 'store9'],
     },
   },
 ];

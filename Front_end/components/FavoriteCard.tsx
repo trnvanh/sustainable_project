@@ -1,31 +1,64 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity, ImageSourcePropType, Pressable } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 
 interface Props {
+  id: string;
   title: string;
-  image: string;
+  image: any;
   price: string;
   onDelete: () => void;
 }
 
-export const FavoriteCard: React.FC<Props> = ({ title, image, price, onDelete }) => {
+export const FavoriteCard: React.FC<Props> = ({ id, title, image, price, onDelete }) => {
+  const router = useRouter();
+
+  // Normalize image value into ImageSourcePropType
+  const getImageSource = (): ImageSourcePropType => {
+    if (typeof image === 'string') {
+      //console.log('Image URL:', image);
+      return { uri: image };
+    } else if (typeof image === 'number') {
+      //console.log('Image local:', image);
+      return image;
+    } else if (typeof image === 'object' && 'uri' in image) {
+      //console.log('Image object:', image);
+      return image; // Already in correct format
+    } else {
+      //console.log('Image fallback');
+      return { uri: 'https://via.placeholder.com/160x100.png?text=Food' };
+    }
+  };
+
   return (
-    <View style={styles.card}>
-      <Image source={{ uri: image }} style={styles.image} />
-      <TouchableOpacity onPress={onDelete} style={styles.delete}>
-        <AntDesign name="closecircle" size={20} color="tomato" />
-      </TouchableOpacity>
-      <Text style={styles.title}>{title}</Text>
-      <Text style={styles.price}>{price}</Text>
-    </View>
+    <Pressable style={styles.container} onPress={() => router.push({
+                      pathname: '/offer/[offerId]',
+                      params: { offerId: id, from: 'Favourite Card' },
+                    })}>
+      <View style={styles.card}>
+        <Image source={getImageSource()} style={styles.image} />
+        <TouchableOpacity onPress={onDelete} style={styles.delete}>
+          <AntDesign name="closecircle" size={20} color="tomato" />
+        </TouchableOpacity>
+        <Text style={styles.title}>{title}</Text>
+        <Text style={styles.price}>{price}</Text>
+      </View>
+    </Pressable>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    width: '48%',
+    flexShrink: 0,
+    backgroundColor: '#F2F5F3',
+    borderRadius: 10,
+    marginRight: 12,
+  },
   card: {
     backgroundColor: '#fff',
-    width: '48%',
+    width: '100%',
     borderRadius: 12,
     padding: 8,
     shadowColor: '#000',

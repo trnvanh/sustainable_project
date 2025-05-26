@@ -62,12 +62,17 @@ export const registerRequest = async (
       language: 'en',
       notifications: true,
     } as const,
+    favorites: {
+      items: [],
+      stores: [],
+    },
   };
 
   mockUsers.push(newUser);
   return newUser; // Return full user object
 };
 
+// This function simulates a user profile update request
 export const updateUserRequest = async (
   userId: string,
   updatedFields: Partial<UserProfile>
@@ -86,6 +91,10 @@ export const updateUserRequest = async (
     preferences: {
       ...mockUsers[userIndex].preferences,
       ...updatedFields.preferences,
+    },
+    favorites: {
+      ...mockUsers[userIndex].favorites,
+      ...updatedFields.favorites,
     },
   };
 
