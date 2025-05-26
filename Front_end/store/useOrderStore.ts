@@ -33,6 +33,7 @@ interface OrderStore {
     fetchOrders: () => Promise<void>;
     getOrderById: (orderId: string) => Promise<Order | null>;
     updateOrderStatus: (orderId: string, status: string) => Promise<boolean>;
+    refreshOrderPaymentStatus: (orderId: string) => Promise<void>;
     clearError: () => void;
     setLoading: (loading: boolean) => void;
 }
@@ -66,6 +67,23 @@ export const useOrderStore = create<OrderStore>()(
                             orders: [newOrder, ...state.orders],
                             loading: false
                         }));
+
+                        // Automatically initiate payment after successful order creation
+                        try {
+                            const paymentResponse = await payOrderApi(response.data.id);
+                            if (paymentResponse.success && paymentResponse.data?.redirectUrl) {
+                                // Open PayPal checkout page in the system browser
+                                const { Linking } = require('react-native');
+                                await Linking.openURL(paymentResponse.data.redirectUrl);
+                            } else {
+                                console.warn('Payment initiation failed:', paymentResponse.message);
+                                // Still return true since order was created successfully
+                            }
+                        } catch (paymentError: any) {
+                            console.warn('Failed to initiate payment:', paymentError.message);
+                            // Still return true since order was created successfully
+                        }
+
                         return true;
                     } else {
                         set({ error: response.message || 'Failed to create order', loading: false });
@@ -81,7 +99,17 @@ export const useOrderStore = create<OrderStore>()(
                 set({ loading: true, error: null });
                 try {
                     const response = await payOrderApi(orderId);
-                    if (response.success) {
+                    if (response.success && response.data?.redirectUrl) {
+                        // Open PayPal checkout page in the system browser
+                        const { Linking } = require('react-native');
+                        await Linking.openURL(response.data.redirectUrl);
+
+                        // Note: Payment status will be updated when the user returns from PayPal
+                        // or through a webhook notification from the backend
+                        set({ loading: false });
+                        return true;
+                    } else if (response.success && response.data?.success) {
+                        // Payment was already completed
                         set(state => ({
                             orders: state.orders.map(order =>
                                 order.id === orderId
@@ -92,7 +120,7 @@ export const useOrderStore = create<OrderStore>()(
                         }));
                         return true;
                     } else {
-                        set({ error: response.message || 'Payment failed', loading: false });
+                        set({ error: response.message || 'Payment initiation failed', loading: false });
                         return false;
                     }
                 } catch (error: any) {
@@ -196,6 +224,22 @@ export const useOrderStore = create<OrderStore>()(
                 } catch (error: any) {
                     set({ error: error.message || 'Failed to update order status', loading: false });
                     return false;
+                }
+            },
+
+            refreshOrderPaymentStatus: async (orderId: string): Promise<void> => {
+                try {
+                    const order = await get().getOrderById(orderId);
+                    if (order) {
+                        // Update the order in the store with the latest status from the server
+                        set(state => ({
+                            orders: state.orders.map(o =>
+                                o.id === orderId ? order : o
+                            ),
+                        }));
+                    }
+                } catch (error: any) {
+                    console.warn('Failed to refresh order payment status:', error.message);
                 }
             },
 

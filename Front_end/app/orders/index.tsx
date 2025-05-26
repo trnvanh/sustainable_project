@@ -1,5 +1,6 @@
 import { EmptyState } from '@/components/EmptyOrderState';
 import { EnhancedOrderCard } from '@/components/EnhancedOrderCard';
+import { useAppStateHandler } from '@/hooks/useAppStateHandler';
 import { useOrderStore } from '@/store/useOrderStore';
 import React, { useEffect, useState } from 'react';
 import { Dimensions, FlatList, RefreshControl, StyleSheet, Text, View } from 'react-native';
@@ -56,6 +57,9 @@ const orderHistory: OrderItem[] = [
 export default function OrdersScreen() {
     const [index, setIndex] = useState(0);
     const { orders, fetchOrders, loading, error } = useOrderStore();
+
+    // Handle app state changes to refresh orders when returning from PayPal
+    useAppStateHandler();
 
     // Separate active and completed orders
     const activeOrders = orders.filter(order =>

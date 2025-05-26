@@ -1,6 +1,5 @@
 import { Order, useOrderStore } from '@/store/useOrderStore';
 import { Ionicons } from '@expo/vector-icons';
-import { router } from "expo-router";
 import React from 'react';
 import { Alert, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { showMessage } from 'react-native-flash-message';
@@ -53,12 +52,26 @@ export function EnhancedOrderCard({ order }: EnhancedOrderCardProps) {
     };
 
     const handlePayOrder = async () => {
+        showMessage({
+            message: 'Initiating PayPal payment...',
+            type: 'info',
+            icon: 'info',
+            duration: 2000,
+        });
+
         const success = await payOrder(order.id);
         if (success) {
             showMessage({
-                message: 'Payment successful!',
+                message: 'Redirecting to PayPal for payment...',
                 type: 'success',
                 icon: 'success',
+                duration: 3000,
+            });
+        } else {
+            showMessage({
+                message: 'Failed to initiate payment. Please try again.',
+                type: 'danger',
+                icon: 'danger',
             });
         }
     };
@@ -138,7 +151,14 @@ export function EnhancedOrderCard({ order }: EnhancedOrderCardProps) {
 
                 <TouchableOpacity
                     style={styles.detailsButton}
-                    onPress={() => router.push(`/orders/${order.id}`)}
+                    onPress={() => {
+                        // Navigate to order details - for now just show order info
+                        Alert.alert(
+                            'Order Details',
+                            `Order ID: ${order.id}\nStatus: ${statusText[order.status]}\nTotal: €${order.totalPrice.toFixed(2)}\nPayment: ${order.paymentStatus}`,
+                            [{ text: 'OK' }]
+                        );
+                    }}
                 >
                     <Ionicons name="chevron-forward" size={16} color="#666" />
                 </TouchableOpacity>

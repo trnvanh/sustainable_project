@@ -39,5 +39,5 @@ paypal:
         id: ${PAYPAL_CLIENT_ID:AZUVnT1L037ibi2XFQE5THLKip1_hbxQxV8AX9zySHBNrEK3n9oopGRsKSMIV0bmqH03KWhsEfUZySV3}
         secret: ${PAYPAL_CLIENT_SECRET:EIxZvJwRn5ZjgNlza6CM0X1tBimAx8PuGpmFm_uViVTrTqDLmdJC0DEAqMyma1JfDYYWJYjvwB1Rgn0v}
     mode: sandbox # Change to 'live' for production
-    return-url: http://localhost:8080/api/v1/payments/success
-    cancel-url: http://localhost:8080/api/v1/payments/cancel
+    return-url: https://sustainable-be.code4fun.xyz/api/v1/payments/success
+    cancel-url: https://sustainable-be.code4fun.xyz/api/v1/payments/cancel

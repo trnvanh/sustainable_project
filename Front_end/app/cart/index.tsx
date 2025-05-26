@@ -147,6 +147,11 @@ export default function CartScreen() {
             return;
         }
 
+        // Prevent multiple submissions
+        if (orderLoading) {
+            return;
+        }
+
         // Clear any previous errors
         clearOrderError();
         setError(null);
@@ -157,24 +162,48 @@ export default function CartScreen() {
             if (success) {
                 clearCart(); // Clear cart after successful order creation
                 showMessage({
-                    message: 'Order created successfully!',
+                    message: 'Order created successfully! Redirecting to PayPal for payment...',
                     type: 'success',
                     icon: 'success',
+                    duration: 3000,
                 });
-                router.push('/orders');
+                // Navigate to orders page after a short delay to allow PayPal redirect
+                setTimeout(() => {
+                    router.push('/orders');
+                }, 2500);
             } else {
+                // Provide more specific error messaging
+                const errorMessage = orderError || 'Failed to create order';
                 showMessage({
-                    message: orderError || 'Failed to create order',
+                    message: errorMessage,
                     type: 'danger',
                     icon: 'danger',
+                    duration: 4000,
                 });
+
+                // If order creation failed, suggest trying again
+                if (errorMessage.toLowerCase().includes('network') || errorMessage.toLowerCase().includes('connection')) {
+                    setTimeout(() => {
+                        showMessage({
+                            message: 'Please check your internet connection and try again',
+                            type: 'info',
+                            icon: 'info',
+                            duration: 3000,
+                        });
+                    }, 1000);
+                }
             }
         } catch (error: any) {
+            const errorMessage = error.message || 'Failed to create order';
             showMessage({
-                message: error.message || 'Failed to create order',
+                message: errorMessage,
                 type: 'danger',
                 icon: 'danger',
+                duration: 4000,
             });
+
+            // Log error for debugging
+            console.error('Checkout error:', error);
         }
     };
 
