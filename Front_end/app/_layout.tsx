@@ -8,11 +8,10 @@ function AppLayout() {
   const navigation = useNavigation();
   const router = useRouter();
   const pathname = usePathname();
-  const { user } = useAuth();
 
-  const hideNavRoutes = ['/login', '/register', '/welcome', '/prelogin', '/email-signup', '/offer'];
+  const hideNavRoutes = ['/login', '/register', '/welcome', '/prelogin', '/email-signup', '/offer', '/category-transition'];
 
-  const shouldShowNav = user && !hideNavRoutes.includes(pathname);
+  const shouldShowNav = !hideNavRoutes.includes(pathname);
 
   return (
     <View style={{ flex: 1, paddingBottom: shouldShowNav ? 70 : 0 }}>

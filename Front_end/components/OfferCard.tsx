@@ -1,23 +1,28 @@
 import { View, Text, StyleSheet, Image, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import React from 'react';
 
 interface OfferCardProps {
-  name: string;
-  price: string;
-  image?: string;
-  pickupTime?: string;
+  id: string,
+  title: string;
+  time: string,
   distance?: string;
-  portionsLeft: number;
+  quantity: number;
+  price: string;
+  store: string,
+  image?: string;
 }
 
 export default function OfferCard({
-  name,
-  price,
-  image,
-  pickupTime,
+  id,
+  title,
+  time,
   distance,
-  portionsLeft,
+  quantity,
+  price,
+  store,
+  image
 }: OfferCardProps) {
   const router = useRouter();
 
@@ -28,12 +33,12 @@ export default function OfferCard({
         style={styles.cardImage}
       />
       <View style={styles.cardContent}>
-        <Text style={styles.cardName}>{name}</Text>
+        <Text style={styles.cardName}>{title}</Text>
         <Text style={styles.cardPrice}>{price}</Text>
 
         <View style={styles.infoRow}>
           <Ionicons name="time-outline" size={14} color="#777" />
-          <Text style={styles.infoText}>{pickupTime}</Text>
+          <Text style={styles.infoText}>{time}</Text>
         </View>
 
         <View style={styles.infoRow}>
@@ -43,17 +48,17 @@ export default function OfferCard({
 
         <View style={styles.infoRow}>
         <MaterialCommunityIcons
-            name={portionsLeft <= 1 ? 'fire' : 'food'}
+            name={quantity <= 1 ? 'fire' : 'food'}
             size={14}
-            color={portionsLeft <= 1 ? '#D32F2F' : '#777'}
+            color={quantity <= 1 ? '#D32F2F' : '#777'}
         />
         <Text
             style={[
             styles.infoText,
-            portionsLeft <= 2 && styles.lowPortions,
+            quantity <= 2 && styles.lowPortions,
             ]}
         >
-            {portionsLeft} left
+            {quantity} left
         </Text>
         </View>
 
@@ -70,12 +75,15 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 10,
     marginRight: 12,
+    marginVertical: 8,
+    overflow: 'hidden',
   },
   cardImage: {
     width: '100%',
     height: 100,
     borderRadius: 8,
     marginBottom: 8,
+    resizeMode: 'cover',
   },
   cardContent: {
     flex: 1,

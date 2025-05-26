@@ -4,7 +4,7 @@ import { View, Text, StyleSheet, Image } from 'react-native';
 export function EmptyState({ text }: { text: string }) {
   return (
     <View style={styles.container}>
-      <Image source={require('@/assets/images/empty.png')} style={styles.image} />
+      <Image source={require('@/assets/images/favicon.png')} style={styles.image} />
       <Text style={styles.text}>{text}</Text>
     </View>
   );

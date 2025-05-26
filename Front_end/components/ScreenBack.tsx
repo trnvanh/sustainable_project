@@ -1,13 +1,13 @@
-// components/ScreenWithBack.tsx
 import { View, TouchableOpacity, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import React from 'react';
 
 export default function ScreenWithBack({ children, title }) {
   const navigation = useNavigation();
   return (
-    <View style={{ flex: 1, paddingTop: 50 }}>
-      <View style={{ flexDirection: 'row', alignItems: 'center', padding: 10 }}>
+    <View style={{ flex: 1, paddingTop: 50, backgroundColor: '#C4DAD2' }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', padding: 10, backgroundColor: '#C4DAD2' }}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={24} color="black" />
         </TouchableOpacity>
