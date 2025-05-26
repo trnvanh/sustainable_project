@@ -1,5 +1,7 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
+import {useProductsStore} from "@/store/useProductsStore";
+import {router} from "expo-router";
 
 interface OrderItem {
   id: string;
@@ -17,20 +19,29 @@ export function OrderCard({ item }: { item: OrderItem }) {
     Completed: '#A3A3A3',
   }[item.status] || '#D1D5DB';
 
+  const {
+    setSelectedOffer,
+  } = useProductsStore();
+
   return (
-    <View style={styles.card}>
-      <Image source={{ uri: item.image }} style={styles.image} />
-      <View style={styles.info}>
-        <Text style={styles.title}>{item.title}</Text>
-        <Text style={styles.restaurant}>{item.restaurant}</Text>
-        
-        <Text style={styles.date}>{item.date}</Text>
-        <View style={[styles.statusBadge, { backgroundColor: statusColor }]}>
-          <Text style={styles.statusText}>{item.status}</Text>
+    <TouchableOpacity onPress={() => {
+      setSelectedOffer(item);
+      router.push(`/offer/${item.id}`);
+    }}>
+      <View style={styles.card}>
+        <Image source={{ uri: item.image }} style={styles.image} />
+        <View style={styles.info}>
+          <Text style={styles.title}>{item.title}</Text>
+          <Text style={styles.restaurant}>{item.restaurant}</Text>
+
+          <Text style={styles.date}>{item.date}</Text>
+          <View style={[styles.statusBadge, { backgroundColor: statusColor }]}>
+            <Text style={styles.statusText}>{item.status}</Text>
+          </View>
+
         </View>
-        
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }
 

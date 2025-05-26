@@ -1,23 +1,36 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
+import {useProductsStore} from "@/store/useProductsStore";
+import {OrderItem} from "@/types/order";
+import {router} from "expo-router";
 
 interface Props {
+  item: OrderItem;
   title: string;
   image: string;
   price: string;
   onDelete: () => void;
 }
 
-export const FavoriteCard: React.FC<Props> = ({ title, image, price, onDelete }) => {
+export const FavoriteCard: React.FC<Props> = ({item, title, image, price, onDelete }) => {
+  const {
+    setSelectedOffer,
+  } = useProductsStore();
+
   return (
     <View style={styles.card}>
-      <Image source={{ uri: image }} style={styles.image} />
-      <TouchableOpacity onPress={onDelete} style={styles.delete}>
-        <AntDesign name="closecircle" size={20} color="tomato" />
+      <TouchableOpacity onPress={() => {
+        setSelectedOffer(item);
+        router.push(`/offer/${item.id}`);
+      }}>
+        <Image source={{ uri: image }} style={styles.image} />
+        <TouchableOpacity onPress={onDelete} style={styles.delete}>
+          <AntDesign name="closecircle" size={20} color="tomato" />
+        </TouchableOpacity>
+        <Text style={styles.title}>{title}</Text>
+        <Text style={styles.price}>{price}</Text>
       </TouchableOpacity>
-      <Text style={styles.title}>{title}</Text>
-      <Text style={styles.price}>{price}</Text>
     </View>
   );
 };

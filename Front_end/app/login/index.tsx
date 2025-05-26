@@ -1,28 +1,43 @@
-import { router, useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { Link } from 'expo-router';
-import { View, Text, TextInput, StyleSheet, Pressable } from 'react-native';
-import { useAuth } from '@/hooks/useAuth';
+import {View, Text, TextInput, StyleSheet, Pressable, Alert, ActivityIndicator} from 'react-native';
+import {Link, router} from 'expo-router';
+import { useAuthStore } from '@/store/useAuthStore';
+import {showMessage} from "react-native-flash-message";
 
 export default function LoginScreen() {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('tanh@gmail.com');
+  const [password, setPassword] = useState('1234@tanh');
+  const login = useAuthStore((state) => state.login);
+  const {
+    loading,
+  } = useAuthStore();
 
-  const router = useRouter();
-  const { login } = useAuth();
-
-  const handleLogin = () => {
-    login({ name: 'testuser', password: '1234' }); // mock login
-    router.replace('/explore'); // redirect to main app
+  const handleLogin = async () => {
+    try {
+      await login(email, password);
+      // Navigation handled inside the store
+    } catch (error) {
+      Alert.alert('Login Failed', 'Invalid username or password.');
+    }
   };
+
+  if (loading) {
+    return (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#4CAF50" />
+          <Text style={{ marginTop: 8, color: '#555'}}>Loading login...</Text>
+        </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>HeroEats</Text>
+
       <TextInput
-        placeholder="Username"
-        value={username}
-        onChangeText={setUsername}
+        placeholder="Email"
+        value={email}
+        onChangeText={setEmail}
         style={styles.input}
       />
       <TextInput
@@ -43,7 +58,7 @@ export default function LoginScreen() {
 
       <Pressable style={styles.link}>
         <Text style={styles.linkText}>
-            <Link href="/welcome">Don't have account yet?</Link>
+          <Link href="/welcome">Don't have account yet?</Link>
         </Text>
       </Pressable>
     </View>
@@ -51,6 +66,13 @@ export default function LoginScreen() {
 }
 
 const styles = StyleSheet.create({
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingTop: 120,
+    backgroundColor: '#C4DAD2',
+  },
   container: {
     flex: 1,
     paddingTop: 160,

@@ -2,32 +2,30 @@ import React from 'react';
 import { router, useRouter } from 'expo-router';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useAuthStore } from '@/store/useAuthStore';
 
 export default function ProfileScreen() {
     const router = useRouter();
+    const logout = useAuthStore((state) => state.logout);
+    const user = useAuthStore((state) => state.user);
 
     const handleLogout = () => {
-        router.replace('/welcome'); // redirect to main app
-      };
-
-    const CREDITS = 120;
-    const RESCUED = 100;
-    const CO2 = 250;
-    const MONEY = 65;
+      logout();
+    };
 
     return (
         <SafeAreaView style={styles.container}>
           <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
             {/* Header */}
             <View style={styles.header}>
-              <Text style={styles.greeting}>Hi Anh!</Text>
+              <Text style={styles.greeting}>Hi {user?.name}!</Text>
               <View style={styles.avatarPlaceholder} />
             </View>
     
             {/* Credits Section */}
             <View style={styles.creditsCard}>
             <Text style={styles.creditsLabel}>Your Credits</Text>
-            <Text style={styles.creditsAmount}>{CREDITS}</Text>
+            <Text style={styles.creditsAmount}>{user?.credits}</Text>
             <TouchableOpacity style={styles.redeemButton}>
                 <Text style={styles.redeemText}>Redeem rewards</Text>
             </TouchableOpacity>
@@ -37,15 +35,15 @@ export default function ProfileScreen() {
             <View style={styles.statsRow}>
               <View style={styles.statCard}>
                 <Text style={styles.statText}>Rescued</Text>
-                <Text style={styles.statText}>{RESCUED} meals</Text>
+                <Text style={styles.statText}>{user?.rescuedMeals} meals</Text>
               </View>
               <View style={styles.statCard}>
                 <Text style={styles.statText}>CO2 Saved</Text>
-                <Text style={styles.statText}>{CO2} kg</Text>
+                <Text style={styles.statText}>{user?.co2SavedKg} kg</Text>
               </View>
               <View style={styles.statCard}>
                 <Text style={styles.statText}>Money Saved</Text>
-                <Text style={styles.statText}>{MONEY} €</Text>
+                <Text style={styles.statText}>{user?.moneySavedEur} €</Text>
               </View>
             </View>
     

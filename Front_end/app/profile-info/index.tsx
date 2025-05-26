@@ -2,11 +2,13 @@ import React, { useState } from 'react';
 import * as ImagePicker from 'expo-image-picker';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image, Alert, } from 'react-native';
 import ScreenWithBack from '@/components/ScreenBack';
+import {useAuthStore} from "@/store/useAuthStore";
 
 export default function ProfileInfoScreen() {
-  const [name, setName] = useState('Anh');
-  const [email, setEmail] = useState('anh@example.com');
-  const [phone, setPhone] = useState('0123456789');
+  const user = useAuthStore((state) => state.user);
+  const [name, setName] = useState(user?.name);
+  const [email, setEmail] = useState(user?.email);
+  const [phone, setPhone] = useState(user?.phone);
   const [avatar, setAvatar] = useState<string | null>(null);
 
   const handleSave = () => {
@@ -58,7 +60,7 @@ export default function ProfileInfoScreen() {
           style={styles.input}
           value={name}
           onChangeText={setName}
-          placeholder="Your name"
+          placeholder={user?.name}
         />
 
         <Text style={styles.label}>Email</Text>
