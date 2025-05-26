@@ -1,25 +1,8 @@
 package com.sustanable.foodproduct.services.impl;
 
-import java.io.IOException;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.paypal.core.PayPalHttpClient;
 import com.paypal.http.HttpResponse;
-import com.paypal.orders.AmountWithBreakdown;
-import com.paypal.orders.ApplicationContext;
-import com.paypal.orders.Item;
-import com.paypal.orders.Money;
-import com.paypal.orders.Order;
-import com.paypal.orders.OrderRequest;
-import com.paypal.orders.OrdersCaptureRequest;
-import com.paypal.orders.OrdersCreateRequest;
-import com.paypal.orders.PurchaseUnitRequest;
+import com.paypal.orders.*;
 import com.sustanable.foodproduct.dtos.PaymentRequest;
 import com.sustanable.foodproduct.dtos.PaymentResponse;
 import com.sustanable.foodproduct.entities.OrderEntity;
@@ -29,10 +12,18 @@ import com.sustanable.foodproduct.entities.PaymentStatus;
 import com.sustanable.foodproduct.repositories.OrderRepository;
 import com.sustanable.foodproduct.services.OrderService;
 import com.sustanable.foodproduct.services.PaymentService;
-
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -205,10 +196,34 @@ public class PayPalService implements PaymentService {
      * Creates the amount with breakdown for the PayPal order
      */
     private AmountWithBreakdown createAmountWithBreakdown(OrderEntity order) {
-        // Create the amount with the total value
-        return new AmountWithBreakdown()
+        BigDecimal itemTotalValue = BigDecimal.ZERO;
+        for (OrderItemEntity orderItem : order.getItems()) {
+            BigDecimal itemPrice = orderItem.getPrice();
+            BigDecimal quantity = new BigDecimal(orderItem.getQuantity());
+            itemTotalValue = itemTotalValue.add(itemPrice.multiply(quantity));
+        }
+        itemTotalValue = itemTotalValue.setScale(2, RoundingMode.HALF_UP);
+
+        BigDecimal orderTotal = order.getTotalAmount().setScale(2, RoundingMode.HALF_UP);
+        if (itemTotalValue.compareTo(orderTotal) != 0) {
+            throw new IllegalStateException("Item total (" + itemTotalValue + ") does not match order total (" + orderTotal + ")");
+        }
+
+        AmountWithBreakdown amount = new AmountWithBreakdown()
                 .currencyCode("USD")
-                .value(order.getTotalAmount().setScale(2, RoundingMode.HALF_UP).toString());
+                .value(orderTotal.toString());
+
+        if (!order.getItems().isEmpty()) {
+            AmountBreakdown breakdown = new AmountBreakdown();
+            breakdown.itemTotal(
+                    new Money()
+                            .currencyCode("USD")
+                            .value(itemTotalValue.toString())
+            );
+            amount.amountBreakdown(breakdown);
+        }
+
+        return amount;
     }
 
     /**

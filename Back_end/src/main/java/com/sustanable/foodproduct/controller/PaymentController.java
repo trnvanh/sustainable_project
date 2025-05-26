@@ -49,10 +49,23 @@ public class PaymentController {
 
     @GetMapping("/success")
     public ResponseEntity<PaymentResponse> executePayment(
-            @RequestParam("paymentId") String paymentId,
+            @RequestParam(value = "paymentId", required = false) String paymentId,
+            @RequestParam(value = "token", required = false) String token,
             @RequestParam("PayerID") String payerId) {
 
-        PaymentResponse response = paymentService.executePayment(paymentId, payerId);
+        // Use token as paymentId if paymentId is null (PayPal sometimes sends it as
+        // token)
+        String effectivePaymentId = (paymentId != null) ? paymentId : token;
+
+        if (effectivePaymentId == null) {
+            return ResponseEntity.badRequest()
+                    .body(PaymentResponse.builder()
+                            .success(false)
+                            .message("Missing payment ID or token")
+                            .build());
+        }
+
+        PaymentResponse response = paymentService.executePayment(effectivePaymentId, payerId);
         return ResponseEntity.ok(response);
     }
 
