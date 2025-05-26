@@ -5,7 +5,7 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/download.png",
-    "scheme": "myapp",
+    "scheme": "heroeatspay",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {

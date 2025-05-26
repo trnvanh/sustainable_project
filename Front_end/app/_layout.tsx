@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons/';
+import * as Linking from 'expo-linking';
 import { Slot, useNavigation, usePathname, useRouter } from 'expo-router';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 //import { AuthProvider, useAuth } from '@/hooks/useAuth';
 import { useAuthStore } from '@/store/useAuthStore';
@@ -17,6 +18,54 @@ function AppLayout() {
     const hideNavRoutes = ['/login', '/register', '/welcome', '/prelogin', '/email-signup', '/offer'];
 
     const shouldShowNav = user && !hideNavRoutes.includes(pathname);
+
+    // Handle deep links for PayPal redirects
+    useEffect(() => {
+        const handleDeepLink = (url: string) => {
+            console.log('Deep link received:', url);
+
+            // Parse the URL to extract path and query parameters
+            const parsed = Linking.parse(url);
+            console.log('Parsed URL:', parsed);
+
+            // Handle payment success redirect
+            if (parsed.path === 'payment/success') {
+                console.log('Redirecting to payment success screen');
+                router.push('/(app)/payment/success' as any);
+            }
+            // Handle payment cancel redirect
+            else if (parsed.path === 'payment/cancel') {
+                console.log('Redirecting to payment cancel screen');
+                router.push('/(app)/payment/cancel' as any);
+            }
+        };
+
+        // Handle the initial URL if the app was opened from a deep link
+        const handleInitialURL = async () => {
+            try {
+                const initialUrl = await Linking.getInitialURL();
+                if (initialUrl) {
+                    console.log('Initial URL:', initialUrl);
+                    handleDeepLink(initialUrl);
+                }
+            } catch (error) {
+                console.error('Error getting initial URL:', error);
+            }
+        };
+
+        // Handle URLs when the app is already running
+        const subscription = Linking.addEventListener('url', (event) => {
+            handleDeepLink(event.url);
+        });
+
+        // Check for initial URL
+        handleInitialURL();
+
+        // Cleanup subscription
+        return () => {
+            subscription?.remove();
+        };
+    }, [router]);
 
     return (
         <View style={{ flex: 1, paddingBottom: shouldShowNav ? 70 : 0 }}>
