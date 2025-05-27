@@ -3,8 +3,8 @@ import { router } from "expo-router";
 import { showMessage } from "react-native-flash-message";
 import { useAuthStore } from "../store/useAuthStore";
 
-// const API_BASE_URL = "https://sustainable-be.code4fun.xyz/api/v1/";
-const API_BASE_URL = "http://localhost:8080/api/v1/";
+const API_BASE_URL = "https://sustainable-be.code4fun.xyz/api/v1/";
+// const API_BASE_URL = "http://localhost:8080/api/v1/";
 
 const api: AxiosInstance = axios.create({
     baseURL: API_BASE_URL,
