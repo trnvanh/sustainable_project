@@ -56,7 +56,8 @@ export default function FavoriteScreen() {
   };
 
   const handleStorePress = (storeId: string) => {
-    setSelectedStoreId(storeId);
+//    setSelectedStoreId(storeId);
+    router.push('/store-favorites/${storeId}');
   };
 
   const handleShowAll = () => {

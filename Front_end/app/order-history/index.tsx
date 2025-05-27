@@ -1,3 +1,4 @@
+import ScreenWithBack from '@/components/ScreenBack';
 import { CartItem } from '@/store/useCartStore';
 import { Order, useOrderStore } from '@/store/useOrderStore';
 import { Ionicons } from '@expo/vector-icons';
@@ -260,6 +261,7 @@ export default function OrderHistoryScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
+      <ScreenWithBack title="Order History">
       <Text style={styles.title}>Order History</Text>
 
       {loading && !useMockData && displayOrders.length === 0 ? (
@@ -311,6 +313,7 @@ export default function OrderHistoryScreen() {
           }
         />
       )}
+      </ScreenWithBack>
     </SafeAreaView>
   );
 }
