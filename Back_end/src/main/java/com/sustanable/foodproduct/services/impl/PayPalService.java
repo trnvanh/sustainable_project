@@ -1,8 +1,27 @@
 package com.sustanable.foodproduct.services.impl;
 
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.paypal.core.PayPalHttpClient;
 import com.paypal.http.HttpResponse;
-import com.paypal.orders.*;
+import com.paypal.orders.AmountBreakdown;
+import com.paypal.orders.AmountWithBreakdown;
+import com.paypal.orders.ApplicationContext;
+import com.paypal.orders.Item;
+import com.paypal.orders.Money;
+import com.paypal.orders.Order;
+import com.paypal.orders.OrderRequest;
+import com.paypal.orders.OrdersCaptureRequest;
+import com.paypal.orders.OrdersCreateRequest;
+import com.paypal.orders.PurchaseUnitRequest;
 import com.sustanable.foodproduct.dtos.PaymentRequest;
 import com.sustanable.foodproduct.dtos.PaymentResponse;
 import com.sustanable.foodproduct.entities.OrderEntity;
@@ -12,20 +31,12 @@ import com.sustanable.foodproduct.entities.PaymentStatus;
 import com.sustanable.foodproduct.repositories.OrderRepository;
 import com.sustanable.foodproduct.services.OrderService;
 import com.sustanable.foodproduct.services.PaymentService;
+
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.List;
-
-@Service
+@Service("payPalService")
 @RequiredArgsConstructor
 @Slf4j
 public class PayPalService implements PaymentService {
@@ -206,7 +217,8 @@ public class PayPalService implements PaymentService {
 
         BigDecimal orderTotal = order.getTotalAmount().setScale(2, RoundingMode.HALF_UP);
         if (itemTotalValue.compareTo(orderTotal) != 0) {
-            throw new IllegalStateException("Item total (" + itemTotalValue + ") does not match order total (" + orderTotal + ")");
+            throw new IllegalStateException(
+                    "Item total (" + itemTotalValue + ") does not match order total (" + orderTotal + ")");
         }
 
         AmountWithBreakdown amount = new AmountWithBreakdown()
@@ -218,8 +230,7 @@ public class PayPalService implements PaymentService {
             breakdown.itemTotal(
                     new Money()
                             .currencyCode("USD")
-                            .value(itemTotalValue.toString())
-            );
+                            .value(itemTotalValue.toString()));
             amount.amountBreakdown(breakdown);
         }
 

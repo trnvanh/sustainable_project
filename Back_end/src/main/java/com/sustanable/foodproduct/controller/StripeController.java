@@ -1,85 +1,92 @@
 package com.sustanable.foodproduct.controller;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.stripe.exception.SignatureVerificationException;
+import com.stripe.model.Event;
+import com.stripe.model.checkout.Session;
+import com.stripe.net.Webhook;
 import com.sustanable.foodproduct.auth.CustomUserDetails;
+import com.sustanable.foodproduct.config.StripeConfig;
 import com.sustanable.foodproduct.dtos.PaymentRequest;
 import com.sustanable.foodproduct.dtos.PaymentResponse;
+import com.sustanable.foodproduct.entities.PaymentStatus;
 import com.sustanable.foodproduct.services.OrderService;
 import com.sustanable.foodproduct.services.PaymentService;
-import com.sustanable.foodproduct.services.PaymentServiceFactory;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
-@RequestMapping("/api/v1/payments")
+@RequestMapping("/api/v1/stripe")
 @RequiredArgsConstructor
-public class PaymentController {
+@Slf4j
+public class StripeController {
 
-    private final PaymentServiceFactory paymentServiceFactory;
+    @Qualifier("stripeService")
+    private final PaymentService stripeService;
     private final OrderService orderService;
+    private final StripeConfig stripeConfig;
 
-    @PostMapping("/create")
-    public ResponseEntity<PaymentResponse> createPayment(
+    /**
+     * Create a Stripe checkout session for an order
+     */
+    @PostMapping("/create-checkout-session")
+    public ResponseEntity<PaymentResponse> createCheckoutSession(
             @RequestBody PaymentRequest request,
-            @RequestParam(value = "provider", defaultValue = "paypal") String paymentProvider,
             @AuthenticationPrincipal CustomUserDetails userDetails) {
 
-        // Verify that the order belongs to the authenticated user
         try {
+            // Verify that the order belongs to the authenticated user
             orderService.getOrderById(request.getOrderId(), userDetails.getId());
+
+            // Create payment with Stripe
+            PaymentResponse response = stripeService.createPayment(request);
+            return ResponseEntity.ok(response);
+
         } catch (EntityNotFoundException e) {
             return ResponseEntity.badRequest()
                     .body(PaymentResponse.builder()
                             .success(false)
                             .message("Order not found or does not belong to user")
                             .build());
+        } catch (Exception e) {
+            log.error("Error creating Stripe checkout session", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(PaymentResponse.builder()
+                            .success(false)
+                            .message("Error creating checkout session: " + e.getMessage())
+                            .build());
         }
-
-        // Get the appropriate payment service and process payment
-        PaymentService paymentService = paymentServiceFactory.getPaymentService(paymentProvider);
-        PaymentResponse response = paymentService.createPayment(request);
-        return ResponseEntity.ok(response);
     }
 
+    /**
+     * Handle successful payment completion
+     */
     @GetMapping("/success")
-    public ResponseEntity<String> executePayment(
-            @RequestParam(value = "paymentId", required = false) String paymentId,
-            @RequestParam(value = "token", required = false) String token,
-            @RequestParam("PayerID") String payerId) {
-
-        // Use token as paymentId if paymentId is null (PayPal sometimes sends it as
-        // token)
-        String effectivePaymentId = (paymentId != null) ? paymentId : token;
-
-        if (effectivePaymentId == null) {
-            // Redirect to app with error
-            return ResponseEntity.status(HttpStatus.FOUND)
-                    .header("Location", "heroeatspay://payment/success?status=error&message=Missing payment ID")
-                    .body("Redirecting to app...");
-        }
-
+    public ResponseEntity<String> handleSuccess(@RequestParam("session_id") String sessionId) {
         try {
-            // This endpoint is PayPal-specific based on the PayerID parameter
-            PaymentService paymentService = paymentServiceFactory.getPaymentService("paypal");
-            PaymentResponse response = paymentService.executePayment(effectivePaymentId, payerId);
+            // Execute payment completion
+            PaymentResponse response = stripeService.executePayment(sessionId, null);
 
-            // Create redirect URL with payment status
             String redirectUrl;
             if (response.isSuccess()) {
-                redirectUrl = String.format("heroeatspay://payment/success?status=success&paymentId=%s&message=%s",
-                        effectivePaymentId, "Payment completed successfully");
+                redirectUrl = String.format(
+                        "heroeatspay://payment/stripe/success?status=success&sessionId=%s&message=%s",
+                        sessionId, "Payment completed successfully");
             } else {
-                redirectUrl = String.format("heroeatspay://payment/success?status=error&message=%s",
+                redirectUrl = String.format("heroeatspay://payment/stripe/success?status=error&message=%s",
                         response.getMessage());
             }
 
@@ -136,7 +143,8 @@ public class PaymentController {
                     .body(htmlResponse);
 
         } catch (Exception e) {
-            String errorRedirectUrl = String.format("heroeatspay://payment/success?status=error&message=%s",
+            log.error("Error handling Stripe success", e);
+            String errorRedirectUrl = String.format("heroeatspay://payment/stripe/success?status=error&message=%s",
                     "Payment processing failed");
 
             String errorHtml = String.format("""
@@ -187,17 +195,17 @@ public class PaymentController {
         }
     }
 
+    /**
+     * Handle payment cancellation
+     */
     @GetMapping("/cancel")
-    public ResponseEntity<String> cancelPayment(
-            @RequestParam("paymentId") String paymentId) {
+    public ResponseEntity<String> handleCancel(@RequestParam("session_id") String sessionId) {
+        // Cancel the payment
+        stripeService.cancelPayment(sessionId);
 
-        // Cancel the payment (for logging/audit purposes)
-        // This endpoint is PayPal-specific based on the URL structure
-        PaymentService paymentService = paymentServiceFactory.getPaymentService("paypal");
-        paymentService.cancelPayment(paymentId);
-
-        String redirectUrl = String.format("heroeatspay://payment/cancel?status=cancelled&paymentId=%s&message=%s",
-                paymentId, "Payment was cancelled by user");
+        String redirectUrl = String.format(
+                "heroeatspay://payment/stripe/cancel?status=cancelled&sessionId=%s&message=%s",
+                sessionId, "Payment was cancelled by user");
 
         String htmlResponse = String.format("""
                 <!DOCTYPE html>
@@ -244,5 +252,65 @@ public class PaymentController {
         return ResponseEntity.ok()
                 .header("Content-Type", "text/html")
                 .body(htmlResponse);
+    }
+
+    /**
+     * Webhook endpoint for Stripe events
+     */
+    @PostMapping("/webhook")
+    public ResponseEntity<String> handleWebhook(
+            @RequestBody String payload,
+            @RequestHeader("Stripe-Signature") String sigHeader) {
+
+        try {
+            Event event = Webhook.constructEvent(payload, sigHeader, stripeConfig.getStripeWebhookSecret());
+
+            // Handle the event
+            switch (event.getType()) {
+                case "checkout.session.completed":
+                    handleCheckoutSessionCompleted(event);
+                    break;
+                case "payment_intent.succeeded":
+                    handlePaymentIntentSucceeded(event);
+                    break;
+                case "payment_intent.payment_failed":
+                    handlePaymentIntentFailed(event);
+                    break;
+                default:
+                    log.info("Unhandled event type: " + event.getType());
+            }
+
+            return ResponseEntity.ok("Success");
+
+        } catch (SignatureVerificationException e) {
+            log.error("Invalid signature", e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid signature");
+        } catch (Exception e) {
+            log.error("Error handling webhook", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Webhook error");
+        }
+    }
+
+    private void handleCheckoutSessionCompleted(Event event) {
+        try {
+            Session session = (Session) event.getDataObjectDeserializer().getObject().orElse(null);
+            if (session != null && session.getMetadata().containsKey("orderId")) {
+                Long orderId = Long.valueOf(session.getMetadata().get("orderId"));
+                orderService.updatePaymentInfo(orderId, session.getId(), PaymentStatus.COMPLETED);
+                log.info("Payment completed for order: " + orderId);
+            }
+        } catch (Exception e) {
+            log.error("Error handling checkout session completed", e);
+        }
+    }
+
+    private void handlePaymentIntentSucceeded(Event event) {
+        log.info("Payment intent succeeded: " + event.getId());
+        // Additional handling if needed
+    }
+
+    private void handlePaymentIntentFailed(Event event) {
+        log.info("Payment intent failed: " + event.getId());
+        // Additional handling if needed
     }
 }

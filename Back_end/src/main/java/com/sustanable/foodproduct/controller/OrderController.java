@@ -19,9 +19,9 @@ import com.sustanable.foodproduct.dtos.CreateOrderRequest;
 import com.sustanable.foodproduct.dtos.OrderDto;
 import com.sustanable.foodproduct.dtos.PaymentRequest;
 import com.sustanable.foodproduct.dtos.PaymentResponse;
-import com.sustanable.foodproduct.entities.OrderEntity;
 import com.sustanable.foodproduct.services.OrderService;
 import com.sustanable.foodproduct.services.PaymentService;
+import com.sustanable.foodproduct.services.PaymentServiceFactory;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +31,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class OrderController {
     private final OrderService orderService;
-    private final PaymentService paymentService;
+    private final PaymentServiceFactory paymentServiceFactory;
 
     @PostMapping
     public ResponseEntity<OrderDto> createOrder(
@@ -44,21 +44,23 @@ public class OrderController {
     @PostMapping("/{orderId}/pay")
     public ResponseEntity<PaymentResponse> initiatePayment(
             @PathVariable Long orderId,
+            @RequestParam(value = "provider", defaultValue = "paypal") String paymentProvider,
             @AuthenticationPrincipal CustomUserDetails userDetails) {
         try {
             // Check if order belongs to user
-            OrderEntity order = orderService.getOrderById(orderId, userDetails.getId());
+            orderService.getOrderById(orderId, userDetails.getId());
 
             // Create payment request
             PaymentRequest paymentRequest = PaymentRequest.builder()
                     .orderId(orderId)
                     .currency("USD")
-                    .method("paypal")
+                    .method(paymentProvider.toLowerCase())
                     .intent("CAPTURE")
                     .description("Payment for order #" + orderId)
                     .build();
 
-            // Process payment with PayPal
+            // Get the appropriate payment service and process payment
+            PaymentService paymentService = paymentServiceFactory.getPaymentService(paymentProvider);
             PaymentResponse response = paymentService.createPayment(paymentRequest);
             return ResponseEntity.ok(response);
         } catch (EntityNotFoundException e) {
