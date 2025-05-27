@@ -63,6 +63,7 @@ public class SecurityConfiguration {
                         .requestMatchers(POST, "/api/v1/stores/**").permitAll()
                         .requestMatchers(POST, "/api/v1/products/**").permitAll()
                         .requestMatchers("/api/v1/payments/**").permitAll()
+                        .requestMatchers("/api/v1/stripe/**").permitAll()
 
                         // Management endpoints
                         .requestMatchers("/api/v1/management/**").hasAnyRole(ADMIN.name(), MANAGER.name())
