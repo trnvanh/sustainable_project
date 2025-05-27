@@ -2,12 +2,13 @@ import api from "@/api/axiosConfig";
 import CategoryCard from '@/components/CategoryCard';
 import OfferCard from '@/components/OfferCard';
 import { useFavoritesStore } from "@/store/useFavoritesStore";
-import { useProductsStore } from '@/store/useProductsStore';
+import { useProductsStore } from "@/store/useProductsStore";
+// import { useFavoritesStore } from "@/store/useFavoritesStore";
 import { CategoryResponse } from '@/types/categoryTypes';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from "expo-router";
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, FlatList, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, FlatList, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { showMessage } from "react-native-flash-message";
 
 export default function Explore() {
@@ -23,6 +24,7 @@ export default function Explore() {
         loading,
         setSelectedOffer,
         setSelectedCategory,
+        isSearchMode,
     } = useProductsStore();
 
     const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
@@ -111,10 +113,15 @@ export default function Explore() {
     return (
         <ScrollView style={styles.container}>
             {/* Search bar */}
-            <View style={styles.searchContainer}>
-                <Ionicons name="search" size={20} color="#999" style={{ marginRight: 8 }} />
-                <TextInput placeholder="Search" style={styles.searchInput} />
-            </View>
+            <TouchableOpacity
+                style={styles.searchContainer}
+                onPress={() => router.push('/search')}
+            >
+                <View style={styles.searchButton}>
+                    <Ionicons name="search" size={20} color="#999" style={{ marginRight: 8 }} />
+                    <Text style={styles.searchButtonText}>Search products, stores...</Text>
+                </View>
+            </TouchableOpacity>
 
             {/* Current Location */}
             <View style={styles.locationContainer}>
@@ -144,7 +151,7 @@ export default function Explore() {
                 <View style={styles.section}>
                     <View style={styles.sectionHeader}>
                         <Text style={styles.sectionTitle}>
-                            {categories.find(cat => cat.id === selectedCategoryId)?.name || 'Category Products'}
+                            {categories.find((cat: CategoryResponse) => cat.id === selectedCategoryId)?.name || 'Category Products'}
                         </Text>
                         <TouchableOpacity onPress={() => setSelectedCategoryId(null)}>
                             <Text style={styles.seeAll}>Clear</Text>
@@ -210,16 +217,19 @@ const styles = StyleSheet.create({
         backgroundColor: '#C4DAD2',
     },
     searchContainer: {
+        marginBottom: 12,
+    },
+    searchButton: {
         flexDirection: 'row',
         alignItems: 'center',
         backgroundColor: '#E8E8E8',
-        paddingHorizontal: 12,
-        borderRadius: 8,
-        marginBottom: 12,
+        paddingHorizontal: 16,
+        paddingVertical: 12,
+        borderRadius: 25,
     },
-    searchInput: {
-        flex: 1,
-        height: 40,
+    searchButtonText: {
+        color: '#999',
+        fontSize: 14,
     },
     locationContainer: {
         flexDirection: 'row',
