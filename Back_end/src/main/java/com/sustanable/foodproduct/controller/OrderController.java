@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -98,6 +99,14 @@ public class OrderController {
             @PathVariable Long orderId,
             @AuthenticationPrincipal CustomUserDetails userDetails) {
         orderService.cancelOrder(orderId, userDetails.getId());
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/{orderId}")
+    public ResponseEntity<Void> deleteOrder(
+            @PathVariable Long orderId,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+        orderService.deleteOrder(orderId, userDetails.getId());
         return ResponseEntity.ok().build();
     }
 

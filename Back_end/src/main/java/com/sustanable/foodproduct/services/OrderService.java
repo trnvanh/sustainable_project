@@ -18,6 +18,15 @@ public interface OrderService {
     void cancelOrder(Long orderId, Integer userId);
 
     /**
+     * Completely remove an order from the system
+     * This is different from cancelOrder which only changes the status
+     * 
+     * @param orderId The ID of the order to delete
+     * @param userId  The ID of the user who owns the order
+     */
+    void deleteOrder(Long orderId, Integer userId);
+
+    /**
      * Update the payment information for an order
      * 
      * @param orderId       The ID of the order to update

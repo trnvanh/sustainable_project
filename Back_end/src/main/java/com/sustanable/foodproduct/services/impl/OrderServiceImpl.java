@@ -13,7 +13,6 @@ import com.sustanable.foodproduct.entities.OrderStatus;
 import com.sustanable.foodproduct.entities.PaymentStatus;
 import com.sustanable.foodproduct.entities.ProductEntity;
 import com.sustanable.foodproduct.entities.User;
-import com.sustanable.foodproduct.repositories.OrderItemRepository;
 import com.sustanable.foodproduct.repositories.OrderRepository;
 import com.sustanable.foodproduct.repositories.ProductRepository;
 import com.sustanable.foodproduct.repositories.UserRepository;
@@ -26,7 +25,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
-    private final OrderItemRepository orderItemRepository;
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
 
@@ -117,6 +115,30 @@ public class OrderServiceImpl implements OrderService {
 
         order.setStatus(OrderStatus.CANCELLED);
         orderRepository.save(order);
+    }
+
+    @Override
+    @Transactional
+    public void deleteOrder(Long orderId, Integer userId) {
+        OrderEntity order = getOrderById(orderId, userId);
+
+        // Only allow deletion of pending or cancelled orders to prevent issues with
+        // paid orders
+        if (order.getStatus() != OrderStatus.PENDING && order.getStatus() != OrderStatus.CANCELLED) {
+            throw new IllegalStateException("Can only delete pending or cancelled orders");
+        }
+
+        // If order is pending, restore product portions before deletion
+        if (order.getStatus() == OrderStatus.PENDING) {
+            for (OrderItemEntity item : order.getItems()) {
+                ProductEntity product = item.getProduct();
+                product.setPortionsLeft(product.getPortionsLeft() + item.getQuantity());
+                productRepository.save(product);
+            }
+        }
+
+        // Delete the order (cascade will handle order items)
+        orderRepository.delete(order);
     }
 
     @Override
