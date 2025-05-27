@@ -1,5 +1,3 @@
-import { CartItem, useCartStore } from '@/store/useCartStore';
-import { useOrderStore } from '@/store/useOrderStore';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import React from 'react';
@@ -14,10 +12,16 @@ import {
     View
 } from 'react-native';
 import { showMessage } from 'react-native-flash-message';
+import { PaymentProviderSelector } from '../../components/PaymentProviderSelector';
+import { CartItem, useCartStore } from '../../store/useCartStore';
+import { useOrderStore } from '../../store/useOrderStore';
 
 export default function CartScreen() {
     // Use useState to track key changes to force re-renders
     const [cartUpdateKey, setCartUpdateKey] = React.useState(0);
+    // Payment provider selection state
+    const [showPaymentSelector, setShowPaymentSelector] = React.useState(false);
+    const [selectedPaymentProvider, setSelectedPaymentProvider] = React.useState<"paypal" | "stripe" | null>(null);
 
     const {
         items,
@@ -77,7 +81,7 @@ export default function CartScreen() {
                 return;
             }
 
-            const itemExists = items.some((i) => i.id === item.id);
+            const itemExists = items.some((i: CartItem) => i.id === item.id);
             if (!itemExists) {
                 console.error(`Item ${item.id} not found`);
                 showMessage({
@@ -92,7 +96,7 @@ export default function CartScreen() {
             await removeFromCart(item.id);
 
             const currentItems = useCartStore.getState().items;
-            const stillExists = currentItems.some((i) => i.id === item.id);
+            const stillExists = currentItems.some((i: CartItem) => i.id === item.id);
 
             if (stillExists) {
                 console.error('Failed to remove item');
@@ -147,6 +151,18 @@ export default function CartScreen() {
             return;
         }
 
+        // If payment provider is already selected, proceed directly
+        if (selectedPaymentProvider) {
+            await handlePaymentProviderSelected(selectedPaymentProvider);
+        } else {
+            // Show payment provider selector first
+            setShowPaymentSelector(true);
+        }
+    };
+
+    const handlePaymentProviderSelected = async (provider: "paypal" | "stripe") => {
+        setSelectedPaymentProvider(provider);
+
         // Prevent multiple submissions
         if (orderLoading) {
             return;
@@ -157,17 +173,17 @@ export default function CartScreen() {
         setError(null);
 
         try {
-            // Use default pickup time (1 hour from now)
-            const success = await createOrder(items);
+            // Use selected payment provider
+            const success = await createOrder(items, undefined, provider);
             if (success) {
                 clearCart(); // Clear cart after successful order creation
                 showMessage({
-                    message: 'Order created successfully! Redirecting to PayPal for payment...',
+                    message: `Order created successfully! Redirecting to ${provider === 'paypal' ? 'PayPal' : 'Stripe'} for payment...`,
                     type: 'success',
                     icon: 'success',
                     duration: 3000,
                 });
-                // Navigate to orders page after a short delay to allow PayPal redirect
+                // Navigate to orders page after a short delay to allow payment redirect
                 setTimeout(() => {
                     router.push('/orders');
                 }, 2500);
@@ -329,6 +345,26 @@ export default function CartScreen() {
             />
 
             <View style={styles.footer}>
+                {/* Show selected payment provider if available */}
+                {selectedPaymentProvider && (
+                    <View style={styles.selectedProviderContainer}>
+                        <Ionicons
+                            name={selectedPaymentProvider === 'paypal' ? 'logo-paypal' : 'card'}
+                            size={20}
+                            color={selectedPaymentProvider === 'paypal' ? '#0070ba' : '#6772e5'}
+                        />
+                        <Text style={styles.selectedProviderText}>
+                            {selectedPaymentProvider === 'paypal' ? 'PayPal' : 'Credit Card'} selected
+                        </Text>
+                        <TouchableOpacity
+                            onPress={() => setSelectedPaymentProvider(null)}
+                            style={styles.changeProviderButton}
+                        >
+                            <Text style={styles.changeProviderText}>Change</Text>
+                        </TouchableOpacity>
+                    </View>
+                )}
+
                 <View style={styles.totalContainer}>
                     <Text style={styles.totalLabel}>Total:</Text>
                     <Text style={styles.totalPrice}>€{getTotalPrice().toFixed(2)}</Text>
@@ -340,7 +376,12 @@ export default function CartScreen() {
                     disabled={loading || orderLoading}
                 >
                     <Text style={styles.checkoutButtonText}>
-                        {loading || orderLoading ? 'Processing...' : 'Proceed to Checkout'}
+                        {loading || orderLoading
+                            ? 'Processing...'
+                            : selectedPaymentProvider
+                                ? `Pay with ${selectedPaymentProvider === 'paypal' ? 'PayPal' : 'Credit Card'}`
+                                : 'Choose Payment & Checkout'
+                        }
                     </Text>
                 </TouchableOpacity>
 
@@ -356,6 +397,14 @@ export default function CartScreen() {
                     <Text style={styles.debugButtonText}>•</Text>
                 </TouchableOpacity>
             </View>
+
+            {/* Payment Provider Selection Modal */}
+            <PaymentProviderSelector
+                visible={showPaymentSelector}
+                onClose={() => setShowPaymentSelector(false)}
+                onSelectProvider={handlePaymentProviderSelected}
+                selectedProvider={selectedPaymentProvider}
+            />
         </SafeAreaView>
     );
 }
@@ -565,5 +614,29 @@ const styles = StyleSheet.create({
     debugButtonText: {
         fontSize: 20,
         color: '#ccc',
+    },
+    selectedProviderContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#f8f9fa',
+        paddingHorizontal: 12,
+        paddingVertical: 8,
+        borderRadius: 8,
+        marginBottom: 12,
+    },
+    selectedProviderText: {
+        fontSize: 14,
+        color: '#333',
+        marginLeft: 8,
+        flex: 1,
+    },
+    changeProviderButton: {
+        paddingHorizontal: 8,
+        paddingVertical: 4,
+    },
+    changeProviderText: {
+        fontSize: 14,
+        color: '#4CAF50',
+        fontWeight: '500',
     },
 });

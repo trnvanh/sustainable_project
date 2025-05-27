@@ -47,12 +47,17 @@ export const createOrderApi = async (
   }
 };
 
-// Pay for an order
+// Pay for an order (with optional payment provider)
 export const payOrderApi = async (
-  orderId: string
+  orderId: string,
+  paymentProvider?: "paypal" | "stripe"
 ): Promise<OrderApiResponse> => {
   try {
-    const response = await api.post(`/orders/${orderId}/pay`);
+    const url = paymentProvider
+      ? `/orders/${orderId}/pay?provider=${paymentProvider}`
+      : `/orders/${orderId}/pay`; // Default to PayPal for backward compatibility
+
+    const response = await api.post(url);
     return {
       success: true,
       data: response.data,
@@ -134,6 +139,23 @@ export const updateOrderStatusApi = async (
     return {
       success: false,
       message: error.response?.data?.message || "Failed to update order status",
+    };
+  }
+};
+
+// Get available payment providers
+export const getPaymentProvidersApi = async (): Promise<OrderApiResponse> => {
+  try {
+    const response = await api.get("/payment-providers");
+    return {
+      success: true,
+      data: response.data,
+    };
+  } catch (error: any) {
+    return {
+      success: false,
+      message:
+        error.response?.data?.message || "Failed to fetch payment providers",
     };
   }
 };

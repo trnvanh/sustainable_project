@@ -48,8 +48,15 @@ interface OrderStore {
   error: string | null;
 
   // Actions
-  createOrder: (cartItems: CartItem[], pickupTime?: string) => Promise<boolean>;
-  payOrder: (orderId: string) => Promise<boolean>;
+  createOrder: (
+    cartItems: CartItem[],
+    pickupTime?: string,
+    paymentProvider?: "paypal" | "stripe"
+  ) => Promise<boolean>;
+  payOrder: (
+    orderId: string,
+    paymentProvider?: "paypal" | "stripe"
+  ) => Promise<boolean>;
   cancelOrder: (orderId: string) => Promise<boolean>;
   fetchOrders: () => Promise<void>;
   getOrderById: (orderId: string) => Promise<Order | null>;
@@ -68,7 +75,8 @@ export const useOrderStore = create<OrderStore>()(
 
       createOrder: async (
         cartItems: CartItem[],
-        pickupTime?: string
+        pickupTime?: string,
+        paymentProvider?: "paypal" | "stripe"
       ): Promise<boolean> => {
         set({ loading: true, error: null });
         try {
@@ -101,12 +109,15 @@ export const useOrderStore = create<OrderStore>()(
 
             // Automatically initiate payment after successful order creation
             try {
-              const paymentResponse = await payOrderApi(response.data.id);
+              const paymentResponse = await payOrderApi(
+                response.data.id,
+                paymentProvider
+              );
               if (
                 paymentResponse.success &&
                 paymentResponse.data?.redirectUrl
               ) {
-                // Open PayPal checkout page in the system browser
+                // Open payment checkout page in the system browser
                 const { Linking } = require("react-native");
                 await Linking.openURL(paymentResponse.data.redirectUrl);
               } else {
@@ -138,16 +149,19 @@ export const useOrderStore = create<OrderStore>()(
         }
       },
 
-      payOrder: async (orderId: string): Promise<boolean> => {
+      payOrder: async (
+        orderId: string,
+        paymentProvider?: "paypal" | "stripe"
+      ): Promise<boolean> => {
         set({ loading: true, error: null });
         try {
-          const response = await payOrderApi(orderId);
+          const response = await payOrderApi(orderId, paymentProvider);
           if (response.success && response.data?.redirectUrl) {
-            // Open PayPal checkout page in the system browser
+            // Open payment checkout page in the system browser
             const { Linking } = require("react-native");
             await Linking.openURL(response.data.redirectUrl);
 
-            // Note: Payment status will be updated when the user returns from PayPal
+            // Note: Payment status will be updated when the user returns from payment provider
             // or through a webhook notification from the backend
             set({ loading: false });
             return true;
