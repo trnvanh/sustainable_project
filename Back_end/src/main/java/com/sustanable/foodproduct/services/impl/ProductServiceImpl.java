@@ -1,5 +1,13 @@
 package com.sustanable.foodproduct.services.impl;
 
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.sustanable.foodproduct.entities.CategoryEntity;
 import com.sustanable.foodproduct.entities.ProductEntity;
 import com.sustanable.foodproduct.entities.StoreEntity;
@@ -11,14 +19,9 @@ import com.sustanable.foodproduct.repositories.StoreRepository;
 import com.sustanable.foodproduct.repositories.UserFavoriteProductRepository;
 import com.sustanable.foodproduct.repositories.UserRepository;
 import com.sustanable.foodproduct.services.ProductService;
+
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -116,5 +119,52 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public boolean isFavorited(Long productId, Integer userId) {
         return userFavoriteProductRepository.existsByUserIdAndProductId(userId, productId);
+    }
+
+    // Search methods implementation
+    @Override
+    public List<ProductEntity> searchProductsByName(String name) {
+        if (name == null || name.trim().isEmpty()) {
+            return getAllProducts();
+        }
+        return productRepository.findByNameContainingIgnoreCase(name.trim());
+    }
+
+    @Override
+    public List<ProductEntity> searchProductsByDescription(String description) {
+        if (description == null || description.trim().isEmpty()) {
+            return getAllProducts();
+        }
+        return productRepository.findByDescriptionContainingIgnoreCase(description.trim());
+    }
+
+    @Override
+    public List<ProductEntity> searchProducts(String searchTerm) {
+        if (searchTerm == null || searchTerm.trim().isEmpty()) {
+            return getAllProducts();
+        }
+        return productRepository.findByNameOrDescriptionContainingIgnoreCase(searchTerm.trim());
+    }
+
+    @Override
+    public List<ProductEntity> searchProductsByStore(String storeName) {
+        if (storeName == null || storeName.trim().isEmpty()) {
+            return getAllProducts();
+        }
+        return productRepository.findByStoreNameContainingIgnoreCase(storeName.trim());
+    }
+
+    @Override
+    public List<ProductEntity> advancedSearchProducts(String searchTerm, Long categoryId, BigDecimal minPrice,
+            BigDecimal maxPrice) {
+        // Validate price range
+        if (minPrice != null && maxPrice != null && minPrice.compareTo(maxPrice) > 0) {
+            throw new IllegalArgumentException("Minimum price cannot be greater than maximum price");
+        }
+
+        // Trim search term
+        String trimmedSearchTerm = (searchTerm != null && !searchTerm.trim().isEmpty()) ? searchTerm.trim() : null;
+
+        return productRepository.searchProducts(trimmedSearchTerm, categoryId, minPrice, maxPrice);
     }
 }
