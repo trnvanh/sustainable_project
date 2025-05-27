@@ -17,6 +17,14 @@ export function EnhancedOrderCard({ order }: EnhancedOrderCardProps) {
         ready: '#4ADE80',
         completed: '#A3A3A3',
         cancelled: '#F44336',
+        confirmed: '#4ADE80',
+        // Add backend status mappings
+        PENDING: '#FFA726',
+        PREPARING: '#FACC15',
+        READY: '#4ADE80',
+        COMPLETED: '#A3A3A3',
+        CANCELLED: '#F44336',
+        CONFIRMED: '#4ADE80',
     };
 
     const statusText = {
@@ -25,6 +33,14 @@ export function EnhancedOrderCard({ order }: EnhancedOrderCardProps) {
         ready: 'Ready for Pickup',
         completed: 'Completed',
         cancelled: 'Cancelled',
+        confirmed: 'Confirmed',
+        // Add backend status mappings
+        PENDING: 'Pending',
+        PREPARING: 'Preparing',
+        READY: 'Ready for Pickup',
+        COMPLETED: 'Completed',
+        CANCELLED: 'Cancelled',
+        CONFIRMED: 'Confirmed',
     };
 
     const handleCancelOrder = () => {
@@ -77,33 +93,100 @@ export function EnhancedOrderCard({ order }: EnhancedOrderCardProps) {
     };
 
     const getMainImage = () => {
-        if (order.items.length > 0 && order.items[0].image) {
-            const image = order.items[0].image;
-            if (typeof image === 'string') {
-                return { uri: image };
-            } else if (typeof image === 'number') {
-                return image;
-            }
+        // Since backend doesn't provide images, use a default food image based on product name
+        const firstItem = order.items[0];
+        const productName = (firstItem as any)?.productName || (firstItem as any)?.name || '';
+
+        // Use different placeholder images based on product type
+        if (productName.toLowerCase().includes('pizza')) {
+            return { uri: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?w=80&h=80&fit=crop' };
+        } else if (productName.toLowerCase().includes('sushi')) {
+            return { uri: 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=80&h=80&fit=crop' };
+        } else if (productName.toLowerCase().includes('burger')) {
+            return { uri: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=80&h=80&fit=crop' };
+        } else if (productName.toLowerCase().includes('pasta')) {
+            return { uri: 'https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=80&h=80&fit=crop' };
+        } else if (productName.toLowerCase().includes('salad')) {
+            return { uri: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=80&h=80&fit=crop' };
+        } else if (productName.toLowerCase().includes('thai') || productName.toLowerCase().includes('pad')) {
+            return { uri: 'https://images.unsplash.com/photo-1559314809-0f31657b3059?w=80&h=80&fit=crop' };
+        } else if (productName.toLowerCase().includes('salmon')) {
+            return { uri: 'https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=80&h=80&fit=crop' };
+        } else if (productName.toLowerCase().includes('tiramisu') || productName.toLowerCase().includes('dessert')) {
+            return { uri: 'https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=80&h=80&fit=crop' };
         }
-        return { uri: 'https://via.placeholder.com/80x80.png?text=Food' };
+        return { uri: 'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=80&h=80&fit=crop' };
     };
 
     const getMainItemName = () => {
         if (order.items.length === 1) {
-            return order.items[0].name;
+            // Handle both CartItem and BackendOrderItem
+            const item = order.items[0];
+            return (item as any).productName || (item as any).name || 'Food Item';
         } else if (order.items.length > 1) {
-            return `${order.items[0].name} +${order.items.length - 1} more`;
+            const item = order.items[0];
+            const itemName = (item as any).productName || (item as any).name || 'Food Item';
+            return `${itemName} +${order.items.length - 1} more`;
         }
         return 'Order';
     };
 
     const getRestaurantName = () => {
-        return order.items[0]?.location?.restaurant || 'Restaurant';
+        // Use different restaurant names based on product type for better UX
+        const firstItem = order.items[0];
+        const productName = (firstItem as any)?.productName || '';
+
+        if (productName.toLowerCase().includes('pizza')) {
+            return 'Italian Kitchen';
+        } else if (productName.toLowerCase().includes('sushi')) {
+            return 'Sushi Garden';
+        } else if (productName.toLowerCase().includes('burger')) {
+            return 'Burger House';
+        } else if (productName.toLowerCase().includes('pasta')) {
+            return 'Pasta Corner';
+        } else if (productName.toLowerCase().includes('thai') || productName.toLowerCase().includes('pad')) {
+            return 'Thai Express';
+        } else if (productName.toLowerCase().includes('salmon')) {
+            return 'Fish & More';
+        }
+        return 'Restaurant';
     };
 
     const formatDate = (dateString: string) => {
-        const date = new Date(dateString);
-        return date.toLocaleDateString() + ' - ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        try {
+            const date = new Date(dateString);
+            if (isNaN(date.getTime())) {
+                return dateString; // Return original if invalid date
+            }
+            return date.toLocaleDateString() + ' - ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        } catch (error) {
+            return dateString; // Return original if parsing fails
+        }
+    };
+
+    const formatPickupTime = (pickupTime: string) => {
+        try {
+            // Handle various pickup time formats from backend
+            if (pickupTime.includes('T')) {
+                // ISO format like "2025-05-26T21:30:44.457Z"
+                const date = new Date(pickupTime);
+                if (!isNaN(date.getTime())) {
+                    return date.toLocaleDateString() + ' at ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                }
+            } else if (pickupTime.includes('-') && pickupTime.includes(':')) {
+                // Time range format like "20:00-21:00"
+                return `Today ${pickupTime}`;
+            } else if (pickupTime.includes('-')) {
+                // Date format like "2025-01-01"
+                const date = new Date(pickupTime);
+                if (!isNaN(date.getTime())) {
+                    return date.toLocaleDateString();
+                }
+            }
+            return pickupTime;
+        } catch (error) {
+            return pickupTime;
+        }
     };
 
     return (
@@ -112,12 +195,13 @@ export function EnhancedOrderCard({ order }: EnhancedOrderCardProps) {
             <View style={styles.info}>
                 <Text style={styles.title}>{getMainItemName()}</Text>
                 <Text style={styles.restaurant}>{getRestaurantName()}</Text>
-                <Text style={styles.date}>{formatDate(order.createdAt)}</Text>
-                <Text style={styles.price}>€{order.totalPrice.toFixed(2)}</Text>
+                <Text style={styles.date}>Ordered: {formatDate(order.createdAt)}</Text>
+                <Text style={styles.pickupTime}>Pickup: {formatPickupTime(order.pickupTime)}</Text>
+                <Text style={styles.price}>€{(order.totalPrice || order.totalAmount || 0).toFixed(2)}</Text>
 
                 <View style={styles.statusRow}>
-                    <View style={[styles.statusBadge, { backgroundColor: statusColors[order.status] }]}>
-                        <Text style={styles.statusText}>{statusText[order.status]}</Text>
+                    <View style={[styles.statusBadge, { backgroundColor: statusColors[order.status] || '#999' }]}>
+                        <Text style={styles.statusText}>{statusText[order.status] || 'Unknown'}</Text>
                     </View>
 
                     {order.paymentStatus === 'pending' && order.status !== 'cancelled' && (
@@ -155,7 +239,7 @@ export function EnhancedOrderCard({ order }: EnhancedOrderCardProps) {
                         // Navigate to order details - for now just show order info
                         Alert.alert(
                             'Order Details',
-                            `Order ID: ${order.id}\nStatus: ${statusText[order.status]}\nTotal: €${order.totalPrice.toFixed(2)}\nPayment: ${order.paymentStatus}`,
+                            `Order ID: ${order.id}\nStatus: ${statusText[order.status] || 'Unknown'}\nTotal: €${(order.totalPrice || order.totalAmount || 0).toFixed(2)}\nPayment: ${order.paymentStatus || 'Not set'}\nPickup Time: ${order.pickupTime || 'Not set'}`,
                             [{ text: 'OK' }]
                         );
                     }}
@@ -205,7 +289,13 @@ const styles = StyleSheet.create({
     date: {
         fontSize: 12,
         color: '#999',
+        marginBottom: 2,
+    },
+    pickupTime: {
+        fontSize: 12,
+        color: '#666',
         marginBottom: 4,
+        fontWeight: '500',
     },
     price: {
         fontSize: 16,

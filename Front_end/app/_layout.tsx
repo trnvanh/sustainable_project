@@ -79,20 +79,26 @@ function AppLayout() {
                         onPress={() => router.push('/explore')}
                     />
                     <NavItem
+                        icon="receipt"
+                        label="My Orders"
+                        active={pathname === '/orders'}
+                        onPress={() => router.push('/orders')}
+                    />
+                    <NavItem
                         icon="heart"
                         label="Favorite"
                         active={pathname === '/favorite'}
                         onPress={() => router.push('/favorite')}
+                    />
+                    <CartNavItem
+                        active={pathname === '/cart'}
+                        onPress={() => router.push('/cart')}
                     />
                     <NavItem
                         icon="person"
                         label="Profile"
                         active={pathname === '/profile'}
                         onPress={() => router.push('/profile')}
-                    />
-                    <CartNavItem
-                        active={pathname === '/cart'}
-                        onPress={() => router.push('/cart')}
                     />
                 </View>
             )}
@@ -122,7 +128,7 @@ function NavItem({ icon, label, active, onPress }: {
         <TouchableOpacity style={styles.navItem} onPress={onPress}>
             <Ionicons
                 name={active ? icon : `${icon}-outline` as keyof typeof Ionicons.glyphMap}
-                size={24}
+                size={22}
                 color={active ? '#ff6600' : '#fff'}
             />
             <Text style={[styles.navLabel, { color: active ? '#ff6600' : '#fff' }]}>
@@ -163,7 +169,8 @@ const styles = StyleSheet.create({
     navBar: {
         flexDirection: 'row',
         justifyContent: 'space-around',
-        paddingVertical: 10,
+        paddingVertical: 8,
+        paddingHorizontal: 4,
         paddingBottom: 20,
         backgroundColor: '#16423C',
         borderTopWidth: 1,
@@ -175,10 +182,13 @@ const styles = StyleSheet.create({
     },
     navItem: {
         alignItems: 'center',
+        flex: 1,
+        paddingHorizontal: 2,
     },
     navLabel: {
-        fontSize: 12,
-        marginTop: 4,
+        fontSize: 10,
+        marginTop: 2,
+        textAlign: 'center',
     },
     cartIconContainer: {
         position: 'relative',

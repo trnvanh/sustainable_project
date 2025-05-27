@@ -61,13 +61,16 @@ export default function OrdersScreen() {
     // Handle app state changes to refresh orders when returning from PayPal
     useAppStateHandler();
 
-    // Separate active and completed orders
-    const activeOrders = orders.filter(order =>
-        ['pending', 'preparing', 'ready'].includes(order.status)
-    );
-    const completedOrders = orders.filter(order =>
-        ['completed', 'cancelled'].includes(order.status)
-    );
+    // Separate active and completed orders with better status mapping
+    const activeOrders = orders.filter(order => {
+        const status = order.status.toLowerCase();
+        return ['pending', 'preparing', 'ready'].includes(status);
+    });
+
+    const completedOrders = orders.filter(order => {
+        const status = order.status.toLowerCase();
+        return ['completed', 'cancelled', 'confirmed'].includes(status);
+    });
 
     useEffect(() => {
         fetchOrders();
