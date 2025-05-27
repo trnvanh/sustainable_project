@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
-import {View, Text, TextInput, StyleSheet, Pressable, Alert, ActivityIndicator} from 'react-native';
-import {Link, router} from 'expo-router';
 import { useAuthStore } from '@/store/useAuthStore';
-import {showMessage} from "react-native-flash-message";
+import { router } from 'expo-router';
+import React, { useState } from 'react';
+import { ActivityIndicator, Alert, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('tanh@gmail.com');
@@ -23,10 +22,10 @@ export default function LoginScreen() {
 
   if (loading) {
     return (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#4CAF50" />
-          <Text style={{ marginTop: 8, color: '#555'}}>Loading login...</Text>
-        </View>
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#4CAF50" />
+        <Text style={{ marginTop: 8, color: '#555' }}>Loading login...</Text>
+      </View>
     );
   }
 
@@ -56,10 +55,8 @@ export default function LoginScreen() {
         <Text style={styles.linkText}>Forget password?</Text>
       </Pressable>
 
-      <Pressable style={styles.link}>
-        <Text style={styles.linkText}>
-          <Link href="/welcome">Don't have account yet?</Link>
-        </Text>
+      <Pressable style={styles.link} onPress={() => router.push('/register')}>
+        <Text style={styles.linkText}>Don't have an account? Sign Up</Text>
       </Pressable>
     </View>
   );

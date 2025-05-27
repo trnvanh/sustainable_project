@@ -13,7 +13,7 @@ const AuthGuard: React.FC<AuthGuardProps> = ({ children }) => {
 
     React.useEffect(() => {
         if (!isAuthenticated) {
-            router.replace('/prelogin');
+            router.replace('/login');
         }
     }, [isAuthenticated]);
 

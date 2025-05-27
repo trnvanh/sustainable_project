@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
-import {View, Text, TextInput, Pressable, StyleSheet, ActivityIndicator} from 'react-native';
-import {router, useRouter} from 'expo-router';
 import { useAuthStore } from '@/store/useAuthStore';
-import {showMessage} from "react-native-flash-message";
+import { useRouter } from 'expo-router';
+import React, { useState } from 'react';
+import { ActivityIndicator, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
 /**
  * @fileoverview This file defines the `Register` component, which provides a user interface
@@ -21,6 +20,7 @@ export default function Register() {
   const [firstname, setFirstname] = useState('');
   const [lastname, setLastname] = useState('');
   const [email, setEmail] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null); // fallback error message
   const {
@@ -31,12 +31,12 @@ export default function Register() {
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
   const isStrongPassword = (password: string) =>
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/.test(password);  
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/.test(password);
 
   const handleRegister = async () => {
     setError(null); // Clear previous errors
 
-    if (!firstname || !lastname  || !email || !password) {
+    if (!firstname || !lastname || !email || !phoneNumber || !password) {
       setError('Please fill in all fields');
       return;
     }
@@ -54,23 +54,8 @@ export default function Register() {
     }
 
     try {
-      const res = await register(firstname, lastname, email, password);
-      if (res.success) {
-        showMessage({
-          message: 'Success',
-          description: 'Registration successful!',
-          type: 'success',
-          icon: 'success',
-        });
-        router.replace('/explore');
-      } else {
-        showMessage({
-          message: 'Failed',
-          description: 'Registration Failed!',
-          type: 'danger',
-          icon: 'danger',
-        });
-      }
+      await register(firstname, lastname, email, phoneNumber, password);
+      // Navigation is handled in the store
     } catch (err: any) {
       console.error('Registration error:', err);
       setError(err?.message || 'Registration failed. Please try again.');
@@ -79,10 +64,10 @@ export default function Register() {
 
   if (loading) {
     return (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#4CAF50" />
-          <Text style={{ marginTop: 8, color: '#555'}}>Loading register...</Text>
-        </View>
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#4CAF50" />
+        <Text style={{ marginTop: 8, color: '#555' }}>Loading register...</Text>
+      </View>
     );
   }
 
@@ -99,10 +84,10 @@ export default function Register() {
         style={styles.input}
       />
       <TextInput
-          placeholder="Last Name"
-          value={lastname}
-          onChangeText={setLastname}
-          style={styles.input}
+        placeholder="Last Name"
+        value={lastname}
+        onChangeText={setLastname}
+        style={styles.input}
       />
       <TextInput
         placeholder="Email"
@@ -111,6 +96,13 @@ export default function Register() {
         style={styles.input}
         autoCapitalize="none"
         keyboardType="email-address"
+      />
+      <TextInput
+        placeholder="Phone Number"
+        value={phoneNumber}
+        onChangeText={setPhoneNumber}
+        style={styles.input}
+        keyboardType="phone-pad"
       />
       <TextInput
         placeholder="Password"

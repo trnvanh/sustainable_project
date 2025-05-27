@@ -15,7 +15,7 @@ function AppLayout() {
     //const { user } = useAuth();
     const user = useAuthStore((state) => state.user);
 
-    const hideNavRoutes = ['/login', '/register', '/welcome', '/prelogin', '/email-signup', '/offer'];
+    const hideNavRoutes = ['/login', '/register', '/welcome', '/email-signup', '/offer'];
 
     const shouldShowNav = user && !hideNavRoutes.includes(pathname);
 
