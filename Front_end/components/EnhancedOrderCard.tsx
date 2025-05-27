@@ -43,28 +43,29 @@ export function EnhancedOrderCard({ order }: EnhancedOrderCardProps) {
         CONFIRMED: 'Confirmed',
     };
 
-    const handleCancelOrder = () => {
-        Alert.alert(
-            'Cancel Order',
-            'Are you sure you want to cancel this order?',
-            [
-                { text: 'No', style: 'cancel' },
-                {
-                    text: 'Yes, Cancel',
-                    style: 'destructive',
-                    onPress: async () => {
-                        const success = await cancelOrder(order.id);
-                        if (success) {
-                            showMessage({
-                                message: 'Order cancelled successfully',
-                                type: 'success',
-                                icon: 'success',
-                            });
-                        }
-                    },
-                },
-            ]
-        );
+    const handleCancelOrder = async () => {
+        try {
+            const success = await cancelOrder(order.id);
+            if (success) {
+                showMessage({
+                    message: 'Order cancelled successfully',
+                    type: 'success',
+                    icon: 'success',
+                });
+            } else {
+                showMessage({
+                    message: 'Failed to cancel order',
+                    type: 'danger',
+                    icon: 'danger',
+                });
+            }
+        } catch (error: any) {
+            showMessage({
+                message: `Failed to cancel order: ${error?.message || 'Unknown error'}`,
+                type: 'danger',
+                icon: 'danger',
+            });
+        }
     };
 
     const handlePayOrder = async () => {
