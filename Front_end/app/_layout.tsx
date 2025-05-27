@@ -4,9 +4,9 @@ import { Slot, useNavigation, usePathname, useRouter } from 'expo-router';
 import React, { useEffect } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 //import { AuthProvider, useAuth } from '@/hooks/useAuth';
-import { useAuthStore } from '@/store/useAuthStore';
-import { useCartStore } from '@/store/useCartStore';
 import FlashMessage from "react-native-flash-message";
+import { useAuthStore } from '../store/useAuthStore';
+import { useCartStore } from '../store/useCartStore';
 
 function AppLayout() {
     const navigation = useNavigation();
@@ -19,24 +19,84 @@ function AppLayout() {
 
     const shouldShowNav = user && !hideNavRoutes.includes(pathname);
 
-    // Handle deep links for PayPal redirects
+    // Handle deep links for PayPal and Stripe redirects
     useEffect(() => {
         const handleDeepLink = (url: string) => {
-            console.log('Deep link received:', url);
+            console.log('🔗 Deep link received:', url);
 
             // Parse the URL to extract path and query parameters
             const parsed = Linking.parse(url);
-            console.log('Parsed URL:', parsed);
+            console.log('📋 Parsed URL:', JSON.stringify(parsed, null, 2));
 
-            // Handle payment success redirect
+            // Handle payment success redirect (PayPal)
             if (parsed.path === 'payment/success') {
-                console.log('Redirecting to payment success screen');
-                router.push('/(app)/payment/success' as any);
+                console.log('✅ Redirecting to PayPal payment success screen');
+                const queryParams = new URLSearchParams();
+
+                // Add query parameters from the deep link
+                Object.entries(parsed.queryParams || {}).forEach(([key, value]) => {
+                    if (value !== undefined) {
+                        queryParams.append(key, String(value));
+                    }
+                });
+
+                const queryString = queryParams.toString();
+                const route = queryString ? `/payment/success?${queryString}` : '/payment/success';
+                console.log('🎯 Navigating to route:', route);
+                router.push(route as any);
             }
-            // Handle payment cancel redirect
+            // Handle payment cancel redirect (PayPal)
             else if (parsed.path === 'payment/cancel') {
-                console.log('Redirecting to payment cancel screen');
-                router.push('/(app)/payment/cancel' as any);
+                console.log('❌ Redirecting to PayPal payment cancel screen');
+                const queryParams = new URLSearchParams();
+
+                // Add query parameters from the deep link
+                Object.entries(parsed.queryParams || {}).forEach(([key, value]) => {
+                    if (value !== undefined) {
+                        queryParams.append(key, String(value));
+                    }
+                });
+
+                const queryString = queryParams.toString();
+                const route = queryString ? `/payment/cancel?${queryString}` : '/payment/cancel';
+                console.log('🎯 Navigating to route:', route);
+                router.push(route as any);
+            }
+            // Handle Stripe payment success redirect
+            else if (parsed.path === 'payment/stripe/success') {
+                console.log('✅ Redirecting to Stripe payment success screen');
+                const queryParams = new URLSearchParams();
+
+                // Add query parameters from the deep link
+                Object.entries(parsed.queryParams || {}).forEach(([key, value]) => {
+                    if (value !== undefined) {
+                        queryParams.append(key, String(value));
+                    }
+                });
+
+                const queryString = queryParams.toString();
+                const route = queryString ? `/payment/success?${queryString}` : '/payment/success';
+                console.log('🎯 Navigating to route:', route);
+                router.push(route as any);
+            }
+            // Handle Stripe payment cancel redirect
+            else if (parsed.path === 'payment/stripe/cancel') {
+                console.log('❌ Redirecting to Stripe payment cancel screen');
+                const queryParams = new URLSearchParams();
+
+                // Add query parameters from the deep link
+                Object.entries(parsed.queryParams || {}).forEach(([key, value]) => {
+                    if (value !== undefined) {
+                        queryParams.append(key, String(value));
+                    }
+                });
+
+                const queryString = queryParams.toString();
+                const route = queryString ? `/payment/cancel?${queryString}` : '/payment/cancel';
+                console.log('🎯 Navigating to route:', route);
+                router.push(route as any);
+            } else {
+                console.log('🔍 Unhandled deep link path:', parsed.path);
             }
         };
 
@@ -45,16 +105,19 @@ function AppLayout() {
             try {
                 const initialUrl = await Linking.getInitialURL();
                 if (initialUrl) {
-                    console.log('Initial URL:', initialUrl);
+                    console.log('🚀 Initial URL detected:', initialUrl);
                     handleDeepLink(initialUrl);
+                } else {
+                    console.log('📱 App opened normally (no initial URL)');
                 }
             } catch (error) {
-                console.error('Error getting initial URL:', error);
+                console.error('❌ Error getting initial URL:', error);
             }
         };
 
         // Handle URLs when the app is already running
         const subscription = Linking.addEventListener('url', (event) => {
+            console.log('🔄 URL event received while app running:', event.url);
             handleDeepLink(event.url);
         });
 
@@ -63,6 +126,7 @@ function AppLayout() {
 
         // Cleanup subscription
         return () => {
+            console.log('🧹 Cleaning up deep link subscription');
             subscription?.remove();
         };
     }, [router]);

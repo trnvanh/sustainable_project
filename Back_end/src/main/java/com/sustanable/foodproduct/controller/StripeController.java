@@ -90,13 +90,14 @@ public class StripeController {
                         response.getMessage());
             }
 
-            // Return HTML page that redirects to the app
+            // Return HTML page that redirects to the app immediately
             String htmlResponse = String.format("""
                     <!DOCTYPE html>
                     <html>
                     <head>
                         <title>Payment Processing</title>
                         <meta name="viewport" content="width=device-width, initial-scale=1">
+                        <meta http-equiv="refresh" content="0; url=%s">
                         <style>
                             body {
                                 font-family: Arial, sans-serif;
@@ -125,16 +126,24 @@ public class StripeController {
                             <p><a href="%s">Click here if not redirected automatically</a></p>
                         </div>
                         <script>
+                            // Multiple redirect methods for better compatibility
+                            window.location.href = '%s';
+                            window.location.replace('%s');
+
+                            // Fallback after 1 second
                             setTimeout(function() {
-                                window.location.href = '%s';
-                            }, 2000);
+                                window.open('%s', '_self');
+                            }, 1000);
                         </script>
                     </body>
                     </html>
                     """,
+                    redirectUrl,
                     response.isSuccess() ? "success" : "error",
                     response.isSuccess() ? "Payment Successful!" : "Payment Failed",
                     response.getMessage(),
+                    redirectUrl,
+                    redirectUrl,
                     redirectUrl,
                     redirectUrl);
 
@@ -153,6 +162,7 @@ public class StripeController {
                     <head>
                         <title>Payment Error</title>
                         <meta name="viewport" content="width=device-width, initial-scale=1">
+                        <meta http-equiv="refresh" content="0; url=%s">
                         <style>
                             body {
                                 font-family: Arial, sans-serif;
@@ -179,13 +189,21 @@ public class StripeController {
                             <p><a href="%s">Click here if not redirected automatically</a></p>
                         </div>
                         <script>
+                            // Multiple redirect methods for better compatibility
+                            window.location.href = '%s';
+                            window.location.replace('%s');
+
+                            // Fallback after 1 second
                             setTimeout(function() {
-                                window.location.href = '%s';
-                            }, 2000);
+                                window.open('%s', '_self');
+                            }, 1000);
                         </script>
                     </body>
                     </html>
                     """,
+                    errorRedirectUrl,
+                    errorRedirectUrl,
+                    errorRedirectUrl,
                     errorRedirectUrl,
                     errorRedirectUrl);
 
@@ -213,6 +231,7 @@ public class StripeController {
                 <head>
                     <title>Payment Cancelled</title>
                     <meta name="viewport" content="width=device-width, initial-scale=1">
+                    <meta http-equiv="refresh" content="0; url=%s">
                     <style>
                         body {
                             font-family: Arial, sans-serif;
@@ -239,13 +258,21 @@ public class StripeController {
                         <p><a href="%s">Click here if not redirected automatically</a></p>
                     </div>
                     <script>
+                        // Multiple redirect methods for better compatibility
+                        window.location.href = '%s';
+                        window.location.replace('%s');
+
+                        // Fallback after 1 second
                         setTimeout(function() {
-                            window.location.href = '%s';
-                        }, 2000);
+                            window.open('%s', '_self');
+                        }, 1000);
                     </script>
                 </body>
                 </html>
                 """,
+                redirectUrl,
+                redirectUrl,
+                redirectUrl,
                 redirectUrl,
                 redirectUrl);
 

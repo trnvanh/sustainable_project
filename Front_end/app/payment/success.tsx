@@ -1,24 +1,39 @@
-import { useOrderStore } from '@/store/useOrderStore';
 import { Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { showMessage } from 'react-native-flash-message';
+import { useOrderStore } from '../../store/useOrderStore';
 
 export default function PaymentSuccessScreen() {
-    const { status, paymentId, message } = useLocalSearchParams<{
+    const { status, paymentId, sessionId, message } = useLocalSearchParams<{
         status: string;
         paymentId: string;
+        sessionId: string;
         message: string;
     }>();
 
     const [loading, setLoading] = useState(true);
     const { fetchOrders } = useOrderStore();
 
+    // Use paymentId for PayPal or sessionId for Stripe
+    const effectivePaymentId = paymentId || sessionId;
+
+    // Debug logging
+    useEffect(() => {
+        console.log('=== Payment Success Screen Loaded ===');
+        console.log('Status:', status);
+        console.log('PaymentId (PayPal):', paymentId);
+        console.log('SessionId (Stripe):', sessionId);
+        console.log('Message:', message);
+        console.log('Effective Payment ID:', effectivePaymentId);
+        console.log('==========================================');
+    }, []);
+
     useEffect(() => {
         // Handle the payment result
         handlePaymentResult();
-    }, [status, paymentId, message]);
+    }, [status, paymentId, sessionId, message]);
 
     const handlePaymentResult = async () => {
         try {
@@ -85,9 +100,9 @@ export default function PaymentSuccessScreen() {
                             {message || (isSuccess ? 'Your payment has been processed successfully.' : 'There was an issue with your payment.')}
                         </Text>
 
-                        {paymentId && (
+                        {effectivePaymentId && (
                             <Text style={styles.paymentId}>
-                                Payment ID: {paymentId}
+                                Payment ID: {effectivePaymentId}
                             </Text>
                         )}
 
