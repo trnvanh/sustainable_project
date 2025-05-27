@@ -36,8 +36,8 @@ application:
 
 paypal:
     client:
-        id: ${PAYPAL_CLIENT_ID:AZUVnT1L037ibi2XFQE5THLKip1_hbxQxV8AX9zySHBNrEK3n9oopGRsKSMIV0bmqH03KWhsEfUZySV3}
-        secret: ${PAYPAL_CLIENT_SECRET:EIxZvJwRn5ZjgNlza6CM0X1tBimAx8PuGpmFm_uViVTrTqDLmdJC0DEAqMyma1JfDYYWJYjvwB1Rgn0v}
+        id: ${PAYPAL_CLIENT_ID}
+        secret: ${PAYPAL_CLIENT_SECRET}
     mode: sandbox # Change to 'live' for production
     return-url: heroeatspay://payment/success
     cancel-url: heroeatspay://payment/cancel
