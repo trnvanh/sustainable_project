@@ -1,11 +1,11 @@
-import React, {useEffect, useState} from 'react';
-import {View, Text, StyleSheet, FlatList, TouchableOpacity, Image, ActivityIndicator} from 'react-native';
+import api from "@/api/axiosConfig";
 import { FavoriteCard } from '@/components/FavoriteCard';
 import AuthGuard from '@/components/Protected';
-import {useFavoritesStore} from "@/store/useFavoritesStore";
-import api from "@/api/axiosConfig";
-import {showMessage} from "react-native-flash-message";
-import {useProductsStore} from "@/store/useProductsStore";
+import { useFavoritesStore } from "@/store/useFavoritesStore";
+import { router } from 'expo-router';
+import React, { useEffect, useState } from 'react';
+import { ActivityIndicator, FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { showMessage } from "react-native-flash-message";
 
 export default function FavoriteScreen() {
   const [selectedStoreId, setSelectedStoreId] = useState<string | null>(null);
@@ -21,12 +21,12 @@ export default function FavoriteScreen() {
   }, []);
 
   const filteredStores = stores.filter((store) =>
-      favorites.some((favorite) => favorite.storeId == store.id)
+    favorites.some((favorite) => favorite.storeId == store.id)
   );
 
   const filteredFavorites = selectedStoreId
-      ? favorites.filter((favorite) => favorite.storeId == selectedStoreId)
-      : favorites;
+    ? favorites.filter((favorite) => favorite.storeId == selectedStoreId)
+    : favorites;
 
   const handleDelete = async (id: string) => {
     try {
@@ -59,26 +59,31 @@ export default function FavoriteScreen() {
     setSelectedStoreId(storeId);
   };
 
-  const handleShowAll= () => {
+  const handleShowAll = () => {
     setSelectedStoreId(null);
   };
 
   if (loading) {
     return (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#4CAF50" />
-          <Text style={{ marginTop: 8, color: '#555'}}>Loading wishlist...</Text>
-        </View>
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#4CAF50" />
+        <Text style={{ marginTop: 8, color: '#555' }}>Loading wishlist...</Text>
+      </View>
     );
   }
 
   return (
     <AuthGuard>
       <View style={styles.container}>
-        <Text style={styles.heading}>FavoritEats</Text>
-        <TouchableOpacity onPress={() => handleShowAll()}>
-          <Text style={styles.seeAll}>See All</Text>
-        </TouchableOpacity>
+        <View style={styles.sectionHeader}>
+          <Text style={styles.heading}>FavoritEats</Text>
+          <TouchableOpacity onPress={() => router.push({
+            pathname: '/see-all',
+            params: { title: 'Favorite Products', type: 'favorites' }
+          })}>
+            <Text style={styles.seeAll}>See All</Text>
+          </TouchableOpacity>
+        </View>
         <FlatList
           data={filteredFavorites}
           keyExtractor={(item) => item.id}
@@ -96,7 +101,12 @@ export default function FavoriteScreen() {
           contentContainerStyle={{ paddingBottom: 16 }}
         />
         <View style={styles.storeSection}>
-          <Text style={styles.heading}>🏪 Stores 🏪</Text>
+          <View style={styles.sectionHeader}>
+            <Text style={[styles.heading, { marginBottom: 0, marginTop: 0, fontSize: 20 }]}>🏪 Stores 🏪</Text>
+            <TouchableOpacity onPress={() => handleShowAll()}>
+              <Text style={styles.seeAll}>See All</Text>
+            </TouchableOpacity>
+          </View>
           <FlatList
             horizontal
             data={filteredStores}
@@ -148,7 +158,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   storeSection: {
-    backgroundColor: '#6A9C89', 
+    backgroundColor: '#6A9C89',
     paddingVertical: 8,
     borderRadius: 12,
     marginBottom: 12,
@@ -162,31 +172,31 @@ const styles = StyleSheet.create({
     marginRight: 8,
     //backgroundColor: '#ccc',
   },
-  
+
   storeImage: {
     width: '100%',
     height: '100%',
     position: 'absolute',
   },
-  
+
   overlay: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.4)',
     justifyContent: 'flex-end',
     padding: 8,
   },
-  
+
   storeName: {
     color: '#fff',
     fontWeight: 'bold',
     fontSize: 16,
   },
-  
+
   storeDeal: {
     color: '#f0f0f0',
     fontSize: 13,
   },
-  
+
   storeMeta: {
     color: '#ddd',
     fontSize: 12,
@@ -196,5 +206,12 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#4CAF50',
     marginBottom: 15,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+    paddingHorizontal: 4,
   },
 });

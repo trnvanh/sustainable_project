@@ -64,11 +64,16 @@ export default function Explore() {
         }
     };
 
-    const renderOfferRow = (title: string, data: typeof historyOrders) => (
+    const renderOfferRow = (title: string, data: typeof historyOrders, type: 'historyOrders' | 'nearbyOffers' | 'currentDeals') => (
         <View style={styles.section}>
             <View style={styles.sectionHeader}>
                 <Text style={styles.sectionTitle}>{title}</Text>
-                <TouchableOpacity onPress={() => console.log(`See all for ${title}`)}>
+                <TouchableOpacity
+                    onPress={() => router.push({
+                        pathname: '/see-all',
+                        params: { title, type }
+                    })}
+                >
                     <Text style={styles.seeAll}>See All</Text>
                 </TouchableOpacity>
             </View>
@@ -153,9 +158,24 @@ export default function Explore() {
                         <Text style={styles.sectionTitle}>
                             {categories.find((cat: CategoryResponse) => cat.id === selectedCategoryId)?.name || 'Category Products'}
                         </Text>
-                        <TouchableOpacity onPress={() => setSelectedCategoryId(null)}>
-                            <Text style={styles.seeAll}>Clear</Text>
-                        </TouchableOpacity>
+                        <View style={styles.actionButtons}>
+                            <TouchableOpacity
+                                onPress={() => router.push({
+                                    pathname: '/see-all',
+                                    params: {
+                                        title: categories.find((cat: CategoryResponse) => cat.id === selectedCategoryId)?.name || 'Category Products',
+                                        type: 'categoryProducts',
+                                        categoryId: selectedCategoryId?.toString()
+                                    }
+                                })}
+                                style={{ marginRight: 16 }}
+                            >
+                                <Text style={styles.seeAll}>See All</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => setSelectedCategoryId(null)}>
+                                <Text style={styles.seeAll}>Clear</Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
 
                     {categoryLoading ? (
@@ -163,30 +183,29 @@ export default function Explore() {
                             <ActivityIndicator size="small" color="#4CAF50" />
                             <Text style={{ marginTop: 8, color: '#555' }}>Loading products...</Text>
                         </View>
-                    ) : categoryProducts.length > 0 ? (
-                        <FlatList
-                            data={categoryProducts}
-                            horizontal
-                            showsHorizontalScrollIndicator={false}
-                            keyExtractor={(item) => item.id.toString()}
-                            renderItem={({ item }) => (
-                                <TouchableOpacity onPress={() => {
-                                    setSelectedOffer(item as any);
-                                    router.push(`/offer/${item.id}`);
-                                }}>
-                                    <OfferCard
-                                        id={item.id.toString()}
-                                        name={item.name}
-                                        price={`${item.price} €`}
-                                        image={item.image}
-                                        pickupTime={item.pickupTime || ""}
-                                        rating={item.rating}
-                                        distance={item.distance || 0}
-                                        portionsLeft={item.portionsLeft || 0}
-                                    />
-                                </TouchableOpacity>
-                            )}
-                        />
+                    ) : categoryProducts.length > 0 ? (<FlatList
+                        data={categoryProducts}
+                        horizontal
+                        showsHorizontalScrollIndicator={false}
+                        keyExtractor={(item) => item.id.toString()}
+                        renderItem={({ item }) => (
+                            <TouchableOpacity onPress={() => {
+                                setSelectedOffer(item as any);
+                                router.push(`/offer/${item.id}`);
+                            }}>
+                                <OfferCard
+                                    id={item.id.toString()}
+                                    name={item.name}
+                                    price={typeof item.price === 'number' ? `${item.price} €` : item.price}
+                                    image={item.image}
+                                    pickupTime={item.pickupTime || ""}
+                                    rating={item.rating}
+                                    distance={typeof item.distance === 'string' ? parseFloat(item.distance) : (item.distance || 0)}
+                                    portionsLeft={item.portionsLeft || 0}
+                                />
+                            </TouchableOpacity>
+                        )}
+                    />
                     ) : (
                         <View style={styles.noProductsContainer}>
                             <Text style={styles.noProductsText}>No products found in this category</Text>
@@ -196,9 +215,9 @@ export default function Explore() {
             )}
 
             {/* Offer sections from store */}
-            {renderOfferRow('Rescue Again', historyOrders)}
-            {renderOfferRow('Nearby Offers', nearbyOffers)}
-            {renderOfferRow('Deals 1€', currentDeals)}
+            {renderOfferRow('Rescue Again', historyOrders, 'historyOrders')}
+            {renderOfferRow('Nearby Offers', nearbyOffers, 'nearbyOffers')}
+            {renderOfferRow('Deals 1€', currentDeals, 'currentDeals')}
         </ScrollView>
     );
 }
@@ -277,5 +296,9 @@ const styles = StyleSheet.create({
     noProductsText: {
         fontSize: 14,
         color: '#555',
+    },
+    actionButtons: {
+        flexDirection: 'row',
+        alignItems: 'center',
     },
 });
