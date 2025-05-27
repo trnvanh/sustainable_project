@@ -44,8 +44,8 @@ paypal:
 
 stripe:
     api:
-        key: ${STRIPE_API_KEY:pk_test_51RTLnC9zdTL8J8e2EBf9xXZyKn3jbGrav3l6dnjueNDuPzP4k8BoubV5x6vfm30R0vh0T6jD74AW6DkappcAAhvI00tT1hCOrR}
+        key: ${STRIPE_API_KEY}
     webhook:
-        secret: ${STRIPE_WEBHOOK_SECRET:sk_test_51RTLnC9zdTL8J8e250FngpsDcTJrdLalInUhWYuhLPWPp9sQo0U8rdiKllz4qnx59zC6u2gH94qrH9esymYOk5hk00ffXDbgmc}
+        secret: ${STRIPE_WEBHOOK_SECRET}
     success-url: heroeatspay://payment/stripe/success
     cancel-url: heroeatspay://payment/stripe/cancel
