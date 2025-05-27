@@ -1,4 +1,8 @@
-import { CartItem } from "@/store/useCartStore";
+// If your useCartStore.ts is at src/store/useCartStore.ts, use this relative import:
+import { CartItem } from "../store/useCartStore";
+// Or, if you want to use the '@' alias, make sure your tsconfig.json has:
+// "paths": { "@/*": ["src/*"] }
+// and your build tool supports it.
 import api from "./axiosConfig";
 
 export interface OrderResponse {
