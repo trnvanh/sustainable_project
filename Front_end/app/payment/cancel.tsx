@@ -1,25 +1,56 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { showMessage } from 'react-native-flash-message';
 
 export default function PaymentCancelScreen() {
-    const { paymentId, message } = useLocalSearchParams<{
+    const { paymentId, sessionId, message, status } = useLocalSearchParams<{
         paymentId: string;
+        sessionId: string;
         message: string;
+        status: string;
     }>();
+
+    const [paymentProvider, setPaymentProvider] = useState<'paypal' | 'stripe' | 'unknown'>('unknown');
+
+    // Determine payment provider and effective payment ID
+    const effectivePaymentId = paymentId || sessionId;
+
+    useEffect(() => {
+        // Determine payment provider based on parameters
+        if (paymentId && !sessionId) {
+            setPaymentProvider('paypal');
+        } else if (sessionId && !paymentId) {
+            setPaymentProvider('stripe');
+        } else if (paymentId && sessionId) {
+            // If both are present, prioritize the one that's not empty
+            setPaymentProvider(paymentId.length > sessionId.length ? 'paypal' : 'stripe');
+        }
+
+        console.log('=== Payment Cancel Screen Loaded ===');
+        console.log('Status:', status);
+        console.log('PaymentId (PayPal):', paymentId);
+        console.log('SessionId (Stripe):', sessionId);
+        console.log('Message:', message);
+        console.log('Effective Payment ID:', effectivePaymentId);
+        console.log('Detected Provider:', paymentProvider);
+        console.log('=========================================');
+    }, [paymentId, sessionId, message, status]);
 
     useEffect(() => {
         // Show cancellation message
+        const providerName = paymentProvider === 'paypal' ? 'PayPal' :
+            paymentProvider === 'stripe' ? 'Stripe' : 'Payment';
+
         showMessage({
-            message: 'Payment Cancelled',
+            message: `${providerName} Payment Cancelled`,
             description: message || 'Your payment has been cancelled.',
             type: 'warning',
             icon: 'warning',
             duration: 4000,
         });
-    }, [message]);
+    }, [message, paymentProvider]);
 
     const handleReturnToOrders = () => {
         router.replace('/orders');
@@ -42,9 +73,15 @@ export default function PaymentCancelScreen() {
                     {message || 'Your payment has been cancelled. You can try again or return to your cart.'}
                 </Text>
 
-                {paymentId && (
+                {effectivePaymentId && (
                     <Text style={styles.paymentId}>
-                        Payment ID: {paymentId}
+                        {paymentProvider === 'stripe' ? 'Session ID' : 'Payment ID'}: {effectivePaymentId}
+                    </Text>
+                )}
+
+                {paymentProvider !== 'unknown' && (
+                    <Text style={styles.providerInfo}>
+                        Provider: {paymentProvider === 'paypal' ? 'PayPal' : 'Stripe'}
                     </Text>
                 )}
 
@@ -99,8 +136,14 @@ const styles = StyleSheet.create({
     paymentId: {
         fontSize: 14,
         color: '#666',
-        marginBottom: 32,
+        marginBottom: 16,
         fontFamily: 'monospace',
+    },
+    providerInfo: {
+        fontSize: 12,
+        color: '#999',
+        marginBottom: 32,
+        fontWeight: '500',
     },
     buttonContainer: {
         width: '100%',

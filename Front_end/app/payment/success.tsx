@@ -14,10 +14,23 @@ export default function PaymentSuccessScreen() {
     }>();
 
     const [loading, setLoading] = useState(true);
+    const [paymentProvider, setPaymentProvider] = useState<'paypal' | 'stripe' | 'unknown'>('unknown');
     const { fetchOrders } = useOrderStore();
 
-    // Use paymentId for PayPal or sessionId for Stripe
+    // Determine payment provider and effective payment ID
     const effectivePaymentId = paymentId || sessionId;
+
+    useEffect(() => {
+        // Determine payment provider based on parameters
+        if (paymentId && !sessionId) {
+            setPaymentProvider('paypal');
+        } else if (sessionId && !paymentId) {
+            setPaymentProvider('stripe');
+        } else if (paymentId && sessionId) {
+            // If both are present, prioritize the one that's not empty
+            setPaymentProvider(paymentId.length > sessionId.length ? 'paypal' : 'stripe');
+        }
+    }, [paymentId, sessionId]);
 
     // Debug logging
     useEffect(() => {
@@ -27,8 +40,9 @@ export default function PaymentSuccessScreen() {
         console.log('SessionId (Stripe):', sessionId);
         console.log('Message:', message);
         console.log('Effective Payment ID:', effectivePaymentId);
+        console.log('Detected Provider:', paymentProvider);
         console.log('==========================================');
-    }, []);
+    }, [status, paymentId, sessionId, message, paymentProvider]);
 
     useEffect(() => {
         // Handle the payment result
@@ -37,26 +51,32 @@ export default function PaymentSuccessScreen() {
 
     const handlePaymentResult = async () => {
         try {
-            // Refresh orders to get updated payment status
-            await fetchOrders();
+            // Add a small delay to ensure the app is ready
+            setTimeout(async () => {
+                // Refresh orders to get updated payment status
+                await fetchOrders();
 
-            if (status === 'success') {
-                showMessage({
-                    message: 'Payment Successful!',
-                    description: message || 'Your payment has been processed successfully.',
-                    type: 'success',
-                    icon: 'success',
-                    duration: 4000,
-                });
-            } else {
-                showMessage({
-                    message: 'Payment Failed',
-                    description: message || 'There was an issue with your payment.',
-                    type: 'danger',
-                    icon: 'danger',
-                    duration: 4000,
-                });
-            }
+                if (status === 'success') {
+                    const providerName = paymentProvider === 'paypal' ? 'PayPal' :
+                        paymentProvider === 'stripe' ? 'Stripe' : 'Payment';
+
+                    showMessage({
+                        message: `${providerName} Payment Successful!`,
+                        description: message || 'Your payment has been processed successfully.',
+                        type: 'success',
+                        icon: 'success',
+                        duration: 4000,
+                    });
+                } else {
+                    showMessage({
+                        message: 'Payment Failed',
+                        description: message || 'There was an issue with your payment.',
+                        type: 'danger',
+                        icon: 'danger',
+                        duration: 4000,
+                    });
+                }
+            }, 100); // 100ms delay
         } catch (error) {
             console.error('Error refreshing orders:', error);
         } finally {

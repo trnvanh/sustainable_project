@@ -90,41 +90,108 @@ public class PaymentController {
                     <head>
                         <title>Payment Processing</title>
                         <meta name="viewport" content="width=device-width, initial-scale=1">
+                        <meta http-equiv="refresh" content="1; url=%s">
                         <style>
                             body {
-                                font-family: Arial, sans-serif;
+                                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
                                 text-align: center;
                                 padding: 50px;
-                                background-color: #f5f5f5;
+                                background: linear-gradient(135deg, #667eea 0%%, #764ba2 100%%);
+                                margin: 0;
+                                min-height: 100vh;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
                             }
                             .container {
                                 max-width: 400px;
-                                margin: 0 auto;
                                 background: white;
-                                padding: 30px;
-                                border-radius: 10px;
-                                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                                padding: 40px;
+                                border-radius: 15px;
+                                box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+                                animation: fadeIn 0.5s ease-in;
                             }
                             .success { color: #4CAF50; }
                             .error { color: #f44336; }
-                            .loading { color: #2196F3; }
+                            .loading {
+                                color: #2196F3;
+                                font-size: 14px;
+                                margin-top: 20px;
+                            }
+                            .spinner {
+                                border: 2px solid #f3f3f3;
+                                border-top: 2px solid #2196F3;
+                                border-radius: 50%%;
+                                width: 20px;
+                                height: 20px;
+                                animation: spin 1s linear infinite;
+                                margin: 10px auto;
+                            }
+                            @keyframes fadeIn {
+                                from { opacity: 0; transform: translateY(20px); }
+                                to { opacity: 1; transform: translateY(0); }
+                            }
+                            @keyframes spin {
+                                0%% { transform: rotate(0deg); }
+                                100%% { transform: rotate(360deg); }
+                            }
+                            a {
+                                color: #2196F3;
+                                text-decoration: none;
+                                font-size: 14px;
+                            }
+                            a:hover {
+                                text-decoration: underline;
+                            }
                         </style>
                     </head>
                     <body>
                         <div class="container">
                             <h2 class="%s">%s</h2>
                             <p>%s</p>
+                            <div class="spinner"></div>
                             <p class="loading">Redirecting to HeroEats app...</p>
                             <p><a href="%s">Click here if not redirected automatically</a></p>
                         </div>
                         <script>
-                            setTimeout(function() {
-                                window.location.href = '%s';
-                            }, 2000);
+                            // Multiple redirect strategies for maximum compatibility
+                            function redirectToApp() {
+                                const appUrl = '%s';
+                                console.log('Attempting to redirect to:', appUrl);
+
+                                // Try multiple methods
+                                try {
+                                    // Method 1: Direct assignment
+                                    window.location.href = appUrl;
+
+                                    // Method 2: Replace (prevents back button)
+                                    setTimeout(() => {
+                                        window.location.replace(appUrl);
+                                    }, 500);
+
+                                    // Method 3: Open in same window
+                                    setTimeout(() => {
+                                        window.open(appUrl, '_self');
+                                    }, 1000);
+
+                                } catch (error) {
+                                    console.error('Redirect failed:', error);
+                                    // Show manual link if all else fails
+                                    document.querySelector('.loading').innerHTML =
+                                        'Unable to redirect automatically. Please click the link above.';
+                                }
+                            }
+
+                            // Start redirect immediately
+                            redirectToApp();
+
+                            // Fallback after 2 seconds
+                            setTimeout(redirectToApp, 2000);
                         </script>
                     </body>
                     </html>
                     """,
+                    redirectUrl,
                     response.isSuccess() ? "success" : "error",
                     response.isSuccess() ? "Payment Successful!" : "Payment Failed",
                     response.getMessage(),
@@ -145,39 +212,78 @@ public class PaymentController {
                     <head>
                         <title>Payment Error</title>
                         <meta name="viewport" content="width=device-width, initial-scale=1">
+                        <meta http-equiv="refresh" content="1; url=%s">
                         <style>
                             body {
-                                font-family: Arial, sans-serif;
+                                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
                                 text-align: center;
                                 padding: 50px;
-                                background-color: #f5f5f5;
+                                background: linear-gradient(135deg, #ff6b6b 0%%, #ee5a52 100%%);
+                                margin: 0;
+                                min-height: 100vh;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
                             }
                             .container {
                                 max-width: 400px;
-                                margin: 0 auto;
                                 background: white;
-                                padding: 30px;
-                                border-radius: 10px;
-                                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                                padding: 40px;
+                                border-radius: 15px;
+                                box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+                                animation: fadeIn 0.5s ease-in;
                             }
                             .error { color: #f44336; }
+                            .spinner {
+                                border: 2px solid #f3f3f3;
+                                border-top: 2px solid #f44336;
+                                border-radius: 50%%;
+                                width: 20px;
+                                height: 20px;
+                                animation: spin 1s linear infinite;
+                                margin: 10px auto;
+                            }
+                            @keyframes fadeIn {
+                                from { opacity: 0; transform: translateY(20px); }
+                                to { opacity: 1; transform: translateY(0); }
+                            }
+                            @keyframes spin {
+                                0%% { transform: rotate(0deg); }
+                                100%% { transform: rotate(360deg); }
+                            }
+                            a {
+                                color: #f44336;
+                                text-decoration: none;
+                                font-size: 14px;
+                            }
                         </style>
                     </head>
                     <body>
                         <div class="container">
                             <h2 class="error">Payment Error</h2>
                             <p>There was an issue processing your payment.</p>
+                            <div class="spinner"></div>
                             <p>Redirecting to HeroEats app...</p>
                             <p><a href="%s">Click here if not redirected automatically</a></p>
                         </div>
                         <script>
-                            setTimeout(function() {
-                                window.location.href = '%s';
-                            }, 2000);
+                            function redirectToApp() {
+                                const appUrl = '%s';
+                                try {
+                                    window.location.href = appUrl;
+                                    setTimeout(() => window.location.replace(appUrl), 500);
+                                    setTimeout(() => window.open(appUrl, '_self'), 1000);
+                                } catch (error) {
+                                    console.error('Redirect failed:', error);
+                                }
+                            }
+                            redirectToApp();
+                            setTimeout(redirectToApp, 2000);
                         </script>
                     </body>
                     </html>
                     """,
+                    errorRedirectUrl,
                     errorRedirectUrl,
                     errorRedirectUrl);
 
@@ -205,39 +311,78 @@ public class PaymentController {
                 <head>
                     <title>Payment Cancelled</title>
                     <meta name="viewport" content="width=device-width, initial-scale=1">
+                    <meta http-equiv="refresh" content="1; url=%s">
                     <style>
                         body {
-                            font-family: Arial, sans-serif;
+                            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
                             text-align: center;
                             padding: 50px;
-                            background-color: #f5f5f5;
+                            background: linear-gradient(135deg, #ffa726 0%%, #ff9800 100%%);
+                            margin: 0;
+                            min-height: 100vh;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
                         }
                         .container {
                             max-width: 400px;
-                            margin: 0 auto;
                             background: white;
-                            padding: 30px;
-                            border-radius: 10px;
-                            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                            padding: 40px;
+                            border-radius: 15px;
+                            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+                            animation: fadeIn 0.5s ease-in;
                         }
                         .cancelled { color: #ff9800; }
+                        .spinner {
+                            border: 2px solid #f3f3f3;
+                            border-top: 2px solid #ff9800;
+                            border-radius: 50%%;
+                            width: 20px;
+                            height: 20px;
+                            animation: spin 1s linear infinite;
+                            margin: 10px auto;
+                        }
+                        @keyframes fadeIn {
+                            from { opacity: 0; transform: translateY(20px); }
+                            to { opacity: 1; transform: translateY(0); }
+                        }
+                        @keyframes spin {
+                            0%% { transform: rotate(0deg); }
+                            100%% { transform: rotate(360deg); }
+                        }
+                        a {
+                            color: #ff9800;
+                            text-decoration: none;
+                            font-size: 14px;
+                        }
                     </style>
                 </head>
                 <body>
                     <div class="container">
                         <h2 class="cancelled">Payment Cancelled</h2>
                         <p>Your payment has been cancelled.</p>
+                        <div class="spinner"></div>
                         <p>Redirecting to HeroEats app...</p>
                         <p><a href="%s">Click here if not redirected automatically</a></p>
                     </div>
                     <script>
-                        setTimeout(function() {
-                            window.location.href = '%s';
-                        }, 2000);
+                        function redirectToApp() {
+                            const appUrl = '%s';
+                            try {
+                                window.location.href = appUrl;
+                                setTimeout(() => window.location.replace(appUrl), 500);
+                                setTimeout(() => window.open(appUrl, '_self'), 1000);
+                            } catch (error) {
+                                console.error('Redirect failed:', error);
+                            }
+                        }
+                        redirectToApp();
+                        setTimeout(redirectToApp, 2000);
                     </script>
                 </body>
                 </html>
                 """,
+                redirectUrl,
                 redirectUrl,
                 redirectUrl);
 

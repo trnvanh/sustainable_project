@@ -24,79 +24,76 @@ function AppLayout() {
         const handleDeepLink = (url: string) => {
             console.log('🔗 Deep link received:', url);
 
-            // Parse the URL to extract path and query parameters
-            const parsed = Linking.parse(url);
-            console.log('📋 Parsed URL:', JSON.stringify(parsed, null, 2));
+            try {
+                // Parse the URL to extract path and query parameters
+                const parsed = Linking.parse(url);
+                console.log('📋 Parsed URL:', JSON.stringify(parsed, null, 2));
 
-            // Handle payment success redirect (PayPal)
-            if (parsed.path === 'payment/success') {
-                console.log('✅ Redirecting to PayPal payment success screen');
-                const queryParams = new URLSearchParams();
+                // Extract payment parameters safely
+                const extractParams = (queryParams: any) => {
+                    const params = new URLSearchParams();
+                    Object.entries(queryParams || {}).forEach(([key, value]) => {
+                        if (value !== undefined && value !== null) {
+                            params.append(key, String(value));
+                        }
+                    });
+                    return params.toString();
+                };
 
-                // Add query parameters from the deep link
-                Object.entries(parsed.queryParams || {}).forEach(([key, value]) => {
-                    if (value !== undefined) {
-                        queryParams.append(key, String(value));
+                // Handle payment success redirect (PayPal)
+                if (parsed.path === 'payment/success') {
+                    console.log('✅ Redirecting to PayPal payment success screen');
+                    const queryString = extractParams(parsed.queryParams);
+                    const route = queryString ? `/payment/success?${queryString}` : '/payment/success';
+                    console.log('🎯 Navigating to route:', route);
+
+                    // Use replace to prevent going back to web payment page
+                    router.replace(route as any);
+                }
+                // Handle payment cancel redirect (PayPal)
+                else if (parsed.path === 'payment/cancel') {
+                    console.log('❌ Redirecting to PayPal payment cancel screen');
+                    const queryString = extractParams(parsed.queryParams);
+                    const route = queryString ? `/payment/cancel?${queryString}` : '/payment/cancel';
+                    console.log('🎯 Navigating to route:', route);
+
+                    // Use replace to prevent going back to web payment page
+                    router.replace(route as any);
+                }
+                // Handle Stripe payment success redirect
+                else if (parsed.path === 'payment/stripe/success') {
+                    console.log('✅ Redirecting to Stripe payment success screen');
+                    const queryString = extractParams(parsed.queryParams);
+                    const route = queryString ? `/payment/success?${queryString}` : '/payment/success';
+                    console.log('🎯 Navigating to route:', route);
+
+                    // Use replace to prevent going back to web payment page
+                    router.replace(route as any);
+                }
+                // Handle Stripe payment cancel redirect
+                else if (parsed.path === 'payment/stripe/cancel') {
+                    console.log('❌ Redirecting to Stripe payment cancel screen');
+                    const queryString = extractParams(parsed.queryParams);
+                    const route = queryString ? `/payment/cancel?${queryString}` : '/payment/cancel';
+                    console.log('🎯 Navigating to route:', route);
+
+                    // Use replace to prevent going back to web payment page
+                    router.replace(route as any);
+                } else {
+                    console.log('🔍 Unhandled deep link path:', parsed.path);
+                    // For any unhandled payment-related paths, redirect to orders
+                    if (parsed.path?.includes('payment')) {
+                        console.log('🔄 Redirecting unhandled payment path to orders');
+                        router.replace('/orders');
                     }
-                });
-
-                const queryString = queryParams.toString();
-                const route = queryString ? `/payment/success?${queryString}` : '/payment/success';
-                console.log('🎯 Navigating to route:', route);
-                router.push(route as any);
-            }
-            // Handle payment cancel redirect (PayPal)
-            else if (parsed.path === 'payment/cancel') {
-                console.log('❌ Redirecting to PayPal payment cancel screen');
-                const queryParams = new URLSearchParams();
-
-                // Add query parameters from the deep link
-                Object.entries(parsed.queryParams || {}).forEach(([key, value]) => {
-                    if (value !== undefined) {
-                        queryParams.append(key, String(value));
-                    }
-                });
-
-                const queryString = queryParams.toString();
-                const route = queryString ? `/payment/cancel?${queryString}` : '/payment/cancel';
-                console.log('🎯 Navigating to route:', route);
-                router.push(route as any);
-            }
-            // Handle Stripe payment success redirect
-            else if (parsed.path === 'payment/stripe/success') {
-                console.log('✅ Redirecting to Stripe payment success screen');
-                const queryParams = new URLSearchParams();
-
-                // Add query parameters from the deep link
-                Object.entries(parsed.queryParams || {}).forEach(([key, value]) => {
-                    if (value !== undefined) {
-                        queryParams.append(key, String(value));
-                    }
-                });
-
-                const queryString = queryParams.toString();
-                const route = queryString ? `/payment/success?${queryString}` : '/payment/success';
-                console.log('🎯 Navigating to route:', route);
-                router.push(route as any);
-            }
-            // Handle Stripe payment cancel redirect
-            else if (parsed.path === 'payment/stripe/cancel') {
-                console.log('❌ Redirecting to Stripe payment cancel screen');
-                const queryParams = new URLSearchParams();
-
-                // Add query parameters from the deep link
-                Object.entries(parsed.queryParams || {}).forEach(([key, value]) => {
-                    if (value !== undefined) {
-                        queryParams.append(key, String(value));
-                    }
-                });
-
-                const queryString = queryParams.toString();
-                const route = queryString ? `/payment/cancel?${queryString}` : '/payment/cancel';
-                console.log('🎯 Navigating to route:', route);
-                router.push(route as any);
-            } else {
-                console.log('🔍 Unhandled deep link path:', parsed.path);
+                }
+            } catch (error) {
+                console.error('❌ Error parsing deep link:', error);
+                // If there's an error parsing, but it's a payment link, go to orders
+                if (url.includes('payment')) {
+                    console.log('🔄 Error parsing payment link, redirecting to orders');
+                    router.replace('/orders');
+                }
             }
         };
 
@@ -106,7 +103,10 @@ function AppLayout() {
                 const initialUrl = await Linking.getInitialURL();
                 if (initialUrl) {
                     console.log('🚀 Initial URL detected:', initialUrl);
-                    handleDeepLink(initialUrl);
+                    // Add a small delay to ensure the app is fully loaded
+                    setTimeout(() => {
+                        handleDeepLink(initialUrl);
+                    }, 500);
                 } else {
                     console.log('📱 App opened normally (no initial URL)');
                 }

@@ -39,13 +39,24 @@ paypal:
         id: ${PAYPAL_CLIENT_ID:AZUVnT1L037ibi2XFQE5THLKip1_hbxQxV8AX9zySHBNrEK3n9oopGRsKSMIV0bmqH03KWhsEfUZySV3}
         secret: ${PAYPAL_CLIENT_SECRET:EIxZvJwRn5ZjgNlza6CM0X1tBimAx8PuGpmFm_uViVTrTqDLmdJC0DEAqMyma1JfDYYWJYjvwB1Rgn0v}
     mode: sandbox # Change to 'live' for production
-    return-url: heroeatspay://payment/success
-    cancel-url: heroeatspay://payment/cancel
+    # PayPal will redirect to these URLs after payment completion
+    return-url: ${PAYPAL_RETURN_URL:https://sustainable-be.code4fun.xyz/api/v1/payments/success}
+    cancel-url: ${PAYPAL_CANCEL_URL:https://sustainable-be.code4fun.xyz/api/v1/payments/cancel}
 
 stripe:
     api:
         key: ${STRIPE_API_KEY:sk_test_51RTLnC9zdTL8J8e250FngpsDcTJrdLalInUhWYuhLPWPp9sQo0U8rdiKllz4qnx59zC6u2gH94qrH9esymYOk5hk00ffXDbgmc}
     webhook:
         secret: ${STRIPE_WEBHOOK_SECRET:sk_test_51RTLnC9zdTL8J8e250FngpsDcTJrdLalInUhWYuhLPWPp9sQo0U8rdiKllz4qnx59zC6u2gH94qrH9esymYOk5hk00ffXDbgmc}
-    success-url: https://sustainable-be.code4fun.xyz/api/v1/stripe/success
-    cancel-url: https://sustainable-be.code4fun.xyz/api/v1/stripe/cancel
+    # Stripe will redirect to these URLs after payment completion
+    success-url: ${STRIPE_SUCCESS_URL:https://sustainable-be.code4fun.xyz/api/v1/stripe/success}
+    cancel-url: ${STRIPE_CANCEL_URL:https://sustainable-be.code4fun.xyz/api/v1/stripe/cancel}
+
+# App configuration for deep link redirects
+app:
+    # Custom URL scheme for redirecting back to mobile app
+    url-scheme: heroeatspay
+    # Base URLs for different environments
+    base-url:
+        development: https://sustainable-be.code4fun.xyz
+        production: https://sustainable-be.code4fun.xyz

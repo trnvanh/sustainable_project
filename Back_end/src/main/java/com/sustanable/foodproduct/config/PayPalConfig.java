@@ -19,6 +19,12 @@ public class PayPalConfig {
     @Value("${paypal.mode:sandbox}")
     private String mode;
 
+    @Value("${paypal.return-url}")
+    private String returnUrl;
+
+    @Value("${paypal.cancel-url}")
+    private String cancelUrl;
+
     @Bean
     public PayPalHttpClient payPalHttpClient() {
         PayPalEnvironment environment;
@@ -30,5 +36,17 @@ public class PayPalConfig {
         }
 
         return new PayPalHttpClient(environment);
+    }
+
+    public String getReturnUrl() {
+        return returnUrl;
+    }
+
+    public String getCancelUrl() {
+        return cancelUrl;
+    }
+
+    public String getMode() {
+        return mode;
     }
 }

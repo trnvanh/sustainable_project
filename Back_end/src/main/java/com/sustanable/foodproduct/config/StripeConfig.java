@@ -16,6 +16,12 @@ public class StripeConfig {
     @Value("${stripe.webhook.secret}")
     private String stripeWebhookSecret;
 
+    @Value("${stripe.success-url}")
+    private String successUrl;
+
+    @Value("${stripe.cancel-url}")
+    private String cancelUrl;
+
     @PostConstruct
     public void initStripe() {
         Stripe.apiKey = stripeApiKey;
@@ -23,5 +29,13 @@ public class StripeConfig {
 
     public String getStripeWebhookSecret() {
         return stripeWebhookSecret;
+    }
+
+    public String getSuccessUrl() {
+        return successUrl;
+    }
+
+    public String getCancelUrl() {
+        return cancelUrl;
     }
 }

@@ -100,40 +100,95 @@ public class StripeController {
                         <meta http-equiv="refresh" content="0; url=%s">
                         <style>
                             body {
-                                font-family: Arial, sans-serif;
+                                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
                                 text-align: center;
                                 padding: 50px;
-                                background-color: #f5f5f5;
+                                background: linear-gradient(135deg, #667eea 0%%, #764ba2 100%%);
+                                margin: 0;
+                                min-height: 100vh;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
                             }
                             .container {
                                 max-width: 400px;
-                                margin: 0 auto;
                                 background: white;
-                                padding: 30px;
-                                border-radius: 10px;
-                                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                                padding: 40px;
+                                border-radius: 15px;
+                                box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+                                animation: fadeIn 0.5s ease-in;
                             }
                             .success { color: #4CAF50; }
                             .error { color: #f44336; }
-                            .loading { color: #2196F3; }
+                            .loading {
+                                color: #2196F3;
+                                font-size: 14px;
+                                margin-top: 20px;
+                            }
+                            .spinner {
+                                border: 2px solid #f3f3f3;
+                                border-top: 2px solid #2196F3;
+                                border-radius: 50%%;
+                                width: 20px;
+                                height: 20px;
+                                animation: spin 1s linear infinite;
+                                margin: 10px auto;
+                            }
+                            @keyframes fadeIn {
+                                from { opacity: 0; transform: translateY(20px); }
+                                to { opacity: 1; transform: translateY(0); }
+                            }
+                            @keyframes spin {
+                                0%% { transform: rotate(0deg); }
+                                100%% { transform: rotate(360deg); }
+                            }
+                            a {
+                                color: #2196F3;
+                                text-decoration: none;
+                                font-size: 14px;
+                            }
+                            a:hover {
+                                text-decoration: underline;
+                            }
                         </style>
                     </head>
                     <body>
                         <div class="container">
                             <h2 class="%s">%s</h2>
                             <p>%s</p>
+                            <div class="spinner"></div>
                             <p class="loading">Redirecting to HeroEats app...</p>
                             <p><a href="%s">Click here if not redirected automatically</a></p>
                         </div>
                         <script>
-                            // Multiple redirect methods for better compatibility
-                            window.location.href = '%s';
-                            window.location.replace('%s');
+                            // Immediate redirect with multiple fallback methods
+                            function redirectToApp() {
+                                const appUrl = '%s';
+                                console.log('Stripe: Attempting to redirect to:', appUrl);
 
-                            // Fallback after 1 second
-                            setTimeout(function() {
-                                window.open('%s', '_self');
-                            }, 1000);
+                                try {
+                                    // Method 1: Immediate redirect
+                                    window.location.href = appUrl;
+
+                                    // Method 2: Replace to prevent back navigation
+                                    setTimeout(() => {
+                                        window.location.replace(appUrl);
+                                    }, 100);
+
+                                    // Method 3: Open in same window
+                                    setTimeout(() => {
+                                        window.open(appUrl, '_self');
+                                    }, 300);
+
+                                } catch (error) {
+                                    console.error('Stripe redirect failed:', error);
+                                    document.querySelector('.loading').innerHTML =
+                                        'Unable to redirect automatically. Please click the link above.';
+                                }
+                            }
+
+                            // Start redirect immediately
+                            redirectToApp();
                         </script>
                     </body>
                     </html>
@@ -142,8 +197,6 @@ public class StripeController {
                     response.isSuccess() ? "success" : "error",
                     response.isSuccess() ? "Payment Successful!" : "Payment Failed",
                     response.getMessage(),
-                    redirectUrl,
-                    redirectUrl,
                     redirectUrl,
                     redirectUrl);
 
@@ -165,44 +218,73 @@ public class StripeController {
                         <meta http-equiv="refresh" content="0; url=%s">
                         <style>
                             body {
-                                font-family: Arial, sans-serif;
+                                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
                                 text-align: center;
                                 padding: 50px;
-                                background-color: #f5f5f5;
+                                background: linear-gradient(135deg, #ff6b6b 0%%, #ee5a52 100%%);
+                                margin: 0;
+                                min-height: 100vh;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
                             }
                             .container {
                                 max-width: 400px;
-                                margin: 0 auto;
                                 background: white;
-                                padding: 30px;
-                                border-radius: 10px;
-                                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                                padding: 40px;
+                                border-radius: 15px;
+                                box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+                                animation: fadeIn 0.5s ease-in;
                             }
                             .error { color: #f44336; }
+                            .spinner {
+                                border: 2px solid #f3f3f3;
+                                border-top: 2px solid #f44336;
+                                border-radius: 50%%;
+                                width: 20px;
+                                height: 20px;
+                                animation: spin 1s linear infinite;
+                                margin: 10px auto;
+                            }
+                            @keyframes fadeIn {
+                                from { opacity: 0; transform: translateY(20px); }
+                                to { opacity: 1; transform: translateY(0); }
+                            }
+                            @keyframes spin {
+                                0%% { transform: rotate(0deg); }
+                                100%% { transform: rotate(360deg); }
+                            }
+                            a {
+                                color: #f44336;
+                                text-decoration: none;
+                                font-size: 14px;
+                            }
                         </style>
                     </head>
                     <body>
                         <div class="container">
                             <h2 class="error">Payment Error</h2>
                             <p>There was an issue processing your payment.</p>
+                            <div class="spinner"></div>
                             <p>Redirecting to HeroEats app...</p>
                             <p><a href="%s">Click here if not redirected automatically</a></p>
                         </div>
                         <script>
-                            // Multiple redirect methods for better compatibility
-                            window.location.href = '%s';
-                            window.location.replace('%s');
-
-                            // Fallback after 1 second
-                            setTimeout(function() {
-                                window.open('%s', '_self');
-                            }, 1000);
+                            function redirectToApp() {
+                                const appUrl = '%s';
+                                try {
+                                    window.location.href = appUrl;
+                                    setTimeout(() => window.location.replace(appUrl), 100);
+                                    setTimeout(() => window.open(appUrl, '_self'), 300);
+                                } catch (error) {
+                                    console.error('Stripe error redirect failed:', error);
+                                }
+                            }
+                            redirectToApp();
                         </script>
                     </body>
                     </html>
                     """,
-                    errorRedirectUrl,
-                    errorRedirectUrl,
                     errorRedirectUrl,
                     errorRedirectUrl,
                     errorRedirectUrl);
@@ -234,44 +316,73 @@ public class StripeController {
                     <meta http-equiv="refresh" content="0; url=%s">
                     <style>
                         body {
-                            font-family: Arial, sans-serif;
+                            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
                             text-align: center;
                             padding: 50px;
-                            background-color: #f5f5f5;
+                            background: linear-gradient(135deg, #ffa726 0%%, #ff9800 100%%);
+                            margin: 0;
+                            min-height: 100vh;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
                         }
                         .container {
                             max-width: 400px;
-                            margin: 0 auto;
                             background: white;
-                            padding: 30px;
-                            border-radius: 10px;
-                            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                            padding: 40px;
+                            border-radius: 15px;
+                            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+                            animation: fadeIn 0.5s ease-in;
                         }
                         .cancelled { color: #ff9800; }
+                        .spinner {
+                            border: 2px solid #f3f3f3;
+                            border-top: 2px solid #ff9800;
+                            border-radius: 50%%;
+                            width: 20px;
+                            height: 20px;
+                            animation: spin 1s linear infinite;
+                            margin: 10px auto;
+                        }
+                        @keyframes fadeIn {
+                            from { opacity: 0; transform: translateY(20px); }
+                            to { opacity: 1; transform: translateY(0); }
+                        }
+                        @keyframes spin {
+                            0%% { transform: rotate(0deg); }
+                            100%% { transform: rotate(360deg); }
+                        }
+                        a {
+                            color: #ff9800;
+                            text-decoration: none;
+                            font-size: 14px;
+                        }
                     </style>
                 </head>
                 <body>
                     <div class="container">
                         <h2 class="cancelled">Payment Cancelled</h2>
                         <p>Your payment has been cancelled.</p>
+                        <div class="spinner"></div>
                         <p>Redirecting to HeroEats app...</p>
                         <p><a href="%s">Click here if not redirected automatically</a></p>
                     </div>
                     <script>
-                        // Multiple redirect methods for better compatibility
-                        window.location.href = '%s';
-                        window.location.replace('%s');
-
-                        // Fallback after 1 second
-                        setTimeout(function() {
-                            window.open('%s', '_self');
-                        }, 1000);
+                        function redirectToApp() {
+                            const appUrl = '%s';
+                            try {
+                                window.location.href = appUrl;
+                                setTimeout(() => window.location.replace(appUrl), 100);
+                                setTimeout(() => window.open(appUrl, '_self'), 300);
+                            } catch (error) {
+                                console.error('Stripe cancel redirect failed:', error);
+                            }
+                        }
+                        redirectToApp();
                     </script>
                 </body>
                 </html>
                 """,
-                redirectUrl,
-                redirectUrl,
                 redirectUrl,
                 redirectUrl,
                 redirectUrl);

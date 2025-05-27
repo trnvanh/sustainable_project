@@ -8,14 +8,40 @@
     "scheme": "heroeatspay",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+    "linking": {
+      "enabled": true,
+      "prefixes": ["heroeatspay://"],
+      "config": {
+        "screens": {
+          "payment/success": "payment/success",
+          "payment/cancel": "payment/cancel",
+          "payment/stripe/success": "payment/stripe/success", 
+          "payment/stripe/cancel": "payment/stripe/cancel"
+        }
+      }
+    },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.sustainableapp.heroeatspay"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.sustainableapp.heroeatspay",
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+              "scheme": "heroeatspay"
+            }
+          ],
+          "category": ["BROWSABLE", "DEFAULT"]
+        }
+      ]
     },
     "web": {
       "bundler": "metro",
