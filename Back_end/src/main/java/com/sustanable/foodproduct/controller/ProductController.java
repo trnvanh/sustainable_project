@@ -18,7 +18,6 @@ import com.sustanable.foodproduct.converter.Converter;
 import com.sustanable.foodproduct.dtos.ProductDto;
 import com.sustanable.foodproduct.dtos.ProductResponseDto;
 import com.sustanable.foodproduct.entities.ProductEntity;
-import com.sustanable.foodproduct.entities.StoreEntity;
 import com.sustanable.foodproduct.services.ProductService;
 
 import lombok.RequiredArgsConstructor;
@@ -33,14 +32,6 @@ public class ProductController {
     @PostMapping
     public ResponseEntity<ProductDto> createProduct(@RequestBody ProductDto productDto) {
         var product = Converter.toModel(productDto, ProductEntity.class);
-        
-        // Handle storeId to StoreEntity conversion manually
-        if (productDto.getStoreId() != null) {
-            StoreEntity store = new StoreEntity();
-            store.setId(productDto.getStoreId());
-            product.setStore(store);
-        }
-        
         var savedProduct = productService.createProduct(product);
         return ResponseEntity.ok(Converter.toModel(savedProduct, ProductDto.class));
     }
@@ -48,19 +39,6 @@ public class ProductController {
     @PostMapping("/batch")
     public ResponseEntity<List<ProductDto>> createProducts(@RequestBody List<ProductDto> productDtos) {
         var products = Converter.toList(productDtos, ProductEntity.class);
-        
-        // Handle storeId to StoreEntity conversion manually for each product
-        for (int i = 0; i < productDtos.size(); i++) {
-            ProductDto dto = productDtos.get(i);
-            ProductEntity entity = products.get(i);
-            
-            if (dto.getStoreId() != null) {
-                StoreEntity store = new StoreEntity();
-                store.setId(dto.getStoreId());
-                entity.setStore(store);
-            }
-        }
-        
         var savedProducts = productService.createProducts(products);
         return ResponseEntity.ok(Converter.toList(savedProducts, ProductDto.class));
     }

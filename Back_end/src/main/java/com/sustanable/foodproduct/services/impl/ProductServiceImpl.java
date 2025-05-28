@@ -35,11 +35,6 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductEntity createProduct(ProductEntity product) {
-        // Handle the case where store is null but we have storeId in DTO
-        if (product.getStore() == null || product.getStore().getId() == null) {
-            throw new IllegalArgumentException("Store information is missing or invalid");
-        }
-        
         // Fetch and attach the store
         StoreEntity store = storeRepository.findById(product.getStore().getId())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid store ID: " + product.getStore().getId()));
@@ -58,11 +53,6 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<ProductEntity> createProducts(List<ProductEntity> products) {
         for (ProductEntity product : products) {
-            // Handle the case where store is null but we have storeId in DTO
-            if (product.getStore() == null || product.getStore().getId() == null) {
-                throw new IllegalArgumentException("Store information is missing or invalid for product: " + product.getName());
-            }
-            
             // Resolve store
             StoreEntity store = storeRepository.findById(product.getStore().getId())
                     .orElseThrow(() -> new IllegalArgumentException("Invalid store ID: " + product.getStore().getId()));
