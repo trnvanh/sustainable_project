@@ -1,22 +1,24 @@
 import { router } from 'expo-router';
-import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useEffect } from 'react';
+import { ActivityIndicator, StyleSheet, Text, Image, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function WelcomeScreen() {
+    useEffect(() => {
+        (async () => {
+          await new Promise(resolve => setTimeout(resolve, 2000));
+          router.push('/login')
+        })();
+      }, []); 
+
     return (
         <SafeAreaView style={styles.container}>
-            <View style={styles.content}>
-                <Text style={styles.title}>Welcome to FoodRescue</Text>
-                <Text style={styles.subtitle}>Save food, save the planet</Text>
+                <Text style={styles.title}>Welcome to</Text>
+                <Text style={styles.name}>HeroEats</Text>
 
-                <TouchableOpacity
-                    style={styles.getStartedButton}
-                    onPress={() => router.push('/login')}
-                >
-                    <Text style={styles.buttonText}>Get Started</Text>
-                </TouchableOpacity>
-            </View>
+                <Image source={require('@/assets/images/logo.png')} style={styles.image} />
+
+                <ActivityIndicator size="large" color="#335248" style={{ marginTop: 20 }} />
         </SafeAreaView>
     );
 }
@@ -24,38 +26,27 @@ export default function WelcomeScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#C4DAD2',
-    },
-    content: {
-        flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        paddingHorizontal: 32,
-    },
-    title: {
-        fontSize: 32,
+        backgroundColor: '#C4DAD2',
+        padding: 20,
+      },
+      title: {
+        color: '#6A9C89',
+        fontSize: 30,
         fontWeight: 'bold',
+        alignItems: 'center',
+      },
+      name: {
         color: '#16423C',
-        textAlign: 'center',
-        marginBottom: 16,
-    },
-    subtitle: {
-        fontSize: 18,
-        color: '#335248',
-        textAlign: 'center',
-        marginBottom: 48,
-    },
-    getStartedButton: {
-        backgroundColor: '#6A9C89',
-        paddingHorizontal: 32,
-        paddingVertical: 16,
-        borderRadius: 25,
-        minWidth: 200,
-    },
-    buttonText: {
-        color: '#fff',
-        fontSize: 18,
-        fontWeight: '600',
-        textAlign: 'center',
-    },
+        fontSize: 38,
+        fontWeight: 'bold',
+        alignItems: 'center',
+        marginBottom: 20,
+      },
+      image: {
+        width: 200,
+        height: 200,
+        resizeMode: 'contain',
+      },
 });

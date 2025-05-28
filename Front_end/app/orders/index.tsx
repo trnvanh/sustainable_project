@@ -153,8 +153,8 @@ export default function OrdersScreen() {
                 renderTabBar={(props) => (
                     <TabBar
                         {...props}
-                        style={{ backgroundColor: '#D9D9D9', borderRadius: 12 }}
-                        indicatorStyle={{ backgroundColor: '#16423C' }}
+                        style={{ backgroundColor: '#84AE92', borderRadius: 12 }}
+                        indicatorStyle={{ backgroundColor: '#FAFFCA' }}
                     />
                 )}
             />
@@ -165,7 +165,7 @@ export default function OrdersScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#E7F0F1',
+        backgroundColor: '#C4DAD2',
         paddingTop: 50,
         paddingHorizontal: 16,
     },
