@@ -1,8 +1,4 @@
-import {
-  loginRequest,
-  registerRequest,
-  updateUserRequest,
-} from "@/api/authentication";
+import { loginRequest, registerRequest } from "@/api/authentication";
 import { UserProfile } from "@/types/user";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
@@ -174,20 +170,21 @@ export const useAuthStore = create<AuthState>()(
 
         set({ loading: true });
         try {
-          const updatedUser = await updateUserRequest(
-            currentUser.id,
-            updatedFields
-          );
+          // Don't call updateUserRequest here as it's using mock data
+          // Just update the local state directly with the provided fields
+          // The actual API call is made in the profile-info component
+
+          const updatedUser = {
+            ...currentUser,
+            ...updatedFields,
+          };
+
           set({ user: updatedUser, loading: false });
-          showMessage({
-            message: "Successfully updated",
-            type: "success",
-            icon: "success",
-          });
+          // Don't show success message here as it's already shown in the profile-info component
         } catch (error) {
           set({ loading: false });
           showMessage({
-            message: "Failed to update",
+            message: "Failed to update user data",
             type: "danger",
             icon: "danger",
           });

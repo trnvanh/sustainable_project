@@ -69,12 +69,16 @@ export default function ProfileInfoScreen() {
       const firstname = nameParts[0] || '';
       const lastname = nameParts.slice(1).join(' ') || '';
 
+      console.log('Updating profile with data:', { firstname, lastname, phoneNumber: phone });
+
       // Update profile using API
       const updatedProfile = await updateUserProfile(accessToken, {
         firstname,
         lastname,
         phoneNumber: phone,
       });
+
+      console.log('Profile update response:', updatedProfile);
 
       // Update local store with returned data to ensure consistency
       await updateUser({
@@ -86,6 +90,11 @@ export default function ProfileInfoScreen() {
       Alert.alert('Success', 'Profile updated successfully!');
     } catch (error: any) {
       console.error('Failed to update profile:', error);
+      // More detailed error logging
+      if (error.response) {
+        console.error('Error response data:', error.response.data);
+        console.error('Error response status:', error.response.status);
+      }
       Alert.alert('Error', error.message || 'Failed to update profile');
     } finally {
       setIsLoading(false);
