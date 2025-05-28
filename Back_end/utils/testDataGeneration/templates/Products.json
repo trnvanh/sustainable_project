@@ -1,55 +1,219 @@
 {
     "products": [
         {
-            "name": "Sushi Roll Set",
-            "description": "Fresh sushi rolls with various fillings including salmon, tuna, and vegetables",
-            "image": "https://example.com/images/sushi-roll.jpg",
-            "price": 15.99,
-            "pickupTime": "18:00-20:00",
-            "distance": 2.5,
+            "name": "Vegan Buddha Bowl",
+            "description": "Colorful mix of quinoa, roasted vegetables, chickpeas, and tahini dressing",
+            "image": "https://example.com/images/buddha-bowl.jpg",
+            "price": 11.50,
+            "pickupTime": "16:00-18:00",
+            "distance": 2.0,
+            "portionsLeft": 6,
+            "rating": 4.6,
+            "expiringDate": "2025-05-24",
+            "status": true,
+            "favourite": 14,
+            "categories": ["Vegan", "Healthy"],
+            "location": {
+                "restaurant": "Green Garden",
+                "address": "12 Leafy Lane, Eco Quarter"
+            }
+        },
+        {
+            "name": "Beef Burrito",
+            "description": "Hearty burrito filled with spiced beef, beans, rice, and cheese",
+            "image": "https://example.com/images/burrito.jpg",
+            "price": 9.75,
+            "pickupTime": "18:30-20:30",
+            "distance": 3.4,
+            "portionsLeft": 4,
+            "rating": 4.2,
+            "expiringDate": "2025-05-24",
+            "status": true,
+            "favourite": 22,
+            "categories": ["Mexican"],
+            "location": {
+                "restaurant": "Taco Fiesta",
+                "address": "95 Spicy Road, Market District"
+            }
+        },
+        {
+            "name": "Falafel Wrap",
+            "description": "Crispy falafel with hummus, pickles, and fresh veggies in a soft wrap",
+            "image": "https://example.com/images/falafel-wrap.jpg",
+            "price": 8.90,
+            "pickupTime": "15:00-17:00",
+            "distance": 2.1,
+            "portionsLeft": 7,
+            "rating": 4.4,
+            "expiringDate": "2025-05-24",
+            "status": true,
+            "favourite": 30,
+            "categories": ["Middle Eastern", "Vegetarian"],
+            "location": {
+                "restaurant": "Falafel King",
+                "address": "78 Pita Street, City Center"
+            }
+        },
+        {
+            "name": "Grilled Chicken Salad",
+            "description": "Grilled chicken breast served over fresh greens with vinaigrette",
+            "image": "https://example.com/images/chicken-salad.jpg",
+            "price": 10.50,
+            "pickupTime": "17:00-19:00",
+            "distance": 1.5,
             "portionsLeft": 5,
+            "rating": 4.1,
+            "expiringDate": "2025-05-24",
+            "status": true,
+            "favourite": 19,
+            "categories": ["Healthy"],
+            "location": {
+                "restaurant": "Fit Eats",
+                "address": "30 Health Street, Wellness Block"
+            }
+        },
+        {
+            "name": "Butter Chicken with Rice",
+            "description": "Creamy butter chicken served with fragrant basmati rice",
+            "image": "https://example.com/images/butter-chicken.jpg",
+            "price": 13.40,
+            "pickupTime": "18:00-20:00",
+            "distance": 3.9,
+            "portionsLeft": 3,
+            "rating": 4.7,
+            "expiringDate": "2025-05-24",
+            "status": true,
+            "favourite": 28,
+            "categories": ["Indian"],
+            "location": {
+                "restaurant": "Curry House",
+                "address": "88 Spice Road, Southside"
+            }
+        },
+        {
+            "name": "Vegetable Lasagna",
+            "description": "Layers of pasta with grilled vegetables, tomato sauce, and cheese",
+            "image": "https://example.com/images/veg-lasagna.jpg",
+            "price": 9.95,
+            "pickupTime": "17:00-19:00",
+            "distance": 2.7,
+            "portionsLeft": 2,
+            "rating": 4.0,
+            "expiringDate": "2025-05-24",
+            "status": true,
+            "favourite": 15,
+            "categories": ["Italian", "Vegetarian"],
+            "location": {
+                "restaurant": "Mama's Kitchen",
+                "address": "22 Pasta Avenue, Old Town"
+            }
+        },
+        {
+            "name": "Salmon Poke Bowl",
+            "description": "Fresh salmon with rice, seaweed, avocado, and soy dressing",
+            "image": "https://example.com/images/poke-bowl.jpg",
+            "price": 14.25,
+            "pickupTime": "16:30-18:30",
+            "distance": 1.9,
+            "portionsLeft": 4,
+            "rating": 4.9,
+            "expiringDate": "2025-05-24",
+            "status": true,
+            "favourite": 33,
+            "categories": ["Hawaiian", "Seafood"],
+            "location": {
+                "restaurant": "Poke Place",
+                "address": "60 Island Way, Seaside Block"
+            }
+        },
+        {
+            "name": "Ramen Bowl",
+            "description": "Japanese ramen with pork, soft-boiled egg, and vegetables in miso broth",
+            "image": "https://example.com/images/ramen.jpg",
+            "price": 12.80,
+            "pickupTime": "18:00-20:00",
+            "distance": 3.0,
+            "portionsLeft": 6,
+            "rating": 4.6,
+            "expiringDate": "2025-05-24",
+            "status": true,
+            "favourite": 27,
+            "categories": ["Japanese"],
+            "location": {
+                "restaurant": "Tokyo Noodles",
+                "address": "101 Ramen Lane, East Market"
+            }
+        },
+        {
+            "name": "Tofu Stir-Fry",
+            "description": "Stir-fried tofu with mixed vegetables and teriyaki sauce",
+            "image": "https://example.com/images/tofu-stirfry.jpg",
+            "price": 9.60,
+            "pickupTime": "16:00-18:00",
+            "distance": 2.3,
+            "portionsLeft": 5,
+            "rating": 4.2,
+            "expiringDate": "2025-05-24",
+            "status": true,
+            "favourite": 17,
+            "categories": ["Asian", "Vegan"],
+            "location": {
+                "restaurant": "Zen Bowl",
+                "address": "33 Harmony Street, Central Town"
+            }
+        },
+        {
+            "name": "BBQ Pulled Pork Sandwich",
+            "description": "Tender pulled pork with BBQ sauce on a toasted bun",
+            "image": "https://example.com/images/pulled-pork.jpg",
+            "price": 10.75,
+            "pickupTime": "17:30-19:30",
+            "distance": 4.1,
+            "portionsLeft": 3,
             "rating": 4.5,
             "expiringDate": "2025-05-24",
             "status": true,
-            "favourite": 12,
-            "categories": ["Japanese"],
+            "favourite": 21,
+            "categories": ["American"],
             "location": {
-                "restaurant": "Sushi Master",
-                "address": "123 Food Street, City Center"
+                "restaurant": "Grill & Smoke",
+                "address": "7 BBQ Avenue, Northside"
             }
         },
         {
-            "name": "Pizza Margherita",
-            "description": "Traditional Italian pizza with tomato sauce, mozzarella, and fresh basil",
-            "image": "https://example.com/images/pizza.jpg",
-            "price": 12.99,
-            "pickupTime": "19:00-21:00",
-            "distance": 1.8,
-            "portionsLeft": 3,
-            "rating": 4.8,
-            "expiringDate": "2025-05-24",
-            "status": true,
-            "favourite": 25,
-            "location": {
-                "restaurant": "Pizza Express",
-                "address": "456 Main Avenue, Downtown"
-            }
-        },
-        {
-            "name": "Pad Thai",
-            "description": "Authentic Thai stir-fried rice noodles with tofu, shrimp, and peanuts",
-            "image": "https://example.com/images/pad-thai.jpg",
-            "price": 10.99,
-            "pickupTime": "17:30-19:30",
-            "distance": 3.2,
+            "name": "Greek Salad Box",
+            "description": "Fresh salad with feta, olives, cucumber, tomato, and oregano dressing",
+            "image": "https://example.com/images/greek-salad.jpg",
+            "price": 8.20,
+            "pickupTime": "15:00-17:00",
+            "distance": 1.6,
             "portionsLeft": 4,
             "rating": 4.3,
             "expiringDate": "2025-05-24",
             "status": true,
-            "favourite": 18,
+            "favourite": 16,
+            "categories": ["Mediterranean", "Vegetarian"],
             "location": {
-                "restaurant": "Thai Delight",
-                "address": "789 Eastern Road, Food District"
+                "restaurant": "Olive Grove",
+                "address": "18 Aegean Way, West End"
+            }
+        },
+        {
+            "name": "Korean Fried Chicken",
+            "description": "Crispy double-fried chicken tossed in spicy Korean glaze",
+            "image": "https://example.com/images/korean-chicken.jpg",
+            "price": 13.60,
+            "pickupTime": "18:30-20:30",
+            "distance": 3.8,
+            "portionsLeft": 5,
+            "rating": 4.7,
+            "expiringDate": "2025-05-24",
+            "status": true,
+            "favourite": 26,
+            "categories": ["Korean"],
+            "location": {
+                "restaurant": "Seoul Street",
+                "address": "45 Kimchi Lane, Uptown"
             }
         }
     ]

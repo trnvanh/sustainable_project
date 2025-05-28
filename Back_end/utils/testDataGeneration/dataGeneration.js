@@ -122,8 +122,8 @@ async function createProducts(stores, categories) {
             expiringDate: faker.date.soon({ days: 2 }).toISOString().split('T')[0],
             status: true,
             favourite: faker.number.int({ min: 0, max: 50 }),
-            store: store,
-            categories: productCategories  // Send the full category objects instead of just IDs
+            storeId: store.id,  // Send only the store ID, not the full store object
+            categories: productCategories.map(cat => ({ id: cat.id }))  // Send only category IDs for proper mapping
         };
     };
 
@@ -135,7 +135,7 @@ async function createProducts(stores, categories) {
             const response = await client.post('/api/v1/products', productData);
             if (response.data?.id) {
                 products.push(response.data);
-                console.log(`✅ Created product: ${productData.name} (ID: ${response.data.id}) in store: ${productData.store.name}`);
+                console.log(`✅ Created product: ${productData.name} (ID: ${response.data.id}) for store ID: ${productData.storeId}`);
             } else {
                 console.warn(`⚠️ Created product without ID:`, response.data);
             }
@@ -185,7 +185,7 @@ async function createProducts(stores, categories) {
                 const response = await client.post('/api/v1/products', productData);
                 if (response.data?.id) {
                     products.push(response.data);
-                    console.log(`✅ Created product: ${productData.name} (ID: ${response.data.id}) in store: ${productData.store.name}`);
+                    console.log(`✅ Created product: ${productData.name} (ID: ${response.data.id}) for store ID: ${productData.storeId}`);
                 } else {
                     console.warn(`⚠️ Created product without ID:`, response.data);
                 }
