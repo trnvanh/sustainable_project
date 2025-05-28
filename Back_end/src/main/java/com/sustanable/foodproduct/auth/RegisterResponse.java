@@ -29,6 +29,7 @@ public class RegisterResponse {
         private String firstname;
         private String lastname;
         private String phoneNumber;
+        private String profileImageUrl;
         private Role role;
     }
 }

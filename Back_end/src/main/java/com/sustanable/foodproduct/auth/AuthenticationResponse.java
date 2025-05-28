@@ -28,6 +28,7 @@ public class AuthenticationResponse {
         private String lastname;
         private String email;
         private String phoneNumber;
+        private String profileImageUrl;
         private Role role;
     }
 }

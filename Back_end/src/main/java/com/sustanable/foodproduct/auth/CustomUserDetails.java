@@ -36,6 +36,10 @@ public class CustomUserDetails implements UserDetails {
         return user.getPhoneNumber();
     }
 
+    public String getProfileImageUrl() {
+        return user.getProfileImageUrl();
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return user.getRole().getAuthorities();

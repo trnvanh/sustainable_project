@@ -42,6 +42,9 @@ public class User {
     @Column(name = "phone_number")
     private String phoneNumber;
 
+    @Column(name = "profile_image_url")
+    private String profileImageUrl;
+
     @JsonIgnore
     private String password;
 

@@ -53,7 +53,8 @@ export const useAuthStore = create<AuthState>()(
                 id: response.user.id,
                 email: response.user.email,
                 name: `${response.user.firstname} ${response.user.lastname}`,
-                phone: "0964434888",
+                phone: response.user.phoneNumber || "0964434888",
+                profileImageUrl: response.user.profileImageUrl,
                 credits: 748,
                 rescuedMeals: 6,
                 co2SavedKg: 6,
@@ -115,6 +116,7 @@ export const useAuthStore = create<AuthState>()(
                   response.userData?.lastname || ""
                 }`,
                 phone: response.userData?.phoneNumber || "",
+                profileImageUrl: response.userData?.profileImageUrl,
                 credits: 748,
                 rescuedMeals: 6,
                 co2SavedKg: 6,

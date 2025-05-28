@@ -19,6 +19,7 @@ export type RegisterResponse = {
     firstname: string;
     lastname: string;
     phoneNumber: string;
+    profileImageUrl?: string;
     role: string;
   };
   message?: string;
@@ -33,5 +34,7 @@ export type AuthenticationResponse = {
     firstname: string;
     lastname: string;
     email: string;
+    phoneNumber?: string;
+    profileImageUrl?: string;
   };
 };

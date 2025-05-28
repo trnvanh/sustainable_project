@@ -4,8 +4,8 @@ import React, { useState } from 'react';
 import { ActivityIndicator, Alert, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
 export default function LoginScreen() {
-  const [email, setEmail] = useState('tanh@gmail.com');
-  const [password, setPassword] = useState('1234@tanh');
+  const [email, setEmail] = useState('tuanbeovnn@gmail.com');
+  const [password, setPassword] = useState('P@ssword*123');
   const login = useAuthStore((state) => state.login);
   const {
     loading,

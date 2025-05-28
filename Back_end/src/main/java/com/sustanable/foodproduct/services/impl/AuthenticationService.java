@@ -72,6 +72,8 @@ public class AuthenticationService {
                             .email(savedUser.getEmail())
                             .firstname(savedUser.getFirstname())
                             .lastname(savedUser.getLastname())
+                            .phoneNumber(savedUser.getPhoneNumber())
+                            .profileImageUrl(savedUser.getProfileImageUrl())
                             .role(savedUser.getRole())
                             .build())
                     .build();
@@ -118,6 +120,8 @@ public class AuthenticationService {
                             .firstname(user.getFirstname())
                             .lastname(user.getLastname())
                             .email(user.getEmail())
+                            .phoneNumber(user.getPhoneNumber())
+                            .profileImageUrl(user.getProfileImageUrl())
                             .role(user.getRole())
                             .build())
                     .build();

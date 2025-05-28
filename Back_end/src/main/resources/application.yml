@@ -60,3 +60,11 @@ app:
     base-url:
         development: https://sustainable-be.code4fun.xyz
         production: https://sustainable-be.code4fun.xyz
+
+api:
+    username: admin
+    password: 123456
+
+file:
+    upload:
+        url: https://minio-be.code4fun.xyz
