@@ -6,6 +6,7 @@ import {OrderItem} from "@/types/order";
 import {router} from "expo-router";
 
 interface Props {
+  id: string;
   item: OrderItem;
   title: string;
   image: string;
@@ -13,7 +14,7 @@ interface Props {
   onDelete: () => void;
 }
 
-export const FavoriteCard: React.FC<Props> = ({item, title, image, price, onDelete }) => {
+export const FavoriteCard: React.FC<Props> = ({ id, item, title, image, price, onDelete }) => {
   const {
     setSelectedOffer,
   } = useProductsStore();
@@ -22,7 +23,10 @@ export const FavoriteCard: React.FC<Props> = ({item, title, image, price, onDele
     <View style={styles.card}>
       <TouchableOpacity onPress={() => {
         setSelectedOffer(item);
-        router.push(`/offer/${item.id}`);
+        router.push({
+          pathname: '/offer/[offerId]',
+          params: { offerId: id, from: 'FavoritEats' },
+        })
       }}>
         <Image source={{ uri: image }} style={styles.image} />
         <TouchableOpacity onPress={onDelete} style={styles.delete}>

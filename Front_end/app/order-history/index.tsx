@@ -261,58 +261,58 @@ export default function OrderHistoryScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScreenWithBack title="Order History">
-      <Text style={styles.title}>Order History</Text>
+      <ScreenWithBack title="Profile">
+        <Text style={styles.title}>Order History</Text>
 
-      {loading && !useMockData && displayOrders.length === 0 ? (
-        // Loading state - only show if not using mock data
-        <View style={styles.loadingContainer}>
-          <Text style={styles.loadingText}>Loading order history...</Text>
-        </View>
-      ) : hasError && displayOrders.length === 0 ? (
-        // Error state
-        <View style={styles.errorContainer}>
-          <Ionicons name="alert-circle-outline" size={48} color="#F44336" />
-          <Text style={styles.errorText}>Error loading order history</Text>
-          <TouchableOpacity
-            style={styles.refreshButton}
-            onPress={() => {
-              setHasError(false);
-              fetchOrders();
-            }}
-          >
-            <Text style={styles.refreshButtonText}>Try Again</Text>
-          </TouchableOpacity>
-        </View>
-      ) : displayOrders.length === 0 ? (
-        // Empty state
-        <View style={styles.emptyContainer}>
-          <Ionicons name="receipt-outline" size={48} color="#999" />
-          <Text style={styles.emptyText}>No past orders yet.</Text>
-          <Text style={styles.emptySubtext}>Your completed orders will appear here.</Text>
-          <TouchableOpacity
-            style={styles.refreshButton}
-            onPress={() => fetchOrders()}
-          >
-            <Text style={styles.refreshButtonText}>Refresh</Text>
-          </TouchableOpacity>
-        </View>
-      ) : (
-        // Orders list
-        <FlatList
-          data={displayOrders}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={styles.list}
-          refreshControl={
-            <RefreshControl
-              refreshing={loading}
-              onRefresh={fetchOrders}
-              colors={['#4CAF50']}
-            />
-          }
-        />
-      )}
+        {loading && !useMockData && displayOrders.length === 0 ? (
+          // Loading state - only show if not using mock data
+          <View style={styles.loadingContainer}>
+            <Text style={styles.loadingText}>Loading order history...</Text>
+          </View>
+        ) : hasError && displayOrders.length === 0 ? (
+          // Error state
+          <View style={styles.errorContainer}>
+            <Ionicons name="alert-circle-outline" size={48} color="#F44336" />
+            <Text style={styles.errorText}>Error loading order history</Text>
+            <TouchableOpacity
+              style={styles.refreshButton}
+              onPress={() => {
+                setHasError(false);
+                fetchOrders();
+              }}
+            >
+              <Text style={styles.refreshButtonText}>Try Again</Text>
+            </TouchableOpacity>
+          </View>
+        ) : displayOrders.length === 0 ? (
+          // Empty state
+          <View style={styles.emptyContainer}>
+            <Ionicons name="receipt-outline" size={48} color="#999" />
+            <Text style={styles.emptyText}>No past orders yet.</Text>
+            <Text style={styles.emptySubtext}>Your completed orders will appear here.</Text>
+            <TouchableOpacity
+              style={styles.refreshButton}
+              onPress={() => fetchOrders()}
+            >
+              <Text style={styles.refreshButtonText}>Refresh</Text>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          // Orders list
+          <FlatList
+            data={displayOrders}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.id}
+            contentContainerStyle={styles.list}
+            refreshControl={
+              <RefreshControl
+                refreshing={loading}
+                onRefresh={fetchOrders}
+                colors={['#4CAF50']}
+              />
+            }
+          />
+        )}
       </ScreenWithBack>
     </SafeAreaView>
   );

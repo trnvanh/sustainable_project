@@ -188,6 +188,7 @@ export default function FavoriteScreen() {
 
             return (
               <FavoriteCard
+                id={item.id.toString()}
                 item={orderItem}
                 title={item.name}
                 image={item.image || ''}

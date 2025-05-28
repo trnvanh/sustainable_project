@@ -1,3 +1,4 @@
+import ScreenWithBack from '@/components/ScreenBack';
 import { useTheme } from '@/context/ThemeContext';
 import { useAuthStore } from '@/store/useAuthStore';
 import { Ionicons } from '@expo/vector-icons';
@@ -146,103 +147,105 @@ export default function SettingsScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>Settings</Text>
+      <ScreenWithBack title="Profile">
+        <Text style={styles.title}>Settings</Text>
 
-      {/* Name */}
-      <Text style={styles.label}>Name</Text>
-      <TextInput value={name} onChangeText={setName} style={styles.input} />
+        {/* Name */}
+        <Text style={styles.label}>Name</Text>
+        <TextInput value={name} onChangeText={setName} style={styles.input} />
 
-      {/* Phone */}
-      <Text style={styles.label}>Phone</Text>
-      <TextInput
-        value={phone}
-        onChangeText={setPhone}
-        style={styles.input}
-        keyboardType="phone-pad"
-      />
+        {/* Phone */}
+        <Text style={styles.label}>Phone</Text>
+        <TextInput
+          value={phone}
+          onChangeText={setPhone}
+          style={styles.input}
+          keyboardType="phone-pad"
+        />
 
-      {/* Theme Selection */}
-      <Text style={styles.label}>Theme</Text>
-      <View style={styles.themeContainer}>
-        <TouchableOpacity
-          style={[
-            styles.themeOption,
-            theme === 'light' && styles.themeOptionActive,
-          ]}
-          onPress={() => handleThemeChange('light')}
-        >
-          <View style={styles.themeOptionContent}>
-            <Ionicons
-              name="sunny"
-              size={24}
-              color={theme === 'light' ? colors.primary : colors.text}
-            />
-            <Text
-              style={[
-                styles.themeOptionText,
-                theme === 'light' && styles.themeOptionTextActive,
-              ]}
-            >
-              Light
-            </Text>
-          </View>
-          {theme === 'light' && (
-            <Ionicons name="checkmark-circle" size={20} color={colors.primary} />
-          )}
+        {/* Theme Selection */}
+        <Text style={styles.label}>Theme</Text>
+        <View style={styles.themeContainer}>
+          <TouchableOpacity
+            style={[
+              styles.themeOption,
+              theme === 'light' && styles.themeOptionActive,
+            ]}
+            onPress={() => handleThemeChange('light')}
+          >
+            <View style={styles.themeOptionContent}>
+              <Ionicons
+                name="sunny"
+                size={24}
+                color={theme === 'light' ? colors.primary : colors.text}
+              />
+              <Text
+                style={[
+                  styles.themeOptionText,
+                  theme === 'light' && styles.themeOptionTextActive,
+                ]}
+              >
+                Light
+              </Text>
+            </View>
+            {theme === 'light' && (
+              <Ionicons name="checkmark-circle" size={20} color={colors.primary} />
+            )}
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[
+              styles.themeOption,
+              theme === 'dark' && styles.themeOptionActive,
+            ]}
+            onPress={() => handleThemeChange('dark')}
+          >
+            <View style={styles.themeOptionContent}>
+              <Ionicons
+                name="moon"
+                size={24}
+                color={theme === 'dark' ? colors.primary : colors.text}
+              />
+              <Text
+                style={[
+                  styles.themeOptionText,
+                  theme === 'dark' && styles.themeOptionTextActive,
+                ]}
+              >
+                Dark
+              </Text>
+            </View>
+            {theme === 'dark' && (
+              <Ionicons name="checkmark-circle" size={20} color={colors.primary} />
+            )}
+          </TouchableOpacity>
+        </View>
+
+        {/* Language Picker */}
+        <Text style={styles.label}>Language</Text>
+        <View style={styles.pickerContainer}>
+          <Picker
+            selectedValue={language}
+            onValueChange={(itemValue) => setLanguage(itemValue)}
+            style={styles.picker}
+          >
+            <Picker.Item label="English" value="en" />
+            <Picker.Item label="Finnish" value="fi" />
+            <Picker.Item label="Vietnamese" value="vi" />
+          </Picker>
+        </View>
+
+        {/* Notifications Toggle */}
+        <View style={styles.switchRow}>
+          <Text style={styles.label}>Notifications</Text>
+          <Switch value={notifications} onValueChange={setNotifications} />
+        </View>
+
+        {/* Save Button */}
+        <TouchableOpacity onPress={handleSave} style={styles.button}>
+          <Text style={styles.buttonText}>Save Changes</Text>
         </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[
-            styles.themeOption,
-            theme === 'dark' && styles.themeOptionActive,
-          ]}
-          onPress={() => handleThemeChange('dark')}
-        >
-          <View style={styles.themeOptionContent}>
-            <Ionicons
-              name="moon"
-              size={24}
-              color={theme === 'dark' ? colors.primary : colors.text}
-            />
-            <Text
-              style={[
-                styles.themeOptionText,
-                theme === 'dark' && styles.themeOptionTextActive,
-              ]}
-            >
-              Dark
-            </Text>
-          </View>
-          {theme === 'dark' && (
-            <Ionicons name="checkmark-circle" size={20} color={colors.primary} />
-          )}
-        </TouchableOpacity>
-      </View>
-
-      {/* Language Picker */}
-      <Text style={styles.label}>Language</Text>
-      <View style={styles.pickerContainer}>
-        <Picker
-          selectedValue={language}
-          onValueChange={(itemValue) => setLanguage(itemValue)}
-          style={styles.picker}
-        >
-          <Picker.Item label="English" value="en" />
-          <Picker.Item label="Finnish" value="fi" />
-          <Picker.Item label="Vietnamese" value="vi" />
-        </Picker>
-      </View>
-
-      {/* Notifications Toggle */}
-      <View style={styles.switchRow}>
-        <Text style={styles.label}>Notifications</Text>
-        <Switch value={notifications} onValueChange={setNotifications} />
-      </View>
-
-      {/* Save Button */}
-      <TouchableOpacity onPress={handleSave} style={styles.button}>
-        <Text style={styles.buttonText}>Save Changes</Text>
-      </TouchableOpacity>
+       </ScreenWithBack>
     </SafeAreaView>
   );
 }

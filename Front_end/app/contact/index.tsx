@@ -1,3 +1,4 @@
+import ScreenWithBack from '@/components/ScreenBack';
 import { useTheme } from '@/context/ThemeContext';
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
@@ -52,87 +53,89 @@ export default function ContactScreen() {
 
     return (
         <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
-            <ScrollView showsVerticalScrollIndicator={false}>
-                <Text style={[styles.title, { color: colors.text }]}>Meet Hero Eats</Text>
+            <ScreenWithBack title="Profile">
+                <ScrollView showsVerticalScrollIndicator={false}>
+                    <Text style={[styles.title, { color: colors.text }]}>Meet Hero Eats</Text>
 
-                <View style={[styles.heroSection, { backgroundColor: colors.surface }]}>
-                    <Ionicons name="heart" size={48} color={colors.primary} />
-                    <Text style={[styles.heroTitle, { color: colors.primary }]}>
-                        Our Mission
-                    </Text>
-                    <Text style={[styles.heroDescription, { color: colors.textSecondary }]}>
-                        Creating a sustainable future through innovative food technology,
-                        connecting communities with fresh, local produce while minimizing waste.
-                    </Text>
-                </View>
+                    <View style={[styles.heroSection, { backgroundColor: colors.surface }]}>
+                        <Ionicons name="heart" size={48} color={colors.primary} />
+                        <Text style={[styles.heroTitle, { color: colors.primary }]}>
+                            Our Mission
+                        </Text>
+                        <Text style={[styles.heroDescription, { color: colors.textSecondary }]}>
+                            Creating a sustainable future through innovative food technology,
+                            connecting communities with fresh, local produce while minimizing waste.
+                        </Text>
+                    </View>
 
-                <Text style={[styles.sectionTitle, { color: colors.text }]}>Our Team</Text>
+                    <Text style={[styles.sectionTitle, { color: colors.text }]}>Our Team</Text>
 
-                {teamMembers.map((member, index) => (
-                    <View key={index} style={[styles.teamCard, { backgroundColor: colors.surface }]}>
-                        <View style={styles.teamHeader}>
-                            <View style={[styles.iconContainer, { backgroundColor: colors.primaryLight + '20' }]}>
-                                <Ionicons name={member.icon} size={24} color={colors.primary} />
+                    {teamMembers.map((member, index) => (
+                        <View key={index} style={[styles.teamCard, { backgroundColor: colors.surface }]}>
+                            <View style={styles.teamHeader}>
+                                <View style={[styles.iconContainer, { backgroundColor: colors.primaryLight + '20' }]}>
+                                    <Ionicons name={member.icon} size={24} color={colors.primary} />
+                                </View>
+                                <View style={styles.teamInfo}>
+                                    <Text style={[styles.memberName, { color: colors.text }]}>
+                                        {member.name}
+                                    </Text>
+                                    <Text style={[styles.memberRole, { color: colors.primary }]}>
+                                        {member.role}
+                                    </Text>
+                                </View>
                             </View>
-                            <View style={styles.teamInfo}>
-                                <Text style={[styles.memberName, { color: colors.text }]}>
-                                    {member.name}
-                                </Text>
-                                <Text style={[styles.memberRole, { color: colors.primary }]}>
-                                    {member.role}
-                                </Text>
-                            </View>
+
+                            <Text style={[styles.memberDescription, { color: colors.textSecondary }]}>
+                                {member.description}
+                            </Text>
+
+                            {member.email && (
+                                <TouchableOpacity
+                                    style={[styles.emailButton, { backgroundColor: colors.primary }]}
+                                    onPress={() => handleEmailPress(member.email!)}
+                                >
+                                    <Ionicons name="mail" size={16} color="white" />
+                                    <Text style={styles.emailText}>{member.email}</Text>
+                                </TouchableOpacity>
+                            )}
                         </View>
+                    ))}
 
-                        <Text style={[styles.memberDescription, { color: colors.textSecondary }]}>
-                            {member.description}
+                    <View style={[styles.contactSection, { backgroundColor: colors.surface }]}>
+                        <Text style={[styles.contactTitle, { color: colors.text }]}>
+                            Get In Touch
+                        </Text>
+                        <Text style={[styles.contactDescription, { color: colors.textSecondary }]}>
+                            Have questions, suggestions, or want to partner with us?
+                            We'd love to hear from you!
                         </Text>
 
-                        {member.email && (
-                            <TouchableOpacity
-                                style={[styles.emailButton, { backgroundColor: colors.primary }]}
-                                onPress={() => handleEmailPress(member.email!)}
-                            >
-                                <Ionicons name="mail" size={16} color="white" />
-                                <Text style={styles.emailText}>{member.email}</Text>
-                            </TouchableOpacity>
-                        )}
-                    </View>
-                ))}
+                        <View style={styles.contactMethods}>
+                            <View style={styles.contactMethod}>
+                                <Ionicons name="mail" size={20} color={colors.primary} />
+                                <Text style={[styles.contactText, { color: colors.textSecondary }]}>
+                                    hello@heroeats.com
+                                </Text>
+                            </View>
 
-                <View style={[styles.contactSection, { backgroundColor: colors.surface }]}>
-                    <Text style={[styles.contactTitle, { color: colors.text }]}>
-                        Get In Touch
-                    </Text>
-                    <Text style={[styles.contactDescription, { color: colors.textSecondary }]}>
-                        Have questions, suggestions, or want to partner with us?
-                        We'd love to hear from you!
-                    </Text>
+                            <View style={styles.contactMethod}>
+                                <Ionicons name="call" size={20} color={colors.primary} />
+                                <Text style={[styles.contactText, { color: colors.textSecondary }]}>
+                                    +1 (555) 123-HERO
+                                </Text>
+                            </View>
 
-                    <View style={styles.contactMethods}>
-                        <View style={styles.contactMethod}>
-                            <Ionicons name="mail" size={20} color={colors.primary} />
-                            <Text style={[styles.contactText, { color: colors.textSecondary }]}>
-                                hello@heroeats.com
-                            </Text>
-                        </View>
-
-                        <View style={styles.contactMethod}>
-                            <Ionicons name="call" size={20} color={colors.primary} />
-                            <Text style={[styles.contactText, { color: colors.textSecondary }]}>
-                                +1 (555) 123-HERO
-                            </Text>
-                        </View>
-
-                        <View style={styles.contactMethod}>
-                            <Ionicons name="location" size={20} color={colors.primary} />
-                            <Text style={[styles.contactText, { color: colors.textSecondary }]}>
-                                Sustainable Food Hub, Green City
-                            </Text>
+                            <View style={styles.contactMethod}>
+                                <Ionicons name="location" size={20} color={colors.primary} />
+                                <Text style={[styles.contactText, { color: colors.textSecondary }]}>
+                                    Sustainable Food Hub, Green City
+                                </Text>
+                            </View>
                         </View>
                     </View>
-                </View>
-            </ScrollView>
+                </ScrollView>
+            </ScreenWithBack>
         </SafeAreaView>
     );
 }

@@ -75,7 +75,7 @@ export default function OfferCard({
             </View>
             <View style={styles.cardContent}>
                 <Text style={styles.cardName}>{name}</Text>
-                <Text style={styles.cardPrice}>{price}</Text>
+                <Text style={styles.cardPrice}>{price}€</Text>
 
                 <View style={styles.infoRow}>
                     <StarRating rating={rating} size={16} />
