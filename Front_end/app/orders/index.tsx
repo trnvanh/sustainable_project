@@ -1,5 +1,6 @@
 import { EmptyState } from '@/components/EmptyOrderState';
 import { EnhancedOrderCard } from '@/components/EnhancedOrderCard';
+import { useTheme } from '@/context/ThemeContext';
 import { useAppStateHandler } from '@/hooks/useAppStateHandler';
 import { useOrderStore } from '@/store/useOrderStore';
 import React, { useEffect, useState } from 'react';
@@ -57,6 +58,7 @@ const orderHistory: OrderItem[] = [
 export default function OrdersScreen() {
     const [index, setIndex] = useState(0);
     const { orders, fetchOrders, loading, error } = useOrderStore();
+    const { colors } = useTheme();
 
     // Handle app state changes to refresh orders when returning from PayPal
     useAppStateHandler();
@@ -100,7 +102,7 @@ export default function OrdersScreen() {
                     <RefreshControl
                         refreshing={loading}
                         onRefresh={fetchOrders}
-                        colors={['#4CAF50']}
+                        colors={[colors.primary]}
                     />
                 }
             />
@@ -122,7 +124,7 @@ export default function OrdersScreen() {
                     <RefreshControl
                         refreshing={loading}
                         onRefresh={fetchOrders}
-                        colors={['#4CAF50']}
+                        colors={[colors.primary]}
                     />
                 }
             />
@@ -136,9 +138,29 @@ export default function OrdersScreen() {
         history: CompletedOrdersScene,
     });
 
+    const dynamicStyles = StyleSheet.create({
+        container: {
+            flex: 1,
+            backgroundColor: colors.background,
+            paddingTop: 50,
+            paddingHorizontal: 16,
+        },
+        heading: {
+            fontSize: 28,
+            fontWeight: '700',
+            textAlign: 'center',
+            color: colors.text,
+            marginBottom: 12,
+            marginTop: 10,
+        },
+        listContainer: {
+            paddingBottom: 100,
+        },
+    });
+
     return (
-        <View style={styles.container}>
-            <Text style={styles.heading}>My Orders</Text>
+        <View style={dynamicStyles.container}>
+            <Text style={dynamicStyles.heading}>My Orders</Text>
             <TabView
                 navigationState={{
                     index,
@@ -153,31 +175,13 @@ export default function OrdersScreen() {
                 renderTabBar={(props) => (
                     <TabBar
                         {...props}
-                        style={{ backgroundColor: '#84AE92', borderRadius: 12 }}
-                        indicatorStyle={{ backgroundColor: '#FAFFCA' }}
+                        style={{ backgroundColor: colors.primary, borderRadius: 12 }}
+                        indicatorStyle={{ backgroundColor: colors.accent }}
+                        activeColor={colors.surface}
+                        inactiveColor={colors.surface}
                     />
                 )}
             />
         </View>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#C4DAD2',
-        paddingTop: 50,
-        paddingHorizontal: 16,
-    },
-    heading: {
-        fontSize: 28,
-        fontWeight: '700',
-        textAlign: 'center',
-        color: '#16423C',
-        marginBottom: 12,
-        marginTop: 10,
-    },
-    listContainer: {
-        paddingBottom: 100,
-    },
-});

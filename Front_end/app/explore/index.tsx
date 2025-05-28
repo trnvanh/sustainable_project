@@ -4,6 +4,7 @@ import OfferCard from '@/components/OfferCard';
 import { useFavoritesStore } from "@/store/useFavoritesStore";
 import { useProductsStore } from "@/store/useProductsStore";
 // import { useFavoritesStore } from "@/store/useFavoritesStore";
+import { useTheme } from '@/context/ThemeContext';
 import { CategoryResponse } from '@/types/categoryTypes';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from "expo-router";
@@ -27,6 +28,7 @@ export default function Explore() {
         isSearchMode,
     } = useProductsStore();
 
+    const { colors } = useTheme();
     const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
 
     useEffect(() => {
@@ -67,14 +69,14 @@ export default function Explore() {
     const renderOfferRow = (title: string, data: typeof historyOrders, type: 'historyOrders' | 'nearbyOffers' | 'currentDeals') => (
         <View style={styles.section}>
             <View style={styles.sectionHeader}>
-                <Text style={styles.sectionTitle}>{title}</Text>
+                <Text style={dynamicStyles.sectionTitle}>{title}</Text>
                 <TouchableOpacity
                     onPress={() => router.push({
                         pathname: '/see-all',
                         params: { title, type }
                     })}
                 >
-                    <Text style={styles.seeAll}>See All</Text>
+                    <Text style={dynamicStyles.seeAll}>See All</Text>
                 </TouchableOpacity>
             </View>
             <FlatList
@@ -108,30 +110,57 @@ export default function Explore() {
 
     if (loading) {
         return (
-            <View style={styles.loadingContainer}>
-                <ActivityIndicator size="large" color="#4CAF50" />
-                <Text style={{ marginTop: 8, color: '#555' }}>Loading offer...</Text>
+            <View style={[styles.loadingContainer, { backgroundColor: colors.background }]}>
+                <ActivityIndicator size="large" color={colors.primary} />
+                <Text style={{ marginTop: 8, color: colors.textSecondary }}>Loading offer...</Text>
             </View>
         );
     }
 
+    const dynamicStyles = {
+        container: {
+            ...styles.container,
+            backgroundColor: colors.background,
+        },
+        searchButton: {
+            ...styles.searchButton,
+            backgroundColor: colors.surface,
+        },
+        searchButtonText: {
+            ...styles.searchButtonText,
+            color: colors.textMuted,
+        },
+        locationText: {
+            ...styles.locationText,
+            color: colors.text,
+        },
+        sectionTitle: {
+            ...styles.sectionTitle,
+            color: colors.text,
+        },
+        seeAll: {
+            ...styles.seeAll,
+            color: colors.primary,
+        },
+    };
+
     return (
-        <ScrollView style={styles.container}>
+        <ScrollView style={dynamicStyles.container}>
             {/* Search bar */}
             <TouchableOpacity
                 style={styles.searchContainer}
                 onPress={() => router.push('/search')}
             >
-                <View style={styles.searchButton}>
-                    <Ionicons name="search" size={20} color="#999" style={{ marginRight: 8 }} />
-                    <Text style={styles.searchButtonText}>Search products, stores...</Text>
+                <View style={dynamicStyles.searchButton}>
+                    <Ionicons name="search" size={20} color={colors.textMuted} style={{ marginRight: 8 }} />
+                    <Text style={dynamicStyles.searchButtonText}>Search products, stores...</Text>
                 </View>
             </TouchableOpacity>
 
             {/* Current Location */}
             <View style={styles.locationContainer}>
-                <Ionicons name="location-sharp" size={20} color="#4CAF50" />
-                <Text style={styles.locationText}>Tampere 33100</Text>
+                <Ionicons name="location-sharp" size={20} color={colors.success} />
+                <Text style={dynamicStyles.locationText}>Tampere 33100</Text>
             </View>
 
             {/* Categories */}

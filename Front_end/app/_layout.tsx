@@ -4,6 +4,7 @@ import { Slot, useNavigation, usePathname, useRouter } from 'expo-router';
 import React, { useEffect } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 //import { AuthProvider, useAuth } from '@/hooks/useAuth';
+import { ThemeProvider, useTheme } from '@/context/ThemeContext';
 import FlashMessage from "react-native-flash-message";
 import { useAuthStore } from '../store/useAuthStore';
 import { useCartStore } from '../store/useCartStore';
@@ -14,6 +15,7 @@ function AppLayout() {
     const pathname = usePathname();
     //const { user } = useAuth();
     const user = useAuthStore((state) => state.user);
+    const { colors } = useTheme();
 
     const hideNavRoutes = ['/login', '/register', '/welcome', '/email-signup', '/offer'];
 
@@ -135,34 +137,39 @@ function AppLayout() {
         <View style={{ flex: 1, paddingBottom: shouldShowNav ? 70 : 0 }}>
             <Slot />
             {shouldShowNav && (
-                <View style={styles.navBar}>
+                <View style={[styles.navBar, { backgroundColor: colors.primary }]}>
                     <NavItem
                         icon="search"
                         label="Explore"
                         active={pathname === '/explore'}
                         onPress={() => router.push('/explore')}
+                        colors={colors}
                     />
                     <NavItem
                         icon="receipt"
                         label="My Orders"
                         active={pathname === '/orders'}
                         onPress={() => router.push('/orders')}
+                        colors={colors}
                     />
                     <NavItem
                         icon="heart"
                         label="Favorite"
                         active={pathname === '/favorite'}
                         onPress={() => router.push('/favorite')}
+                        colors={colors}
                     />
                     <CartNavItem
                         active={pathname === '/cart'}
                         onPress={() => router.push('/cart')}
+                        colors={colors}
                     />
                     <NavItem
                         icon="person"
                         label="Profile"
                         active={pathname === '/profile'}
                         onPress={() => router.push('/profile')}
+                        colors={colors}
                     />
                 </View>
             )}
@@ -171,38 +178,39 @@ function AppLayout() {
     );
 }
 
-// Wrapping AppLayout with AuthProvider
-// export default function LayoutWrapper() {
-//   return (
-//     <AuthProvider>
-//       <AppLayout />
-//     </AuthProvider>
-//   );
-// }
-export default AppLayout;
+// Wrapping AppLayout with ThemeProvider
+export default function LayoutWrapper() {
+    return (
+        <ThemeProvider>
+            <AppLayout />
+            <FlashMessage position="top" />
+        </ThemeProvider>
+    );
+}
 
 
-function NavItem({ icon, label, active, onPress }: {
+function NavItem({ icon, label, active, onPress, colors }: {
     icon: keyof typeof Ionicons.glyphMap;
     label: string;
     active: boolean;
     onPress: () => void;
+    colors: any;
 }) {
     return (
         <TouchableOpacity style={styles.navItem} onPress={onPress}>
             <Ionicons
                 name={active ? icon : `${icon}-outline` as keyof typeof Ionicons.glyphMap}
                 size={22}
-                color={active ? '#ff6600' : '#fff'}
+                color={active ? colors.accent : colors.textMuted}
             />
-            <Text style={[styles.navLabel, { color: active ? '#ff6600' : '#fff' }]}>
+            <Text style={[styles.navLabel, { color: active ? colors.accent : colors.textMuted }]}>
                 {label}
             </Text>
         </TouchableOpacity>
     );
 }
 
-function CartNavItem({ active, onPress }: { active: boolean; onPress: () => void }) {
+function CartNavItem({ active, onPress, colors }: { active: boolean; onPress: () => void; colors: any }) {
     const { getTotalItems } = useCartStore();
     const itemCount = getTotalItems();
 
@@ -212,17 +220,17 @@ function CartNavItem({ active, onPress }: { active: boolean; onPress: () => void
                 <Ionicons
                     name={active ? 'cart' : 'cart-outline'}
                     size={24}
-                    color={active ? '#ff6600' : '#fff'}
+                    color={active ? colors.accent : colors.textMuted}
                 />
                 {itemCount > 0 && (
-                    <View style={styles.cartBadge}>
+                    <View style={[styles.cartBadge, { backgroundColor: colors.error }]}>
                         <Text style={styles.cartBadgeText}>
                             {itemCount > 99 ? '99+' : itemCount}
                         </Text>
                     </View>
                 )}
             </View>
-            <Text style={[styles.navLabel, { color: active ? '#ff6600' : '#fff' }]}>
+            <Text style={[styles.navLabel, { color: active ? colors.accent : colors.textMuted }]}>
                 Cart
             </Text>
         </TouchableOpacity>
@@ -236,9 +244,7 @@ const styles = StyleSheet.create({
         paddingVertical: 8,
         paddingHorizontal: 4,
         paddingBottom: 20,
-        backgroundColor: '#16423C',
         borderTopWidth: 1,
-        borderTopColor: '#16423C',
         position: 'absolute',
         bottom: 0,
         left: 0,
@@ -261,7 +267,6 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: -6,
         right: -6,
-        backgroundColor: '#FF4444',
         borderRadius: 10,
         minWidth: 20,
         height: 20,

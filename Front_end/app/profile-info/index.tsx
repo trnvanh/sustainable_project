@@ -1,6 +1,7 @@
 import { getUserProfile, updateUserProfile, uploadProfileImage } from '@/api/profile';
 import ScreenWithBack from '@/components/ScreenBack';
 import { useAuthStore } from "@/store/useAuthStore";
+import { getProfileImageUrl } from '@/utils/imageUtils';
 import * as ImagePicker from 'expo-image-picker';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
@@ -167,8 +168,8 @@ export default function ProfileInfoScreen() {
           <>
             {/* Avatar */}
             <View style={styles.avatarContainer}>
-              {avatar ? (
-                <Image source={{ uri: avatar }} style={styles.avatar} />
+              {getProfileImageUrl(avatar) ? (
+                <Image source={{ uri: getProfileImageUrl(avatar)! }} style={styles.avatar} />
               ) : (
                 <View style={styles.avatar}>
                   <Text style={styles.avatarPlaceholder}>

@@ -1,20 +1,22 @@
+import { useTheme } from '@/context/ThemeContext';
+import { useAuthStore } from '@/store/useAuthStore';
+import { Ionicons } from '@expo/vector-icons';
+import { Picker } from '@react-native-picker/picker';
 import React, { useState } from 'react';
 import {
-  View,
+  StyleSheet,
+  Switch,
   Text,
   TextInput,
-  StyleSheet,
   TouchableOpacity,
-  Alert,
-  Switch,
+  View
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useAuthStore } from '@/store/useAuthStore';
-import { Picker } from '@react-native-picker/picker';
 
 export default function SettingsScreen() {
   const user = useAuthStore((state) => state.user);
   const updateUser = useAuthStore((state) => state.updateUser);
+  const { theme: currentTheme, colors, toggleTheme } = useTheme();
 
   const [name, setName] = useState(user?.name || '');
   const [phone, setPhone] = useState(user?.phone || '');
@@ -40,6 +42,108 @@ export default function SettingsScreen() {
     console.log('Success', 'Your settings have been saved.');
   };
 
+  const handleThemeChange = (newTheme: 'light' | 'dark') => {
+    setTheme(newTheme);
+    // Update the theme context immediately for live preview
+    if (newTheme !== currentTheme) {
+      toggleTheme();
+    }
+  };
+
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background,
+      padding: 20,
+    },
+    title: {
+      fontSize: 24,
+      fontWeight: '700',
+      marginBottom: 20,
+      color: colors.primary,
+    },
+    label: {
+      fontWeight: 'bold',
+      fontSize: 16,
+      marginBottom: 6,
+      color: colors.text,
+    },
+    input: {
+      backgroundColor: colors.surface,
+      padding: 10,
+      marginBottom: 16,
+      borderRadius: 8,
+      borderColor: colors.border,
+      borderWidth: 1,
+      color: colors.text,
+    },
+    themeContainer: {
+      flexDirection: 'row',
+      gap: 12,
+      marginBottom: 16,
+    },
+    themeOption: {
+      flex: 1,
+      backgroundColor: colors.surface,
+      padding: 16,
+      borderRadius: 12,
+      borderColor: colors.border,
+      borderWidth: 1,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    },
+    themeOptionActive: {
+      borderColor: colors.primary,
+      borderWidth: 2,
+      backgroundColor: colors.primary + '10', // Add slight tint
+    },
+    themeOptionContent: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+    },
+    themeOptionText: {
+      fontSize: 16,
+      fontWeight: '500',
+      color: colors.text,
+    },
+    themeOptionTextActive: {
+      color: colors.primary,
+      fontWeight: '600',
+    },
+    pickerContainer: {
+      backgroundColor: colors.surface,
+      borderRadius: 8,
+      marginBottom: 16,
+      borderColor: colors.border,
+      borderWidth: 1,
+    },
+    picker: {
+      height: 50,
+      width: '100%',
+      color: colors.text,
+    },
+    switchRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginVertical: 12,
+    },
+    button: {
+      backgroundColor: colors.primary,
+      padding: 14,
+      borderRadius: 10,
+      alignItems: 'center',
+      marginTop: 20,
+    },
+    buttonText: {
+      color: '#fff',
+      fontSize: 16,
+      fontWeight: '600',
+    },
+  });
+
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.title}>Settings</Text>
@@ -57,17 +161,62 @@ export default function SettingsScreen() {
         keyboardType="phone-pad"
       />
 
-      {/* Theme Picker */}
+      {/* Theme Selection */}
       <Text style={styles.label}>Theme</Text>
-      <View style={styles.pickerContainer}>
-        <Picker
-          selectedValue={theme}
-          onValueChange={(itemValue) => setTheme(itemValue)}
-          style={styles.picker}
+      <View style={styles.themeContainer}>
+        <TouchableOpacity
+          style={[
+            styles.themeOption,
+            theme === 'light' && styles.themeOptionActive,
+          ]}
+          onPress={() => handleThemeChange('light')}
         >
-          <Picker.Item label="Light" value="light" />
-          <Picker.Item label="Dark" value="dark" />
-        </Picker>
+          <View style={styles.themeOptionContent}>
+            <Ionicons
+              name="sunny"
+              size={24}
+              color={theme === 'light' ? colors.primary : colors.text}
+            />
+            <Text
+              style={[
+                styles.themeOptionText,
+                theme === 'light' && styles.themeOptionTextActive,
+              ]}
+            >
+              Light
+            </Text>
+          </View>
+          {theme === 'light' && (
+            <Ionicons name="checkmark-circle" size={20} color={colors.primary} />
+          )}
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[
+            styles.themeOption,
+            theme === 'dark' && styles.themeOptionActive,
+          ]}
+          onPress={() => handleThemeChange('dark')}
+        >
+          <View style={styles.themeOptionContent}>
+            <Ionicons
+              name="moon"
+              size={24}
+              color={theme === 'dark' ? colors.primary : colors.text}
+            />
+            <Text
+              style={[
+                styles.themeOptionText,
+                theme === 'dark' && styles.themeOptionTextActive,
+              ]}
+            >
+              Dark
+            </Text>
+          </View>
+          {theme === 'dark' && (
+            <Ionicons name="checkmark-circle" size={20} color={colors.primary} />
+          )}
+        </TouchableOpacity>
       </View>
 
       {/* Language Picker */}
@@ -97,60 +246,3 @@ export default function SettingsScreen() {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#E7F0F1',
-    padding: 20,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: '700',
-    marginBottom: 20,
-    color: '#335248',
-  },
-  label: {
-    fontWeight: 'bold',
-    fontSize: 16,
-    marginBottom: 6,
-    color: '#333',
-  },
-  input: {
-    backgroundColor: '#fff',
-    padding: 10,
-    marginBottom: 16,
-    borderRadius: 8,
-    borderColor: '#ccc',
-    borderWidth: 1,
-  },
-  pickerContainer: {
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    marginBottom: 16,
-    borderColor: '#ccc',
-    borderWidth: 1,
-  },
-  picker: {
-    height: 50,
-    width: '100%',
-  },
-  switchRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginVertical: 12,
-  },
-  button: {
-    backgroundColor: '#335248',
-    padding: 14,
-    borderRadius: 10,
-    alignItems: 'center',
-    marginTop: 20,
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-});

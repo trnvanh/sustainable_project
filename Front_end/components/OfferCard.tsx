@@ -1,3 +1,4 @@
+import { useTheme } from '@/context/ThemeContext';
 import { ProductResponse } from '@/types/productTypes';
 import { FontAwesome, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
@@ -34,6 +35,7 @@ export default function OfferCard({
     description,
 }: Offer) {
     const router = useRouter();
+    const { colors } = useTheme();
 
     // Convert Offer to ProductResponse for CartButton
     const productForCart: ProductResponse = {
@@ -62,42 +64,96 @@ export default function OfferCard({
         }
     };
 
+    const dynamicStyles = StyleSheet.create({
+        card: {
+            width: 200,
+            flexShrink: 0,
+            backgroundColor: colors.surface,
+            borderRadius: 10,
+            padding: 10,
+            marginRight: 12,
+            borderColor: colors.border,
+            borderWidth: colors.text === '#000000' ? 0 : 1,
+        },
+        imageContainer: {
+            position: 'relative',
+            marginBottom: 8,
+        },
+        cardImage: {
+            width: '100%',
+            height: 100,
+            borderRadius: 8,
+        },
+        cartButton: {
+            position: 'absolute',
+            top: 8,
+            right: 8,
+        },
+        cardContent: {
+            flex: 1,
+        },
+        cardName: {
+            fontSize: 16,
+            fontWeight: '600',
+            color: colors.text,
+        },
+        cardPrice: {
+            fontSize: 14,
+            color: colors.primary,
+            marginBottom: 6,
+        },
+        infoRow: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            marginBottom: 4,
+        },
+        infoText: {
+            fontSize: 12,
+            color: colors.textSecondary,
+            marginLeft: 4,
+        },
+        lowPortions: {
+            color: colors.error,
+            fontWeight: '600',
+        },
+    });
+
     return (
-        <Pressable style={styles.card} onPress={() => router.push(`/offer/${id}`)}>
-            <View style={styles.imageContainer}>
-                <Image source={getImageSource()} style={styles.cardImage} />
+        <Pressable style={dynamicStyles.card} onPress={() => router.push(`/offer/${id}`)}>
+            <View style={dynamicStyles.imageContainer}>
+                <Image source={getImageSource()} style={dynamicStyles.cardImage} />
                 <CartButton
                     product={productForCart}
-                    style={styles.cartButton}
+                    style={dynamicStyles.cartButton}
                     size="small"
                 />
             </View>
-            <View style={styles.cardContent}>
-                <Text style={styles.cardName}>{name}</Text>
-                <Text style={styles.cardPrice}>{price}</Text>
+            <View style={dynamicStyles.cardContent}>
+                <Text style={dynamicStyles.cardName}>{name}</Text>
+                <Text style={dynamicStyles.cardPrice}>{price}</Text>
 
-                <View style={styles.infoRow}>
+                <View style={dynamicStyles.infoRow}>
                     <FontAwesome name="star" size={20} color="gold" />
-                    <Text style={styles.infoText}>{rating}</Text>
+                    <Text style={dynamicStyles.infoText}>{rating}</Text>
                 </View>
 
-                <View style={styles.infoRow}>
-                    <Ionicons name="time-outline" size={14} color="#777" />
-                    <Text style={styles.infoText}>{pickupTime}</Text>
+                <View style={dynamicStyles.infoRow}>
+                    <Ionicons name="time-outline" size={14} color={colors.textSecondary} />
+                    <Text style={dynamicStyles.infoText}>{pickupTime}</Text>
                 </View>
 
-                <View style={styles.infoRow}>
-                    <Ionicons name="location-outline" size={14} color="#777" />
-                    <Text style={styles.infoText}>{distance + " km"}</Text>
+                <View style={dynamicStyles.infoRow}>
+                    <Ionicons name="location-outline" size={14} color={colors.textSecondary} />
+                    <Text style={dynamicStyles.infoText}>{distance + " km"}</Text>
                 </View>
 
-                <View style={styles.infoRow}>
+                <View style={dynamicStyles.infoRow}>
                     <MaterialCommunityIcons
                         name={portionsLeft <= 1 ? 'fire' : 'food'}
                         size={14}
-                        color={portionsLeft <= 1 ? '#D32F2F' : '#777'}
+                        color={portionsLeft <= 1 ? colors.error : colors.textSecondary}
                     />
-                    <Text style={[styles.infoText, portionsLeft <= 2 && styles.lowPortions]}>
+                    <Text style={[dynamicStyles.infoText, portionsLeft <= 2 && dynamicStyles.lowPortions]}>
                         {portionsLeft} left
                     </Text>
                 </View>
@@ -105,54 +161,3 @@ export default function OfferCard({
         </Pressable>
     );
 }
-
-const styles = StyleSheet.create({
-    card: {
-        width: 200,
-        flexShrink: 0,
-        backgroundColor: '#F2F5F3',
-        borderRadius: 10,
-        padding: 10,
-        marginRight: 12,
-    },
-    imageContainer: {
-        position: 'relative',
-        marginBottom: 8,
-    },
-    cardImage: {
-        width: '100%',
-        height: 100,
-        borderRadius: 8,
-    },
-    cartButton: {
-        position: 'absolute',
-        top: 8,
-        right: 8,
-    },
-    cardContent: {
-        flex: 1,
-    },
-    cardName: {
-        fontSize: 16,
-        fontWeight: '600',
-    },
-    cardPrice: {
-        fontSize: 14,
-        color: '#4CAF50',
-        marginBottom: 6,
-    },
-    infoRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 4,
-    },
-    infoText: {
-        fontSize: 12,
-        color: '#666',
-        marginLeft: 4,
-    },
-    lowPortions: {
-        color: '#D32F2F',
-        fontWeight: '600',
-    },
-});

@@ -1,3 +1,4 @@
+import { useTheme } from '@/context/ThemeContext';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import React from 'react';
@@ -22,6 +23,8 @@ export default function CartScreen() {
     // Payment provider selection state
     const [showPaymentSelector, setShowPaymentSelector] = React.useState(false);
     const [selectedPaymentProvider, setSelectedPaymentProvider] = React.useState<"paypal" | "stripe" | null>(null);
+
+    const { colors } = useTheme();
 
     const {
         items,
@@ -234,14 +237,14 @@ export default function CartScreen() {
     };
 
     const renderCartItem = ({ item }: { item: CartItem }) => (
-        <View style={styles.cartItem}>
+        <View style={dynamicStyles.cartItem}>
             <Image source={getImageSource(item.image)} style={styles.itemImage} />
 
             <View style={styles.itemDetails}>
-                <Text style={styles.itemName}>{item.name}</Text>
-                <Text style={styles.itemLocation}>{item.location.restaurant}</Text>
-                <Text style={styles.itemPickupTime}>{item.pickupTime}</Text>
-                <Text style={styles.itemPrice}>
+                <Text style={dynamicStyles.itemName}>{item.name}</Text>
+                <Text style={[styles.itemLocation, { color: colors.textSecondary }]}>{item.location.restaurant}</Text>
+                <Text style={[styles.itemPickupTime, { color: colors.textMuted }]}>{item.pickupTime}</Text>
+                <Text style={dynamicStyles.itemPrice}>
                     {typeof item.price === 'string' ? item.price : `€${Number(item.price).toFixed(2)}`}
                 </Text>
             </View>
@@ -249,16 +252,16 @@ export default function CartScreen() {
             <View style={styles.quantityContainer}>
                 <View style={styles.quantityControls}>
                     <TouchableOpacity
-                        style={styles.quantityButton}
+                        style={[styles.quantityButton, { backgroundColor: colors.primary }]}
                         onPress={() => handleDecrement(item)}
                     >
                         <Ionicons name="remove" size={16} color="#fff" />
                     </TouchableOpacity>
 
-                    <Text style={styles.quantityText}>{item.quantity}</Text>
+                    <Text style={dynamicStyles.quantityText}>{item.quantity}</Text>
 
                     <TouchableOpacity
-                        style={styles.quantityButton}
+                        style={[styles.quantityButton, { backgroundColor: colors.primary }]}
                         onPress={() => handleIncrement(item)}
                     >
                         <Ionicons name="add" size={16} color="#fff" />
@@ -271,19 +274,19 @@ export default function CartScreen() {
                     activeOpacity={0.7}
                     testID={`remove-${item.id}`}
                 >
-                    <Ionicons name="trash-outline" size={22} color="#FF4444" />
+                    <Ionicons name="trash-outline" size={22} color={colors.error} />
                 </TouchableOpacity>
             </View>
         </View>
     );
 
     const renderEmptyCart = () => (
-        <View style={styles.emptyCart}>
-            <Ionicons name="cart-outline" size={80} color="#ccc" />
-            <Text style={styles.emptyCartTitle}>Your cart is empty</Text>
-            <Text style={styles.emptyCartSubtitle}>Add some delicious food to get started!</Text>
+        <View style={[styles.emptyCart, { backgroundColor: colors.background }]}>
+            <Ionicons name="cart-outline" size={80} color={colors.textMuted} />
+            <Text style={[styles.emptyCartTitle, { color: colors.text }]}>Your cart is empty</Text>
+            <Text style={[styles.emptyCartSubtitle, { color: colors.textSecondary }]}>Add some delicious food to get started!</Text>
             <TouchableOpacity
-                style={styles.exploreButton}
+                style={[styles.exploreButton, { backgroundColor: colors.success }]}
                 onPress={() => router.push('/explore')}
             >
                 <Text style={styles.exploreButtonText}>Explore Offers</Text>
@@ -291,14 +294,46 @@ export default function CartScreen() {
         </View>
     );
 
+    const dynamicStyles = {
+        container: { ...styles.container, backgroundColor: colors.background },
+        header: {
+            ...styles.header,
+            backgroundColor: colors.surface,
+            borderBottomColor: colors.border,
+        },
+        headerTitle: { ...styles.headerTitle, color: colors.text },
+        cartItem: {
+            ...styles.cartItem,
+            backgroundColor: colors.surface,
+            borderBottomColor: colors.border,
+        },
+        itemName: { ...styles.itemName, color: colors.text },
+        itemPrice: { ...styles.itemPrice, color: colors.primary },
+        quantityText: { ...styles.quantityText, color: colors.text },
+        footer: {
+            ...styles.footer,
+            backgroundColor: colors.surface,
+            borderTopColor: colors.border,
+        },
+        totalLabel: { ...styles.totalLabel, color: colors.text },
+        totalPrice: { ...styles.totalPrice, color: colors.success },
+        checkoutButton: { ...styles.checkoutButton, backgroundColor: colors.primary },
+        errorContainer: {
+            ...styles.errorContainer,
+            backgroundColor: colors.error + '20',
+            borderLeftColor: colors.error,
+        },
+        errorText: { ...styles.errorText, color: colors.error },
+    };
+
     if (items.length === 0) {
         return (
-            <SafeAreaView style={styles.container}>
-                <View style={styles.header}>
+            <SafeAreaView style={dynamicStyles.container}>
+                <View style={dynamicStyles.header}>
                     <TouchableOpacity onPress={() => router.push('/explore')}>
-                        <Ionicons name="arrow-back" size={24} color="#333" />
+                        <Ionicons name="arrow-back" size={24} color={colors.text} />
                     </TouchableOpacity>
-                    <Text style={styles.headerTitle}>Cart</Text>
+                    <Text style={dynamicStyles.headerTitle}>Cart</Text>
                     <View style={{ width: 24 }} />
                 </View>
                 {renderEmptyCart()}
@@ -307,21 +342,21 @@ export default function CartScreen() {
     }
 
     return (
-        <SafeAreaView style={styles.container}>
-            <View style={styles.header}>
+        <SafeAreaView style={dynamicStyles.container}>
+            <View style={dynamicStyles.header}>
                 <TouchableOpacity onPress={() => router.push('/explore')}>
-                    <Ionicons name="arrow-back" size={24} color="#333" />
+                    <Ionicons name="arrow-back" size={24} color={colors.text} />
                 </TouchableOpacity>
-                <Text style={styles.headerTitle}>Cart ({getTotalItems()} items)</Text>
+                <Text style={dynamicStyles.headerTitle}>Cart ({getTotalItems()} items)</Text>
                 <TouchableOpacity onPress={handleClearCart}>
-                    <Ionicons name="trash-outline" size={24} color="#FF4444" />
+                    <Ionicons name="trash-outline" size={24} color={colors.error} />
                 </TouchableOpacity>
             </View>
 
             {/* Error Display */}
             {(error || orderError) && (
-                <View style={styles.errorContainer}>
-                    <Text style={styles.errorText}>{error || orderError}</Text>
+                <View style={dynamicStyles.errorContainer}>
+                    <Text style={dynamicStyles.errorText}>{error || orderError}</Text>
                     <TouchableOpacity
                         onPress={() => {
                             setError(null);
@@ -329,7 +364,7 @@ export default function CartScreen() {
                         }}
                         style={styles.dismissError}
                     >
-                        <Ionicons name="close" size={16} color="#FF4444" />
+                        <Ionicons name="close" size={16} color={colors.error} />
                     </TouchableOpacity>
                 </View>
             )}
@@ -344,34 +379,34 @@ export default function CartScreen() {
                 key={`cart-list-${cartUpdateKey}`} // Force complete recreation on key changes
             />
 
-            <View style={styles.footer}>
+            <View style={dynamicStyles.footer}>
                 {/* Show selected payment provider if available */}
                 {selectedPaymentProvider && (
-                    <View style={styles.selectedProviderContainer}>
+                    <View style={[styles.selectedProviderContainer, { backgroundColor: colors.surfaceVariant }]}>
                         <Ionicons
                             name={selectedPaymentProvider === 'paypal' ? 'logo-paypal' : 'card'}
                             size={20}
                             color={selectedPaymentProvider === 'paypal' ? '#0070ba' : '#6772e5'}
                         />
-                        <Text style={styles.selectedProviderText}>
+                        <Text style={[styles.selectedProviderText, { color: colors.text }]}>
                             {selectedPaymentProvider === 'paypal' ? 'PayPal' : 'Credit Card'} selected
                         </Text>
                         <TouchableOpacity
                             onPress={() => setSelectedPaymentProvider(null)}
                             style={styles.changeProviderButton}
                         >
-                            <Text style={styles.changeProviderText}>Change</Text>
+                            <Text style={[styles.changeProviderText, { color: colors.primary }]}>Change</Text>
                         </TouchableOpacity>
                     </View>
                 )}
 
                 <View style={styles.totalContainer}>
-                    <Text style={styles.totalLabel}>Total:</Text>
-                    <Text style={styles.totalPrice}>€{getTotalPrice().toFixed(2)}</Text>
+                    <Text style={dynamicStyles.totalLabel}>Total:</Text>
+                    <Text style={dynamicStyles.totalPrice}>€{getTotalPrice().toFixed(2)}</Text>
                 </View>
 
                 <TouchableOpacity
-                    style={[styles.checkoutButton, (loading || orderLoading) && styles.disabledButton]}
+                    style={[dynamicStyles.checkoutButton, (loading || orderLoading) && styles.disabledButton]}
                     onPress={handleCheckout}
                     disabled={loading || orderLoading}
                 >

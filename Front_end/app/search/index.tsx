@@ -1,6 +1,7 @@
 import SearchInput from '@/components/SearchInput';
 import SearchResults from '@/components/SearchResults';
 import SearchSuggestions from '@/components/SearchSuggestions';
+import { useTheme } from '@/context/ThemeContext';
 import { useProductsStore } from '@/store/useProductsStore';
 import { CategoryResponse } from '@/types/categoryTypes';
 import { Ionicons } from '@expo/vector-icons';
@@ -17,6 +18,7 @@ import {
 } from 'react-native';
 
 export default function SearchScreen() {
+    const { colors } = useTheme();
     const {
         searchQuery,
         searchLoading,
@@ -53,18 +55,178 @@ export default function SearchScreen() {
         });
     };
 
+    const dynamicStyles = StyleSheet.create({
+        container: {
+            flex: 1,
+            backgroundColor: colors.background,
+            padding: 16,
+        },
+        header: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            marginBottom: 20,
+            marginTop: 40,
+        },
+        backButton: {
+            padding: 8,
+        },
+        headerTitle: {
+            fontSize: 20,
+            fontWeight: 'bold',
+            marginLeft: 16,
+            color: colors.text,
+        },
+        searchInput: {
+            marginBottom: 16,
+        },
+        advancedSearchToggle: {
+            marginBottom: 16,
+            alignItems: 'flex-end',
+        },
+        advancedToggleButton: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            padding: 8,
+        },
+        advancedToggleText: {
+            color: colors.primary,
+            marginRight: 4,
+            fontWeight: '500',
+        },
+        advancedSearchContainer: {
+            backgroundColor: colors.surface,
+            borderRadius: 12,
+            padding: 16,
+            marginBottom: 16,
+            borderColor: colors.border,
+            borderWidth: colors.text === '#000000' ? 0 : 1,
+        },
+        advancedSectionTitle: {
+            fontSize: 16,
+            fontWeight: 'bold',
+            marginBottom: 12,
+            color: colors.text,
+        },
+        priceRangeContainer: {
+            marginBottom: 16,
+        },
+        filterLabel: {
+            fontSize: 14,
+            fontWeight: '500',
+            marginBottom: 8,
+            color: colors.textSecondary,
+        },
+        priceInputRow: {
+            flexDirection: 'row',
+            alignItems: 'center',
+        },
+        priceInput: {
+            backgroundColor: colors.surface,
+            borderRadius: 8,
+            paddingHorizontal: 12,
+            paddingVertical: 8,
+            flex: 1,
+            fontSize: 14,
+            color: colors.text,
+            borderColor: colors.border,
+            borderWidth: 1,
+        },
+        priceSeparator: {
+            marginHorizontal: 12,
+            color: colors.textSecondary,
+        },
+        categoriesContainer: {
+            marginBottom: 16,
+        },
+        categoriesScroll: {
+            flexDirection: 'row',
+            marginVertical: 8,
+        },
+        categoryChip: {
+            backgroundColor: colors.surface,
+            borderRadius: 20,
+            paddingHorizontal: 16,
+            paddingVertical: 8,
+            marginRight: 8,
+            borderWidth: 1,
+            borderColor: colors.border,
+        },
+        selectedCategoryChip: {
+            backgroundColor: colors.primary,
+            borderColor: colors.primary,
+        },
+        categoryChipText: {
+            color: colors.textSecondary,
+            fontSize: 14,
+        },
+        selectedCategoryChipText: {
+            color: colors.surface,
+        },
+        applyButton: {
+            backgroundColor: colors.primary,
+            borderRadius: 25,
+            paddingVertical: 12,
+            alignItems: 'center',
+            marginTop: 8,
+        },
+        applyButtonText: {
+            color: colors.surface,
+            fontWeight: 'bold',
+            fontSize: 16,
+        },
+        sortContainer: {
+            marginBottom: 16,
+        },
+        sortOptionsRow: {
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            marginTop: 8,
+        },
+        sortOption: {
+            backgroundColor: colors.surface,
+            borderRadius: 8,
+            paddingHorizontal: 12,
+            paddingVertical: 8,
+            flexDirection: 'row',
+            alignItems: 'center',
+            minWidth: 90,
+            justifyContent: 'center',
+            borderColor: colors.border,
+            borderWidth: 1,
+        },
+        selectedSortOption: {
+            backgroundColor: colors.accent,
+            borderColor: colors.primary,
+            borderWidth: 1,
+        },
+        sortOptionText: {
+            fontSize: 14,
+            marginRight: 4,
+            color: colors.text,
+        },
+        loadingContainer: {
+            paddingVertical: 40,
+            alignItems: 'center',
+        },
+        loadingText: {
+            marginTop: 8,
+            color: colors.textSecondary,
+            fontSize: 14,
+        },
+    });
+
     return (
-        <ScrollView style={styles.container}>
-            <View style={styles.header}>
-                <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-                    <Ionicons name="arrow-back" size={24} color="#000" />
+        <ScrollView style={dynamicStyles.container}>
+            <View style={dynamicStyles.header}>
+                <TouchableOpacity onPress={() => router.back()} style={dynamicStyles.backButton}>
+                    <Ionicons name="arrow-back" size={24} color={colors.text} />
                 </TouchableOpacity>
-                <Text style={styles.headerTitle}>Search</Text>
+                <Text style={dynamicStyles.headerTitle}>Search</Text>
             </View>
 
             <SearchInput
                 placeholder="Search products, stores..."
-                style={styles.searchInput}
+                style={dynamicStyles.searchInput}
                 onFocus={() => setShowSuggestions(true)}
                 onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
             />
@@ -80,41 +242,43 @@ export default function SearchScreen() {
                 />
             )}
 
-            <View style={styles.advancedSearchToggle}>
+            <View style={dynamicStyles.advancedSearchToggle}>
                 <TouchableOpacity
                     onPress={() => setShowAdvanced(!showAdvanced)}
-                    style={styles.advancedToggleButton}
+                    style={dynamicStyles.advancedToggleButton}
                 >
-                    <Text style={styles.advancedToggleText}>
+                    <Text style={dynamicStyles.advancedToggleText}>
                         {showAdvanced ? 'Hide Advanced Search' : 'Advanced Search'}
                     </Text>
                     <Ionicons
                         name={showAdvanced ? 'chevron-up' : 'chevron-down'}
                         size={16}
-                        color="#4CAF50"
+                        color={colors.primary}
                     />
                 </TouchableOpacity>
             </View>
 
             {showAdvanced && (
-                <View style={styles.advancedSearchContainer}>
-                    <Text style={styles.advancedSectionTitle}>Filter by:</Text>
+                <View style={dynamicStyles.advancedSearchContainer}>
+                    <Text style={dynamicStyles.advancedSectionTitle}>Filter by:</Text>
 
                     {/* Price Range */}
-                    <View style={styles.priceRangeContainer}>
-                        <Text style={styles.filterLabel}>Price Range (€)</Text>
-                        <View style={styles.priceInputRow}>
+                    <View style={dynamicStyles.priceRangeContainer}>
+                        <Text style={dynamicStyles.filterLabel}>Price Range (€)</Text>
+                        <View style={dynamicStyles.priceInputRow}>
                             <TextInput
-                                style={styles.priceInput}
+                                style={dynamicStyles.priceInput}
                                 placeholder="Min"
+                                placeholderTextColor={colors.textSecondary}
                                 value={minPrice}
                                 onChangeText={setMinPrice}
                                 keyboardType="numeric"
                             />
-                            <Text style={styles.priceSeparator}>to</Text>
+                            <Text style={dynamicStyles.priceSeparator}>to</Text>
                             <TextInput
-                                style={styles.priceInput}
+                                style={dynamicStyles.priceInput}
                                 placeholder="Max"
+                                placeholderTextColor={colors.textSecondary}
                                 value={maxPrice}
                                 onChangeText={setMaxPrice}
                                 keyboardType="numeric"
@@ -123,19 +287,19 @@ export default function SearchScreen() {
                     </View>
 
                     {/* Category Selection */}
-                    <View style={styles.categoriesContainer}>
-                        <Text style={styles.filterLabel}>Categories</Text>
+                    <View style={dynamicStyles.categoriesContainer}>
+                        <Text style={dynamicStyles.filterLabel}>Categories</Text>
                         <ScrollView
                             horizontal
                             showsHorizontalScrollIndicator={false}
-                            style={styles.categoriesScroll}
+                            style={dynamicStyles.categoriesScroll}
                         >
                             {categories.map((category: CategoryResponse) => (
                                 <TouchableOpacity
                                     key={category.id}
                                     style={[
-                                        styles.categoryChip,
-                                        selectedCategoryId === category.id && styles.selectedCategoryChip
+                                        dynamicStyles.categoryChip,
+                                        selectedCategoryId === category.id && dynamicStyles.selectedCategoryChip
                                     ]}
                                     onPress={() => setSelectedCategoryId(
                                         selectedCategoryId === category.id ? null : category.id
@@ -143,8 +307,8 @@ export default function SearchScreen() {
                                 >
                                     <Text
                                         style={[
-                                            styles.categoryChipText,
-                                            selectedCategoryId === category.id && styles.selectedCategoryChipText
+                                            dynamicStyles.categoryChipText,
+                                            selectedCategoryId === category.id && dynamicStyles.selectedCategoryChipText
                                         ]}
                                     >
                                         {category.name}
@@ -155,65 +319,65 @@ export default function SearchScreen() {
                     </View>
 
                     {/* Sort Options */}
-                    <View style={styles.sortContainer}>
-                        <Text style={styles.filterLabel}>Sort By</Text>
-                        <View style={styles.sortOptionsRow}>
+                    <View style={dynamicStyles.sortContainer}>
+                        <Text style={dynamicStyles.filterLabel}>Sort By</Text>
+                        <View style={dynamicStyles.sortOptionsRow}>
                             <TouchableOpacity
                                 style={[
-                                    styles.sortOption,
-                                    sortBy === 'price' && styles.selectedSortOption
+                                    dynamicStyles.sortOption,
+                                    sortBy === 'price' && dynamicStyles.selectedSortOption
                                 ]}
                                 onPress={() => {
                                     setSortBy('price');
                                     setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
                                 }}
                             >
-                                <Text style={styles.sortOptionText}>Price</Text>
+                                <Text style={dynamicStyles.sortOptionText}>Price</Text>
                                 {sortBy === 'price' && (
                                     <Ionicons
                                         name={sortOrder === 'asc' ? 'arrow-up' : 'arrow-down'}
                                         size={16}
-                                        color="#333"
+                                        color={colors.text}
                                     />
                                 )}
                             </TouchableOpacity>
 
                             <TouchableOpacity
                                 style={[
-                                    styles.sortOption,
-                                    sortBy === 'distance' && styles.selectedSortOption
+                                    dynamicStyles.sortOption,
+                                    sortBy === 'distance' && dynamicStyles.selectedSortOption
                                 ]}
                                 onPress={() => {
                                     setSortBy('distance');
                                     setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
                                 }}
                             >
-                                <Text style={styles.sortOptionText}>Distance</Text>
+                                <Text style={dynamicStyles.sortOptionText}>Distance</Text>
                                 {sortBy === 'distance' && (
                                     <Ionicons
                                         name={sortOrder === 'asc' ? 'arrow-up' : 'arrow-down'}
                                         size={16}
-                                        color="#333"
+                                        color={colors.text}
                                     />
                                 )}
                             </TouchableOpacity>
 
                             <TouchableOpacity
                                 style={[
-                                    styles.sortOption,
-                                    sortBy === 'rating' && styles.selectedSortOption
+                                    dynamicStyles.sortOption,
+                                    sortBy === 'rating' && dynamicStyles.selectedSortOption
                                 ]}
                                 onPress={() => {
                                     setSortBy('rating');
                                     setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
                                 }}
                             >
-                                <Text style={styles.sortOptionText}>Rating</Text>
+                                <Text style={dynamicStyles.sortOptionText}>Rating</Text>
                                 {sortBy === 'rating' && (
                                     <Ionicons
                                         name={sortOrder === 'asc' ? 'arrow-up' : 'arrow-down'}
                                         size={16}
-                                        color="#333"
+                                        color={colors.text}
                                     />
                                 )}
                             </TouchableOpacity>
@@ -222,18 +386,18 @@ export default function SearchScreen() {
 
                     {/* Apply Filters Button */}
                     <TouchableOpacity
-                        style={styles.applyButton}
+                        style={dynamicStyles.applyButton}
                         onPress={handleAdvancedSearch}
                     >
-                        <Text style={styles.applyButtonText}>Apply Filters</Text>
+                        <Text style={dynamicStyles.applyButtonText}>Apply Filters</Text>
                     </TouchableOpacity>
                 </View>
             )}
 
             {searchLoading ? (
-                <View style={styles.loadingContainer}>
-                    <ActivityIndicator size="large" color="#4CAF50" />
-                    <Text style={styles.loadingText}>Searching...</Text>
+                <View style={dynamicStyles.loadingContainer}>
+                    <ActivityIndicator size="large" color={colors.primary} />
+                    <Text style={dynamicStyles.loadingText}>Searching...</Text>
                 </View>
             ) : (
                 <SearchResults />
@@ -241,153 +405,3 @@ export default function SearchScreen() {
         </ScrollView>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#C4DAD2',
-        padding: 16,
-    },
-    header: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 20,
-        marginTop: 40,
-    },
-    backButton: {
-        padding: 8,
-    },
-    headerTitle: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        marginLeft: 16,
-    },
-    searchInput: {
-        marginBottom: 16,
-    },
-    advancedSearchToggle: {
-        marginBottom: 16,
-        alignItems: 'flex-end',
-    },
-    advancedToggleButton: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        padding: 8,
-    },
-    advancedToggleText: {
-        color: '#4CAF50',
-        marginRight: 4,
-        fontWeight: '500',
-    },
-    advancedSearchContainer: {
-        backgroundColor: '#E8E8E8',
-        borderRadius: 12,
-        padding: 16,
-        marginBottom: 16,
-    },
-    advancedSectionTitle: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        marginBottom: 12,
-    },
-    priceRangeContainer: {
-        marginBottom: 16,
-    },
-    filterLabel: {
-        fontSize: 14,
-        fontWeight: '500',
-        marginBottom: 8,
-        color: '#555',
-    },
-    priceInputRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    priceInput: {
-        backgroundColor: 'white',
-        borderRadius: 8,
-        paddingHorizontal: 12,
-        paddingVertical: 8,
-        flex: 1,
-        fontSize: 14,
-    },
-    priceSeparator: {
-        marginHorizontal: 12,
-        color: '#555',
-    },
-    categoriesContainer: {
-        marginBottom: 16,
-    },
-    categoriesScroll: {
-        flexDirection: 'row',
-        marginVertical: 8,
-    },
-    categoryChip: {
-        backgroundColor: 'white',
-        borderRadius: 20,
-        paddingHorizontal: 16,
-        paddingVertical: 8,
-        marginRight: 8,
-        borderWidth: 1,
-        borderColor: '#E0E0E0',
-    },
-    selectedCategoryChip: {
-        backgroundColor: '#4CAF50',
-        borderColor: '#4CAF50',
-    },
-    categoryChipText: {
-        color: '#555',
-        fontSize: 14,
-    },
-    selectedCategoryChipText: {
-        color: 'white',
-    },
-    applyButton: {
-        backgroundColor: '#4CAF50',
-        borderRadius: 25,
-        paddingVertical: 12,
-        alignItems: 'center',
-        marginTop: 8,
-    },
-    applyButtonText: {
-        color: 'white',
-        fontWeight: 'bold',
-        fontSize: 16,
-    },
-    sortContainer: {
-        marginBottom: 16,
-    },
-    sortOptionsRow: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        marginTop: 8,
-    },
-    sortOption: {
-        backgroundColor: 'white',
-        borderRadius: 8,
-        paddingHorizontal: 12,
-        paddingVertical: 8,
-        flexDirection: 'row',
-        alignItems: 'center',
-        minWidth: 90,
-        justifyContent: 'center',
-    },
-    selectedSortOption: {
-        backgroundColor: '#E0F2E9',
-        borderColor: '#4CAF50',
-        borderWidth: 1,
-    },
-    sortOptionText: {
-        fontSize: 14,
-        marginRight: 4,
-    },
-    loadingContainer: {
-        paddingVertical: 40,
-        alignItems: 'center',
-    },
-    loadingText: {
-        marginTop: 8,
-        color: '#555',
-        fontSize: 14,
-    },
-});
