@@ -342,6 +342,9 @@ export default function SeeAllScreen() {
                                 (typeof item.distance === 'string' ? parseFloat(item.distance) : (item.distance || 0))
                                 : 0}
                             portionsLeft={item.portionsLeft || 0}
+                            location={'location' in item ? item.location : undefined}
+                            description={'description' in item ? item.description : undefined}
+                            storeId={'storeId' in item ? item.storeId : undefined}
                         />
                     </View>
                 )}

@@ -14,5 +14,6 @@ export type ProductResponse = {
         restaurant: string,
         address: string
     },
-    description: string
+    description: string,
+    storeId?: number
 }

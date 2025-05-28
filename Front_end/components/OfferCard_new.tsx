@@ -1,9 +1,10 @@
 import { ProductResponse } from '@/types/productTypes';
-import { FontAwesome, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React from 'react';
 import { Image, ImageSourcePropType, Pressable, StyleSheet, Text, View } from 'react-native';
 import CartButton from './CartButton';
+import StarRating from './StarRating';
 
 export interface Offer {
     id: string;
@@ -77,8 +78,7 @@ export default function OfferCard({
                 <Text style={styles.cardPrice}>{price}</Text>
 
                 <View style={styles.infoRow}>
-                    <FontAwesome name="star" size={20} color="gold" />
-                    <Text style={styles.infoText}>{rating}</Text>
+                    <StarRating rating={rating} size={16} />
                 </View>
 
                 <View style={styles.infoRow}>

@@ -1,12 +1,14 @@
 import api from '@/api/axiosConfig';
 import { useFavoritesStore } from '@/store/useFavoritesStore';
+import { useStoreStore } from '@/store/useStoreStore';
 import { ProductResponse } from '@/types/productTypes';
-import { FontAwesome, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Dimensions, Image, ImageSourcePropType, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { showMessage } from 'react-native-flash-message';
 import CartButton from './CartButton';
+import StarRating from './StarRating';
 
 // Get screen width to calculate card width
 const screenWidth = Dimensions.get('window').width;
@@ -26,6 +28,7 @@ export interface GridOfferProps {
         address: string;
     };
     description?: string;
+    storeId?: number;
 }
 
 export default function GridOfferCard(props: GridOfferProps) {
@@ -39,14 +42,46 @@ export default function GridOfferCard(props: GridOfferProps) {
         distance,
         portionsLeft,
         location,
-        description
+        description,
+        storeId
     } = props;
 
     const { favorites } = useFavoritesStore();
+    const { getStoreAddressById } = useStoreStore();
     const [isProcessing, setIsProcessing] = useState(false);
+    const [storeAddress, setStoreAddress] = useState<string>('');
+    const [displayAddress, setDisplayAddress] = useState<string>('');
 
     // Check if item is already in favorites
     const isFavorite = favorites.some(fav => fav.id.toString() === id.toString());
+
+    // Fetch store address if storeId is provided and no location address exists
+    useEffect(() => {
+        const fetchStoreAddress = async () => {
+            if (storeId && (!location?.address || location.address.trim() === '')) {
+                try {
+                    const address = await getStoreAddressById(storeId);
+                    setStoreAddress(address);
+                } catch (error) {
+                    console.error('Failed to fetch store address:', error);
+                    setStoreAddress('Address not available');
+                }
+            }
+        };
+
+        fetchStoreAddress();
+    }, [storeId, location?.address]);
+
+    // Determine which address to display
+    useEffect(() => {
+        if (location?.address && location.address.trim() !== '') {
+            setDisplayAddress(location.address);
+        } else if (storeAddress && storeAddress.trim() !== '') {
+            setDisplayAddress(storeAddress);
+        } else {
+            setDisplayAddress(`${distance} km away`);
+        }
+    }, [location?.address, storeAddress, distance]);
 
     // Convert Offer to ProductResponse for CartButton
     const productForCart: ProductResponse = {
@@ -145,8 +180,7 @@ export default function GridOfferCard(props: GridOfferProps) {
                 <Text style={styles.cardPrice}>{price}</Text>
 
                 <View style={styles.infoRow}>
-                    <FontAwesome name="star" size={16} color="gold" />
-                    <Text style={styles.infoText}>{rating}</Text>
+                    <StarRating rating={rating} size={14} />
                 </View>
 
                 <View style={styles.infoRow}>
@@ -156,7 +190,7 @@ export default function GridOfferCard(props: GridOfferProps) {
 
                 <View style={styles.infoRow}>
                     <Ionicons name="location-outline" size={14} color="#777" />
-                    <Text style={styles.infoText}>{distance + " km"}</Text>
+                    <Text style={styles.infoText} numberOfLines={1}>{displayAddress}</Text>
                 </View>
 
                 <View style={styles.infoRow}>

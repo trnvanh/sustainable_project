@@ -101,6 +101,9 @@ export default function Explore() {
                             rating={item.rating}
                             distance={item.distance || 0}
                             portionsLeft={item.portionsLeft}
+                            location={item.location}
+                            description={item.description}
+                            storeId={item.storeId}
                         />
                     </TouchableOpacity>
                 )}
@@ -231,6 +234,9 @@ export default function Explore() {
                                     rating={item.rating}
                                     distance={typeof item.distance === 'string' ? parseFloat(item.distance) : (item.distance || 0)}
                                     portionsLeft={item.portionsLeft || 0}
+                                    location={item.location}
+                                    description={item.description || ""}
+                                    storeId={item.storeId}
                                 />
                             </TouchableOpacity>
                         )}

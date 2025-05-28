@@ -8,9 +8,9 @@ export type OrderItem = {
     rating: number;
     image?: any; // or ImageSourcePropType if typed strictly
     location?: {
-      restaurant: string;
-      address: string;
+        restaurant: string;
+        address: string;
     };
     description: string;
-  };
-  
+    storeId?: number;
+};

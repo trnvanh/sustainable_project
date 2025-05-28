@@ -1,10 +1,12 @@
 import { useTheme } from '@/context/ThemeContext';
+import { useStoreStore } from '@/store/useStoreStore';
 import { ProductResponse } from '@/types/productTypes';
-import { FontAwesome, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Image, ImageSourcePropType, Pressable, StyleSheet, Text, View } from 'react-native';
 import CartButton from './CartButton';
+import StarRating from './StarRating';
 
 export interface Offer {
     id: string;
@@ -20,6 +22,7 @@ export interface Offer {
         address: string;
     };
     description?: string;
+    storeId?: number;
 }
 
 export default function OfferCard({
@@ -33,9 +36,41 @@ export default function OfferCard({
     portionsLeft,
     location,
     description,
+    storeId,
 }: Offer) {
     const router = useRouter();
     const { colors } = useTheme();
+    const { getStoreAddressById } = useStoreStore();
+    const [storeAddress, setStoreAddress] = useState<string>('');
+    const [displayAddress, setDisplayAddress] = useState<string>('');
+
+    // Fetch store address if storeId is provided and no location address exists
+    useEffect(() => {
+        const fetchStoreAddress = async () => {
+            if (storeId && (!location?.address || location.address.trim() === '')) {
+                try {
+                    const address = await getStoreAddressById(storeId);
+                    setStoreAddress(address);
+                } catch (error) {
+                    console.error('Failed to fetch store address:', error);
+                    setStoreAddress('Address not available');
+                }
+            }
+        };
+
+        fetchStoreAddress();
+    }, [storeId, location?.address]);
+
+    // Determine which address to display
+    useEffect(() => {
+        if (location?.address && location.address.trim() !== '') {
+            setDisplayAddress(location.address);
+        } else if (storeAddress && storeAddress.trim() !== '') {
+            setDisplayAddress(storeAddress);
+        } else {
+            setDisplayAddress(`${distance} km away`);
+        }
+    }, [location?.address, storeAddress, distance]);
 
     // Convert Offer to ProductResponse for CartButton
     const productForCart: ProductResponse = {
@@ -48,7 +83,8 @@ export default function OfferCard({
         rating,
         image: typeof image === 'string' ? image : '',
         location: location || { restaurant: '', address: '' },
-        description: description || ''
+        description: description || '',
+        storeId: storeId
     };
 
     // Normalize image value into ImageSourcePropType
@@ -133,8 +169,15 @@ export default function OfferCard({
                 <Text style={dynamicStyles.cardPrice}>{price}</Text>
 
                 <View style={dynamicStyles.infoRow}>
-                    <FontAwesome name="star" size={20} color="gold" />
-                    <Text style={dynamicStyles.infoText}>{rating}</Text>
+                    <StarRating
+                        rating={rating}
+                        size={14}
+                        color={colors.primary}
+                        emptyColor={colors.textSecondary}
+                    />
+                    <Text style={[dynamicStyles.infoText, { marginLeft: 8 }]}>
+                        {rating.toFixed(1)}
+                    </Text>
                 </View>
 
                 <View style={dynamicStyles.infoRow}>
@@ -144,7 +187,9 @@ export default function OfferCard({
 
                 <View style={dynamicStyles.infoRow}>
                     <Ionicons name="location-outline" size={14} color={colors.textSecondary} />
-                    <Text style={dynamicStyles.infoText}>{distance + " km"}</Text>
+                    <Text style={dynamicStyles.infoText} numberOfLines={1} ellipsizeMode="tail">
+                        {displayAddress}
+                    </Text>
                 </View>
 
                 <View style={dynamicStyles.infoRow}>

@@ -1,9 +1,10 @@
 import CartButton from '@/components/CartButton';
 import RescueBar from '@/components/RescueBar';
 import ScreenWithBack from '@/components/ScreenBack';
+import StarRating from '@/components/StarRating';
 import { useProductsStore } from '@/store/useProductsStore';
 import { ProductResponse } from '@/types/productTypes';
-import { Entypo, FontAwesome, MaterialIcons } from '@expo/vector-icons';
+import { Entypo, MaterialIcons } from '@expo/vector-icons';
 import { useLocalSearchParams } from 'expo-router';
 import React from 'react';
 import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
@@ -114,8 +115,7 @@ export default function OfferItemScreen() {
 
                     {/* Rating */}
                     <View style={styles.infoRow}>
-                        <FontAwesome name="star" size={20} color="gold" />
-                        <Text style={styles.infoText}>{rating}</Text>
+                        <StarRating rating={rating} size={18} />
                     </View>
                 </View>
 
