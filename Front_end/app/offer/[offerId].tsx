@@ -10,7 +10,7 @@ import React from 'react';
 import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 export default function OfferItemScreen() {
-    const { offerId } = useLocalSearchParams<{ offerId: string }>();
+    const { offerId, from } = useLocalSearchParams<{ offerId: string; from?: string }>();
 
     const {
         historyOrders,
@@ -69,7 +69,7 @@ export default function OfferItemScreen() {
     };
 
     return (
-        <ScreenWithBack title="Explore">
+        <ScreenWithBack title={from ?? 'Offer Details'}>
             <ScrollView style={styles.container}>
                 <Image source={typeof image === 'string' ? { uri: image } : image} style={styles.image} />
 
@@ -79,7 +79,7 @@ export default function OfferItemScreen() {
 
                     {/* Price and Cart Button */}
                     <View style={styles.priceCartRow}>
-                        <Text style={styles.price}>{price}</Text>
+                        <Text style={styles.price}>{price}€</Text>
                         <CartButton
                             product={productForCart}
                             showQuantity={true}

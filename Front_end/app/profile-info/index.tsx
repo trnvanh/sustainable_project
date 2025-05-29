@@ -5,6 +5,7 @@ import { getProfileImageUrl } from '@/utils/imageUtils';
 import * as ImagePicker from 'expo-image-picker';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function ProfileInfoScreen() {
   const user = useAuthStore((state) => state.user);
@@ -155,8 +156,8 @@ export default function ProfileInfoScreen() {
   };
 
   return (
-    <ScreenWithBack title={'Profile'}>
-      <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      <ScreenWithBack title={'Profile'}>
         <Text style={styles.title}>Edit Profile</Text>
 
         {isFetching ? (
@@ -233,8 +234,8 @@ export default function ProfileInfoScreen() {
             </View>
           </>
         )}
-      </View>
-    </ScreenWithBack>
+      </ScreenWithBack>
+    </SafeAreaView>
   );
 }
 

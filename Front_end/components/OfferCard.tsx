@@ -155,7 +155,10 @@ export default function OfferCard({
     });
 
     return (
-        <Pressable style={dynamicStyles.card} onPress={() => router.push(`/offer/${id}`)}>
+        <Pressable style={dynamicStyles.card} onPress={() => router.push({
+                  pathname: '/offer/[offerId]',
+                  params: { offerId: id, from: 'Explore' },
+                })}>
             <View style={dynamicStyles.imageContainer}>
                 <Image source={getImageSource()} style={dynamicStyles.cardImage} />
                 <CartButton
@@ -166,7 +169,7 @@ export default function OfferCard({
             </View>
             <View style={dynamicStyles.cardContent}>
                 <Text style={dynamicStyles.cardName}>{name}</Text>
-                <Text style={dynamicStyles.cardPrice}>{price}</Text>
+                <Text style={dynamicStyles.cardPrice}>{price}€</Text>
 
                 <View style={dynamicStyles.infoRow}>
                     <StarRating
