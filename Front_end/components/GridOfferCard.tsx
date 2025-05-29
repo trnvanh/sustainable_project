@@ -150,8 +150,10 @@ export default function GridOfferCard(props: GridOfferProps) {
     };
 
     const handlePress = () => {
-        router.push(`/offer/${id}`);
-    };
+        router.push({
+            pathname: '/offer/[offerId]',
+            params: { offerId: id, from: 'Store' },
+    })};
 
     return (
         <TouchableOpacity style={styles.card} onPress={handlePress}>
